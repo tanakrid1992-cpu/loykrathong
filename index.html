@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ลอยกระทงออนไลน์ | เทศบาลตำบลคลองตำหรุ</title>
+<meta name="description" content="ร่วมลอยกระทงออนไลน์ เทศบาลตำบลคลองตำหรุ ปากแม่น้ำบางปะกง">
+<link rel="icon" href="logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#050b1e;color:#fff;font-family:Mitr,sans-serif;overflow:hidden}
+#sc{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:manipulation}
+header{position:fixed;top:0;left:0;right:0;padding:10px 12px 8px;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,color-mix(in srgb,var(--pri) 92%,transparent),transparent);pointer-events:none}
+header img{width:46px;height:46px;border-radius:50%;flex:none;box-shadow:0 0 0 2px var(--acc)}
+header h1{font-weight:500;font-size:clamp(16px,3.4vw,24px);color:var(--acc);line-height:1.15}
+header p{font-weight:300;font-size:12px;opacity:.85}
+#chips{position:fixed;top:66px;left:0;right:0;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:0 10px}
+.chip{background:rgba(5,15,40,.6);border:1px solid #ffffff2a;border-radius:99px;padding:4px 10px;font-size:12px;font-weight:300;cursor:pointer}
+.chip b{color:var(--acc);font-weight:500}
+#panel{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);width:min(680px,95vw);background:rgba(8,18,45,.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid #ffffff22;border-top:3px solid var(--acc);border-radius:18px;padding:10px 12px;transition:transform .45s,opacity .45s}
+#panel.hide{transform:translate(-50%,calc(100% + 30px));opacity:0;pointer-events:none}
+#picker{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}
+.k{position:relative;flex:0 0 88px;border:2px solid transparent;border-radius:12px;background:#ffffff0d;cursor:pointer;text-align:center;padding:4px 2px;font-size:12px;color:#ccd}
+.k.on{border-color:var(--acc);background:#ffffff1a;color:#fff}
+.k canvas{width:82px;height:62px;display:block;margin:auto}
+.eco{position:absolute;top:3px;right:3px;font-size:10px;background:#2e8b3e;color:#fff;border-radius:6px;padding:0 4px}
+#desc{font-size:12px;opacity:.85;min-height:16px;color:var(--acc)}
+.row{display:flex;gap:8px;margin-top:7px;align-items:stretch}
+input[type=text],textarea{flex:1;min-width:0;background:#ffffff12;border:1px solid #ffffff2a;border-radius:10px;color:#fff;font:inherit;font-size:14px;padding:8px 10px;resize:none}
+label.cs{display:none;font-size:11.5px;font-weight:300;margin-top:5px;gap:6px;align-items:flex-start}
+label.cs.on{display:flex}
+.small{font-size:11px;font-weight:300;opacity:.75;margin-top:6px}
+.small a,label a{color:var(--acc);cursor:pointer;text-decoration:underline}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px}
+#go{background:linear-gradient(135deg,var(--acc),#ff8a3d);color:#2a1300;font-weight:500;padding:0 16px;font-size:15px;white-space:nowrap}
+#go:disabled{opacity:.6}
+#again{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--acc);color:#2a1300;padding:10px 22px;display:none;font-weight:500}
+#card{position:fixed;display:none;max-width:250px;background:rgba(255,248,230,.97);color:#3a2400;padding:10px 12px;border-radius:12px;font-size:13px;pointer-events:none;box-shadow:0 6px 20px #0008;z-index:5;word-break:break-word}
+#card b{display:block;margin-bottom:2px}
+#toast{position:fixed;top:110px;left:50%;transform:translateX(-50%);background:#fff3c8;color:#3a2400;padding:8px 14px;border-radius:10px;font-size:13px;display:none;z-index:9;max-width:90vw;text-align:center}
+.modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:10;padding:16px}
+.modal.on{display:flex}
+.box{background:#fff;color:#1a2233;border-radius:14px;max-width:560px;width:100%;max-height:85vh;overflow:auto;padding:18px 20px;font-weight:300;font-size:14px;line-height:1.6}
+.box h2{font-weight:500;color:var(--pri);font-size:18px;margin-bottom:6px}
+.box h3{font-weight:500;font-size:14px;margin-top:10px}
+.box ul{padding-left:20px}
+.box button{background:var(--pri);color:#fff;padding:8px 18px;margin-top:12px}
+#demo{position:fixed;bottom:4px;right:6px;font-size:10px;opacity:.5}
+</style>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="common.js"></script>
+</head><body>
+<canvas id="sc"></canvas>
+<header><img id="logo" alt="ตราสัญลักษณ์"><div><h1 id="org"></h1><p id="ttl"></p></div></header>
+<div id="chips"></div>
+<div id="panel">
+ <div id="picker"></div>
+ <div id="desc"></div>
+ <div class="row"><input type="text" id="nm" maxlength="24" placeholder="ชื่อ (ไม่บังคับ — เว้นว่างเพื่อลอยแบบไม่ระบุชื่อ)"></div>
+ <label class="cs" id="csl"><input type="checkbox" id="cs"> <span>ยินยอมให้แสดงชื่อนี้ต่อสาธารณะตาม<a data-pdpa>ประกาศความเป็นส่วนตัว</a></span></label>
+ <div class="row"><textarea id="ws" rows="2" maxlength="120" placeholder="คำอธิษฐาน / ขอขมาพระแม่คงคา..."></textarea><button id="go">ลอยกระทง ✨</button></div>
+ <div class="small">คำอธิษฐานจะแสดงบนสายน้ำให้ผู้อื่นเห็น · <a data-pdpa>🔒 ประกาศความเป็นส่วนตัว (PDPA)</a></div>
+</div>
+<button id="again">🪷 ลอยอีกกระทง</button>
+<div id="card"></div><div id="toast"></div><div id="demo"></div>
+<div class="modal" id="pdpa"><div class="box" id="pdpaBox"></div></div>
+<div class="modal" id="ev"><div class="box" id="evBox"></div></div>
+<script>
+const $=id=>document.getElementById(id),R=Math.random;
+/* ---------- header / banner / PDPA ---------- */
+$('logo').src=CFG.logo;$('org').textContent=CFG.orgName;$('ttl').textContent=CFG.title+' · ปากแม่น้ำบางปะกง';
+const E=CFG.event,chips=$('chips');
+if(E.show){const d=document.createElement('div');d.className='chip';d.innerHTML=`📅 <b>${esc(E.date)}</b> · ${esc(E.time)}`;d.onclick=()=>$('ev').classList.add('on');chips.append(d)}
+const stat=document.createElement('div');stat.className='chip';chips.append(stat);
+$('evBox').innerHTML=`<h2>🪷 งานประเพณีลอยกระทง</h2><p><b>${esc(CFG.orgName)}</b></p><p>📅 ${esc(E.date)}<br>🕕 ${esc(E.time)}<br>📍 ${esc(E.place)}</p><p>🌱 ${esc(E.note)}</p>${E.link?`<p><a href="${esc(E.link)}" target="_blank" rel="noopener">รายละเอียดเพิ่มเติม</a></p>`:''}<p>สอบถาม: ${esc(CFG.contact.phone)}</p><button onclick="this.closest('.modal').classList.remove('on')">ปิด</button>`;
+$('pdpaBox').innerHTML=`<h2>ประกาศความเป็นส่วนตัว</h2><p>${esc(CFG.orgName)} ("เทศบาล") เป็นผู้ควบคุมข้อมูลส่วนบุคคลของกิจกรรมลอยกระทงออนไลน์ ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562</p>
+<h3>ข้อมูลที่เก็บ</h3><ul><li>ชื่อที่ท่านกรอก (ไม่บังคับ — ลอยแบบไม่ระบุชื่อได้)</li><li>คำอธิษฐาน ประเภทกระทง และเวลาที่ลอย</li></ul>
+<h3>วัตถุประสงค์</h3><ul><li>แสดงกระทงและคำอธิษฐานบนหน้าเว็บกิจกรรม (ผู้อื่นมองเห็นได้)</li><li>จัดทำสถิติภาพรวมเพื่อรายงานผลการจัดงาน</li></ul>
+<h3>ระยะเวลาเก็บ</h3><p>เก็บชื่อไม่เกิน ${CFG.retentionDays} วันหลังจบงาน จากนั้นจะลบชื่อออก คงเหลือเฉพาะสถิติที่ไม่ระบุตัวบุคคล</p>
+<h3>สิทธิของท่าน</h3><p>ขอเข้าถึง แก้ไข ลบ หรือถอนความยินยอมได้ โดยติดต่อเทศบาล โทร ${esc(CFG.contact.phone)}${CFG.contact.email?' อีเมล '+esc(CFG.contact.email):''}</p>
+<p class="small" style="color:#556">กรุณาอย่าใส่ข้อมูลส่วนบุคคลอ่อนไหว เช่น เลขบัตรประชาชน เบอร์โทร หรือข้อมูลสุขภาพ ในคำอธิษฐาน · ข้อความไม่สุภาพจะถูกซ่อนและตรวจสอบโดยเจ้าหน้าที่</p><button onclick="this.closest('.modal').classList.remove('on')">รับทราบ</button>`;
+document.querySelectorAll('[data-pdpa]').forEach(a=>a.onclick=e=>{e.preventDefault();$('pdpa').classList.add('on')});
+document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)m.classList.remove('on')});
+$('nm').oninput=()=>$('csl').classList.toggle('on',!!$('nm').value.trim());
+function toast(s,ms=3000){const t=$('toast');t.textContent=s;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',ms)}
+
+/* ---------- picker ---------- */
+let sel=0;const pk=$('picker');
+TY.forEach((k,i)=>{const d=document.createElement('div');d.className='k'+(i?'':' on');const cv=document.createElement('canvas');cv.width=164;cv.height=124;const x=cv.getContext('2d');x.scale(2,2);x.translate(41,52);x.scale(.78,.78);drawK(x,k,0,0);d.append(cv,k.n);if(k.eco){const b=document.createElement('span');b.className='eco';b.textContent='🌱';d.append(b)}
+ d.onclick=()=>{sel=i;document.querySelectorAll('.k').forEach((e,j)=>e.classList.toggle('on',j==i));showDesc()};pk.append(d)});
+const showDesc=()=>$('desc').textContent=(TY[sel].eco?'🌱 กระทงรักษ์โลก · ':'')+TY[sel].d;showDesc();
+
+/* ---------- data ---------- */
+const SAMPLE=[['ฝ้าย','ขอให้ครอบครัวสุขภาพแข็งแรง'],['ต้น','ขอให้งานราบรื่น'],['','ขอขมาพระแม่คงคา'],['มะลิ','ขอให้ป่าชายเลนคลองตำหรุอุดมสมบูรณ์'],['','ขอให้ทุกข์โศกลอยไปกับสายน้ำ'],['ก้อง','ขอให้สอบผ่าน'],['แพรว','ขอให้คนที่รักมีความสุข'],['','ขอให้ชาวคลองตำหรุร่มเย็นเป็นสุข']].map(([name,wish],i)=>({type:i%TY.length,name,wish}));
+let pool=[],lastId=0,ownSig='',total=0,eco=0,local=0;
+try{local=+localStorage.getItem('lk_n')||0}catch(e){}
+function showStat(){stat.innerHTML=DB?`🪷 ลอยแล้วทั้งตำบล <b>${total.toLocaleString('th-TH')}</b> กระทง · 🌱 รักษ์โลก <b>${total?Math.round(eco/total*100):0}%</b>`:`🪷 คุณลอยแล้ว <b>${local}</b> กระทง`}
+async function loadStats(){if(!DB)return showStat();const{data}=await DB.rpc('public_stats');if(data){total=data.total;eco=data.eco}showStat()}
+async function poll(first){if(!DB)return;
+ let q=DB.from('krathongs').select('id,type,name,wish').order('id',{ascending:false}).limit(first?40:30);if(!first)q=q.gt('id',lastId);
+ const{data,error}=await q;if(error||!data)return;
+ data.reverse().forEach(r=>{lastId=Math.max(lastId,r.id);if(!first&&ownSig&&ownSig===(r.name||'')+'|'+r.wish){ownSig='';return}pool.push(r);if(!first)spawn(r,-60,.25+R()*.2)});
+ if(pool.length>80)pool=pool.slice(-80)}
+if(!DB){pool=SAMPLE;$('demo').textContent='โหมดทดลอง — ยังไม่ได้เชื่อมฐานข้อมูล'}
+
+/* ---------- scene ---------- */
+const sc=$('sc'),c=sc.getContext('2d');let W,H,hy,stars,rip,mang,mx,my,mr;
+function rs(){const dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;sc.width=W*dpr;sc.height=H*dpr;c.setTransform(dpr,0,0,dpr,0,0);hy=H*.44;mx=W*.8;my=hy*.42;mr=Math.min(W,H)*.05;
+ stars=Array.from({length:150},()=>[R()*W,R()*hy*.92,R()*1.3+.3,R()*6]);
+ rip=Array.from({length:70},()=>[R()*W,hy+R()*(H-hy),R()*30+10]);
+ mang=[];let x=-20;while(x<W+40){mang.push([x,10+R()*16,R()]);x+=14+R()*20}}
+addEventListener('resize',rs);rs();
+const items=[],lan=[],fw=[],msgs=[];let pi=0;
+function nextRow(){const src=pool.length?pool:SAMPLE;return src[(pi++)%src.length]}
+function spawn(r,x,z){r=r||nextRow();items.push({k:(r.type|0)%TY.length,z:z??(.35+R()*.6),x:x??R()*W,vx:6+R()*10,ph:R()*9,name:r.name,wish:r.wish})}
+function burst(x,y){const h=R()*360;for(let i=0;i<70;i++){const a=R()*PI2,v=40+R()*90;fw.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1+R()*.6,col:`hsl(${h+R()*40},100%,${60+R()*20}%)`})}}
+function place(o,t){const p=Math.pow(1-o.z,1.6);o.sy=hy+(H-hy)*p+Math.sin(t*1.5+o.ph)*2;o.ss=(.1+p)*Math.min(1.5,Math.min(W,H)/520)}
+function chedi(x,h,b){c.beginPath();c.moveTo(x-h*.32,b);c.lineTo(x-h*.28,b-h*.2);c.quadraticCurveTo(x-h*.28,b-h*.55,x,b-h*.58);c.quadraticCurveTo(x+h*.28,b-h*.55,x+h*.28,b-h*.2);c.lineTo(x+h*.32,b);c.fill();c.beginPath();c.moveTo(x-h*.07,b-h*.54);c.lineTo(x,b-h);c.lineTo(x+h*.07,b-h*.54);c.fill()}
+let last=performance.now(),T=0;
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;T+=dt;const t=T;
+ let g=c.createLinearGradient(0,0,0,hy);g.addColorStop(0,'#020617');g.addColorStop(1,'#1e3266');c.fillStyle=g;c.fillRect(0,0,W,hy);
+ c.fillStyle='#fff';stars.forEach(s=>{c.globalAlpha=.45+.45*Math.sin(t*2+s[3]);c.fillRect(s[0],s[1],s[2],s[2])});c.globalAlpha=1;
+ g=c.createRadialGradient(mx,my,mr*.6,mx,my,mr*4);g.addColorStop(0,'rgba(255,240,200,.35)');g.addColorStop(1,'rgba(255,240,200,0)');c.fillStyle=g;c.fillRect(mx-mr*4,my-mr*4,mr*8,mr*8);
+ el(c,mx,my,mr,mr,'#fff6dc');el(c,mx-mr*.3,my-mr*.2,mr*.18,mr*.18,'rgba(200,190,160,.35)');el(c,mx+mr*.35,my+mr*.3,mr*.12,mr*.12,'rgba(200,190,160,.35)');
+ if(R()<dt*.6)lan.push({x:R()*W,y:hy-10,v:8+R()*10,ph:R()*9,s:.6+R()*.8});
+ for(let i=lan.length-1;i>=0;i--){const l=lan[i];l.y-=l.v*dt;l.x+=Math.sin(t*.6+l.ph)*.15;if(l.y<-20){lan.splice(i,1);continue}
+  g=c.createRadialGradient(l.x,l.y,0,l.x,l.y,9*l.s);g.addColorStop(0,'rgba(255,200,110,.9)');g.addColorStop(1,'rgba(255,140,40,0)');c.fillStyle=g;c.fillRect(l.x-9*l.s,l.y-9*l.s,18*l.s,18*l.s);c.fillStyle='#ffcf7a';c.fillRect(l.x-1.6*l.s,l.y-2.5*l.s,3.2*l.s,5*l.s)}
+ c.globalCompositeOperation='lighter';for(let i=fw.length-1;i>=0;i--){const p=fw[i];p.l-=dt*.7;if(p.l<=0){fw.splice(i,1);continue}p.vy+=30*dt;p.vx*=.985;p.vy*=.985;p.x+=p.vx*dt;p.y+=p.vy*dt;c.globalAlpha=Math.min(1,p.l);c.fillStyle=p.col;c.fillRect(p.x,p.y,2.2,2.2)}c.globalAlpha=1;c.globalCompositeOperation='source-over';
+ /* ฝั่ง: ป่าชายเลน + วัด */
+ c.fillStyle='#061510';c.fillRect(0,hy-4,W,4);
+ mang.forEach(([x,h,r])=>{c.beginPath();c.arc(x,hy-h*.55,h*.55,0,PI2);c.arc(x+h*.45,hy-h*.4,h*.45,0,PI2);c.fill();c.strokeStyle='#061510';c.lineWidth=1;for(let k=-2;k<=2;k++){c.beginPath();c.moveTo(x+k*2,hy-h*.2);c.quadraticCurveTo(x+k*5,hy-h*.1,x+k*6,hy);c.stroke()}});
+ c.fillStyle='#08101f';chedi(W*.16,Math.min(70,H*.09),hy-2);
+ mang.forEach(([x],i)=>{if(i%3==0){c.fillStyle=`rgba(255,200,110,${.5+.4*Math.sin(t*3+i)})`;c.fillRect(x,hy-3,1.6,1.6)}});
+ /* น้ำ */
+ g=c.createLinearGradient(0,hy,0,H);g.addColorStop(0,'#16285e');g.addColorStop(1,'#030a1c');c.fillStyle=g;c.fillRect(0,hy,W,H-hy);
+ for(let y=hy+1;y<H;y+=3){const f=(y-hy)/(H-hy),w=mr*(1+f*3)*(.55+.45*Math.sin(y*.3+t*3));c.fillStyle=`rgba(255,240,200,${.32*(1-f)})`;c.fillRect(mx-w/2+Math.sin(y*.05+t)*8*f,y,w,1.4)}
+ /* แนวไม้ไผ่ชะลอคลื่น */
+ const by=hy+(H-hy)*.07;c.fillStyle='#0a1430';for(let x=4;x<W*.62;x+=5){const h=7+Math.sin(x)*1.5;c.fillRect(x,by-h,1.6,h+Math.sin(t*2+x)*.6)}
+ c.strokeStyle='rgba(170,200,255,.13)';c.lineWidth=1;rip.forEach(r=>{const f=(r[1]-hy)/(H-hy),x=(r[0]+t*12*(f+.2))%(W+60)-30;c.beginPath();c.moveTo(x,r[1]);c.lineTo(x+r[2]*(f+.3),r[1]);c.stroke()});
+ /* กระทง */
+ for(let i=items.length-1;i>=0;i--){const o=items[i];o.x+=o.vx*dt*(1.1-o.z);if(o.mine){o.z+=dt*.018;if(o.z>.97){items.splice(i,1);continue}}else if(o.x>W+60){items.splice(i,1);if(items.filter(q=>!q.mine).length<10)spawn(null,-60)}place(o,t)}
+ items.sort((a,b)=>b.z-a.z).forEach(o=>{const s=o.ss;c.globalAlpha=Math.min(1,(1-o.z)*7);
+  g=c.createRadialGradient(o.x,o.sy+6*s,0,o.x,o.sy+6*s,60*s);g.addColorStop(0,'rgba(255,170,70,.35)');g.addColorStop(1,'rgba(255,170,70,0)');c.fillStyle=g;c.fillRect(o.x-60*s,o.sy-54*s,120*s,120*s);
+  c.save();c.translate(o.x,o.sy);c.rotate(Math.sin(t*1.2+o.ph)*.03);c.scale(s,s);drawK(c,TY[o.k],t,o.ph);c.restore();
+  if(o.mine){c.font=`${Math.max(10,13*s)}px Mitr`;c.textAlign='center';c.fillStyle=CFG.colors.accent;c.fillText('⭐ '+(o.name||'กระทงของฉัน'),o.x,o.sy-72*s)}c.globalAlpha=1});
+ c.textAlign='center';for(let i=msgs.length-1;i>=0;i--){const m=msgs[i];m.l-=dt*.25;m.y-=dt*18;if(m.l<=0){msgs.splice(i,1);continue}c.globalAlpha=Math.min(1,m.l*1.5);c.font='16px Mitr';c.fillStyle='#fff3c8';c.shadowColor='#ffb84d';c.shadowBlur=12;c.fillText(m.s,m.x,m.y);c.shadowBlur=0}c.globalAlpha=1;
+ requestAnimationFrame(frame)}
+
+/* ---------- start ---------- */
+(async()=>{await poll(true);for(let i=0;i<9;i++)spawn();loadStats();requestAnimationFrame(frame);
+ if(DB){setInterval(()=>poll(false),8000);setInterval(loadStats,20000)}})();
+
+/* ---------- release ---------- */
+let cool=0;
+$('go').onclick=async()=>{
+ const name=$('nm').value.trim(),wish=$('ws').value.trim();
+ if(!wish)return toast('กรุณาพิมพ์คำอธิษฐานก่อนลอยกระทง');
+ if(hasBad(name)||hasBad(wish))return toast('กรุณาใช้ถ้อยคำสุภาพ 🙏');
+ if(name&&!$('cs').checked)return toast('กรุณาติ๊กยินยอมแสดงชื่อ หรือเว้นชื่อว่างเพื่อลอยแบบไม่ระบุชื่อ',4000);
+ if(Date.now()<cool)return toast('รอสักครู่ก่อนลอยกระทงถัดไปนะ');
+ cool=Date.now()+5000;$('go').disabled=true;
+ if(DB){ownSig=name+'|'+wish;const{error}=await DB.from('krathongs').insert({type:sel,name:name||null,wish,consent:!!name});
+  $('go').disabled=false;if(error){ownSig='';cool=0;return toast('ส่งไม่สำเร็จ กรุณาลองใหม่')}total++;if(TY[sel].eco)eco++}else $('go').disabled=false;
+ const o={k:sel,z:.12,x:W/2,vx:(R()-.5)*14,ph:R()*9,name,wish,mine:1};items.push(o);place(o,T);
+ msgs.push({s:'🙏 '+(wish.length>34?wish.slice(0,34)+'…':wish),x:W/2,y:o.sy-90*o.ss,l:1.6});
+ [0,500,1000].forEach(d=>setTimeout(()=>burst(W*(.25+R()*.5),hy*(.3+R()*.4)),d));
+ local++;try{localStorage.setItem('lk_n',local)}catch(e){}showStat();
+ if(TY[sel].eco)setTimeout(()=>toast('🌱 ขอบคุณที่เลือกกระทงรักษ์โลก'),1200);
+ $('panel').classList.add('hide');$('again').style.display='block';$('ws').value=''};
+$('again').onclick=()=>{$('panel').classList.remove('hide');$('again').style.display='none'};
+const card=$('card');let ct;
+sc.addEventListener('pointerdown',e=>{let best=null,bd=1e9;items.forEach(o=>{const d=Math.hypot(e.clientX-o.x,e.clientY-(o.sy-25*o.ss));if(d<50*o.ss+12&&d<bd){bd=d;best=o}});
+ if(!best){card.style.display='none';return}
+ card.innerHTML=`<b>${best.mine?'⭐ ':''}${esc(best.name||'ไม่ระบุชื่อ')} · กระทง${TY[best.k].n}${TY[best.k].eco?' 🌱':''}</b>${esc(best.wish)}`;
+ card.style.display='block';card.style.left=Math.min(W-260,Math.max(8,e.clientX-120))+'px';card.style.top=Math.max(8,e.clientY-90)+'px';clearTimeout(ct);ct=setTimeout(()=>card.style.display='none',3500)});
+</script></body></html>

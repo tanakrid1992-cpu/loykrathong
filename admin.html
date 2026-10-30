@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>เจ้าหน้าที่ | ลอยกระทงออนไลน์</title><meta name="robots" content="noindex">
+<link rel="icon" href="logo.svg">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@300;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:Mitr,sans-serif;font-weight:300;background:#f3f5f9;color:#1a2233;font-size:14px}
+header{background:var(--pri);color:#fff;padding:12px 18px;display:flex;align-items:center;gap:12px;border-bottom:4px solid var(--acc)}
+header img{width:44px;height:44px;border-radius:50%}
+header h1{font-size:18px;font-weight:500}header p{font-size:12px;opacity:.85}
+header .sp{flex:1}
+main{max-width:1050px;margin:auto;padding:16px}
+button,select,input{font:inherit}
+button{cursor:pointer;border:0;border-radius:8px;padding:7px 14px;background:var(--pri);color:#fff}
+button.g{background:#e7ebf2;color:#1a2233}button.r{background:#c0392b}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 3px #0001;margin-bottom:14px}
+.card h2{font-size:16px;font-weight:500;color:var(--pri);margin-bottom:10px}
+#login{max-width:360px;margin:40px auto}
+#login input{width:100%;padding:9px;border:1px solid #ccd;border-radius:8px;margin-bottom:8px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button{background:#e7ebf2;color:#1a2233}.tabs button.on{background:var(--pri);color:#fff}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi div{background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 3px #0001;border-left:4px solid var(--acc)}
+.kpi b{display:block;font-size:26px;font-weight:500;color:var(--pri)}
+.bar{display:grid;grid-template-columns:110px 1fr 60px;align-items:center;gap:8px;margin:5px 0}
+.bar i{display:block;height:14px;border-radius:4px;background:var(--pri)}
+.bar i.e{background:#2e8b3e}
+.hours{display:flex;align-items:flex-end;gap:3px;height:140px;border-bottom:1px solid #ccd;padding-top:6px}
+.hours div{flex:1;background:var(--acc);border-radius:3px 3px 0 0;position:relative;min-height:1px}
+.hours span{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:10px;color:#667}
+table{width:100%;border-collapse:collapse}td,th{padding:7px 6px;border-bottom:1px solid #eef;text-align:left;vertical-align:top}th{font-weight:500;background:#f6f8fb}
+.tag{font-size:11px;border-radius:6px;padding:1px 6px;background:#eef}.tag.f{background:#fde2df;color:#a3261a}.tag.h{background:#eee;color:#666}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center}
+.tools input,.tools select{padding:6px 8px;border:1px solid #ccd;border-radius:8px}
+#msg{color:#c0392b;margin-top:6px}
+.note{font-size:12px;color:#667;margin-top:6px}
+@media print{header button,.tabs,.tools,#mod,.np{display:none!important}.card,.kpi div{box-shadow:none;border:1px solid #ddd}body{background:#fff}}
+</style>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="common.js"></script>
+</head><body>
+<header><img id="logo" alt=""><div><h1 id="org"></h1><p>ระบบเจ้าหน้าที่ · ลอยกระทงออนไลน์</p></div><div class="sp"></div><button class="g" id="out" style="display:none">ออกจากระบบ</button></header>
+<main>
+ <div class="card" id="login"><h2>เข้าสู่ระบบเจ้าหน้าที่</h2><input id="em" type="email" placeholder="อีเมล"><input id="pw" type="password" placeholder="รหัสผ่าน"><button id="lg">เข้าสู่ระบบ</button><div id="msg"></div></div>
+ <div id="app" style="display:none">
+  <div class="tabs"><button class="on" data-t="sum">📊 สรุปยอดผู้บริหาร</button><button data-t="mod">🛡️ ตรวจคำอธิษฐาน</button></div>
+  <section id="sum">
+   <div class="tools np"><button onclick="window.print()">🖨️ พิมพ์รายงาน / บันทึก PDF</button><button class="g" id="csv">⬇️ ดาวน์โหลด CSV</button><button class="g" id="rf">↻ รีเฟรช</button></div>
+   <div class="card"><h2 id="rt"></h2><div class="kpi" id="kpi"></div></div>
+   <div class="card"><h2>จำนวนตามประเภทกระทง</h2><div id="types"></div><p class="note">🌱 = กระทงรักษ์โลก (วัสดุย่อยสลายได้)</p></div>
+   <div class="card"><h2>ช่วงเวลาที่ลอย (ชั่วโมง)</h2><div class="hours" id="hours"></div><div style="height:16px"></div></div>
+   <div class="card"><h2>รายวัน</h2><table id="days"></table></div>
+  </section>
+  <section id="mod" style="display:none">
+   <div class="card">
+    <div class="tools"><select id="flt"><option value="flag">รอตรวจ (คำไม่สุภาพ)</option><option value="hidden">ซ่อนอยู่ทั้งหมด</option><option value="vis">แสดงอยู่</option><option value="all">ทั้งหมด</option></select><input id="q" placeholder="ค้นหาข้อความ/ชื่อ"><button id="go">ค้นหา</button><span style="flex:1"></span><button class="r" id="anon">ลบชื่อทั้งหมด (PDPA)</button></div>
+    <table><thead><tr><th>เวลา</th><th>ชื่อ</th><th>คำอธิษฐาน</th><th>สถานะ</th><th></th></tr></thead><tbody id="rows"></tbody></table>
+    <p class="note">แสดงสูงสุด 200 รายการล่าสุด · “ลบชื่อทั้งหมด” ใช้หลังครบระยะเก็บข้อมูล — สถิติยังอยู่ครบ</p>
+   </div>
+  </section>
+ </div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+$('logo').src=CFG.logo;$('org').textContent=CFG.orgName;
+if(!DB){$('msg').textContent='ยังไม่ได้ตั้งค่า Supabase ใน config.js';$('lg').disabled=true}
+const fmt=n=>(+n||0).toLocaleString('th-TH'),pct=(a,b)=>b?Math.round(a/b*100)+'%':'0%';
+const dt=s=>new Date(s).toLocaleString('th-TH',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Bangkok'});
+$('lg').onclick=async()=>{$('msg').textContent='';const{error}=await DB.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value});if(error)$('msg').textContent='อีเมลหรือรหัสผ่านไม่ถูกต้อง';else start()};
+$('pw').onkeydown=e=>{if(e.key==='Enter')$('lg').click()};
+$('out').onclick=async()=>{await DB.auth.signOut();location.reload()};
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));$('sum').style.display=b.dataset.t=='sum'?'':'none';$('mod').style.display=b.dataset.t=='mod'?'':'none';if(b.dataset.t=='mod')loadRows()});
+async function start(){const{data}=await DB.rpc('admin_stats');if(!data){$('msg').textContent='บัญชีนี้ไม่มีสิทธิ์เจ้าหน้าที่ (ยังไม่อยู่ในตาราง staff)';await DB.auth.signOut();return}
+ $('login').style.display='none';$('app').style.display='';$('out').style.display='';render(data)}
+async function stats(){const{data}=await DB.rpc('admin_stats');if(data)render(data)}
+function render(s){
+ $('rt').textContent=`รายงานผลกิจกรรมลอยกระทงออนไลน์ — ${CFG.orgName} (ข้อมูล ณ ${dt(new Date())})`;
+ $('kpi').innerHTML=[['ลอยกระทงทั้งหมด',fmt(s.total)],['วันนี้',fmt(s.today)],['กระทงรักษ์โลก 🌱',pct(s.eco,s.total)],['ระบุชื่อ',pct(s.named,s.total)],['ถูกซ่อน',fmt(s.hidden)],['รอตรวจ',fmt(s.flagged)]].map(([a,b])=>`<div>${a}<b>${b}</b></div>`).join('');
+ const bt=s.by_type||{},mx=Math.max(1,...Object.values(bt));
+ $('types').innerHTML=TY.map((k,i)=>{const n=bt[i]||0;return`<div class="bar"><span>${k.n}${k.eco?' 🌱':''}</span><i class="${k.eco?'e':''}" style="width:${n/mx*100}%"></i><span>${fmt(n)}</span></div>`}).join('');
+ const bh=s.by_hour||{},mh=Math.max(1,...Object.values(bh));
+ $('hours').innerHTML=Array.from({length:24},(_,h)=>`<div title="${h}:00 น. — ${fmt(bh[h])}" style="height:${(bh[h]||0)/mh*100}%"><span>${h%3?'':h}</span></div>`).join('');
+ $('days').innerHTML='<tr><th>วันที่</th><th>จำนวน</th></tr>'+(s.by_day||[]).map(r=>`<tr><td>${new Date(r.d+'T00:00:00').toLocaleDateString('th-TH',{dateStyle:'long'})}</td><td>${fmt(r.c)}</td></tr>`).join('')}
+$('rf').onclick=stats;
+$('csv').onclick=async()=>{let all=[],from=0;for(;;){const{data,error}=await DB.from('krathongs').select('id,created_at,type,name,wish,eco,flagged,hidden').order('id').range(from,from+999);if(error||!data.length)break;all=all.concat(data);if(data.length<1000)break;from+=1000}
+ const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"',lines=[['id','เวลา','ประเภท','ชื่อ','คำอธิษฐาน','รักษ์โลก','คำไม่สุภาพ','ซ่อน'].join(',')].concat(all.map(r=>[r.id,dt(r.created_at),TY[r.type]?.n,r.name,r.wish,r.eco?'ใช่':'',r.flagged?'ใช่':'',r.hidden?'ใช่':''].map(q).join(',')));
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+lines.join('\n')],{type:'text/csv'}));a.download='loykrathong-report.csv';a.click()};
+async function loadRows(){let q=DB.from('krathongs').select('*').order('id',{ascending:false}).limit(200);const f=$('flt').value,s=$('q').value.trim();
+ if(f=='flag')q=q.eq('flagged',true).eq('hidden',true);if(f=='hidden')q=q.eq('hidden',true);if(f=='vis')q=q.eq('hidden',false);if(s)q=q.or(`wish.ilike.%${s.replace(/[,()%]/g,'')}%,name.ilike.%${s.replace(/[,()%]/g,'')}%`);
+ const{data}=await q;$('rows').innerHTML=(data||[]).map(r=>`<tr><td>${dt(r.created_at)}</td><td>${esc(r.name||'—')}</td><td>${esc(r.wish)}<br><small>${TY[r.type]?.n||''}</small></td><td>${r.flagged?'<span class="tag f">คำไม่สุภาพ</span> ':''}${r.hidden?'<span class="tag h">ซ่อน</span>':'<span class="tag">แสดง</span>'}</td><td style="white-space:nowrap"><button class="g" onclick="tog(${r.id},${!r.hidden})">${r.hidden?'แสดง':'ซ่อน'}</button> <button class="r" onclick="del(${r.id})">ลบ</button></td></tr>`).join('')||'<tr><td colspan=5>ไม่มีรายการ</td></tr>'}
+async function tog(id,h){await DB.from('krathongs').update({hidden:h,flagged:false}).eq('id',id);loadRows();stats()}
+async function del(id){if(!confirm('ลบคำอธิษฐานนี้ถาวร?'))return;await DB.from('krathongs').delete().eq('id',id);loadRows();stats()}
+$('go').onclick=loadRows;$('flt').onchange=loadRows;
+$('anon').onclick=async()=>{if(!confirm('ลบชื่อผู้ลอยกระทงทั้งหมด (สถิติยังอยู่)? ทำแล้วย้อนกลับไม่ได้'))return;const{error}=await DB.from('krathongs').update({name:null}).not('name','is',null);alert(error?'ไม่สำเร็จ: '+error.message:'ลบชื่อเรียบร้อย');loadRows();stats()};
+if(DB)DB.auth.getSession().then(({data})=>{if(data.session)start()});
+</script></body></html>
