@@ -60,8 +60,8 @@ html,body{height:100%;overflow:hidden;background:#040817;font-family:'Mitr',sans
 #fx{position:fixed;inset:0;pointer-events:none;z-index:8}
 /* UI */
 .top{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;padding:14px 18px;z-index:9;pointer-events:none}
-.ttl h1{font-family:'Charm',cursive;font-size:clamp(24px,4.4vw,46px);color:var(--gold);text-shadow:0 0 16px rgba(255,200,90,.8),0 2px 4px #000;line-height:1.1}
-.ttl p{font-size:clamp(11px,1.5vw,15px);opacity:.9;text-shadow:0 1px 3px #000}
+.ttl h1{font-family:'Charm',cursive;font-size:clamp(20px,min(4.6vw,6.5vh),52px);color:var(--gold);text-shadow:0 0 16px rgba(255,200,90,.8),0 2px 4px #000;line-height:1.1}
+.ttl p{font-size:clamp(10px,min(1.8vw,2.3vh),17px);opacity:.9;text-shadow:0 1px 3px #000}
 .counter{pointer-events:auto;padding:8px 16px;border-radius:30px;background:rgba(0,0,0,.4);border:1px solid rgba(255,215,122,.5);backdrop-filter:blur(6px);white-space:nowrap;font-size:14px}
 .counter b{color:var(--gold);font-size:20px}
 .dock{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:9;align-items:center}
@@ -169,6 +169,48 @@ textarea{resize:none;height:66px}
 .kt .lbl .lw{max-width:160px;overflow:hidden;text-overflow:ellipsis;font-weight:300;opacity:.9}
 #vPh{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);box-shadow:0 0 16px rgba(255,200,90,.6);margin-top:-6px}
 @media(max-width:600px){.btn{padding:11px 16px;font-size:15px}.ic{width:40px;height:40px;font-size:17px}.ic span{font-size:9px}.dock{bottom:24px;gap:7px}.sc-badge{font-size:9px}}
+
+/* ===== Responsive: Tablet ===== */
+@media(min-width:601px) and (max-width:1024px){
+ #mMake .box{width:min(460px,56vw)}
+ #mMake #preview{height:170px}#pv img,#pv svg{width:150px!important;height:150px}
+ .pre img{height:64px}.pre{font-size:11px}
+ #mMake .opt{font-size:13px;padding:5px 10px}
+ .btn{font-size:20px;padding:14px 32px}.ic{width:54px;height:54px;font-size:24px}
+ .counter{font-size:16px}.counter b{font-size:24px}
+ .tki{font-size:16px}#ticker,#tk{height:40px}.top{top:40px!important}
+}
+@media(min-width:601px) and (max-width:1024px) and (orientation:portrait){
+ #mMake{padding:0;align-items:flex-end}
+ #mMake .box{width:100%;height:auto;max-height:72vh;border-radius:22px 22px 0 0;transform:translateY(110%)}
+ #mMake .presets{grid-template-columns:repeat(5,1fr)}
+ .dock{bottom:30px}
+}
+/* ===== Responsive: Smartphone ===== */
+@media(max-width:600px){
+ #mMake .presets{grid-template-columns:repeat(4,1fr)}
+ #mMake #preview{height:120px}#pv img,#pv svg{width:110px!important;height:110px}
+ .pre img{height:48px}
+ .tki{font-size:13px}.counter{padding:6px 10px}
+ .ttl{max-width:62vw}
+ input,textarea{font-size:16px!important}
+}
+/* ===== Short screens: phone landscape ===== */
+@media(max-height:500px){
+ #ticker,#tk{height:28px}.top{top:28px!important;padding:6px 12px}.tki{font-size:12px}.av{width:20px;height:20px}
+ .ttl p,.sc-badge{display:none}
+ .counter{padding:4px 10px;font-size:12px}.counter b{font-size:16px}.small2{display:none}
+ .dock{bottom:8px}.btn{font-size:15px;padding:8px 20px}.ic{width:38px;height:38px;font-size:17px}.ic span{display:none}
+ #mMake{padding:6px;align-items:stretch;justify-content:flex-end}
+ #mMake .box{width:min(440px,60vw);height:100%;max-height:none;border-radius:16px;transform:translateX(110%);padding:8px 10px}
+ #mMake h2{display:none}#mMake #preview{height:84px;margin-bottom:5px}#pv img,#pv svg{width:76px!important;height:76px}
+ .rays{width:260px;height:260px;margin:-130px}.ped{width:100px;margin-left:-50px;height:16px;bottom:4px}
+ #mMake .presets{grid-template-columns:repeat(5,1fr)}.pre img{height:40px}.pre{font-size:9px}
+ .tabs{margin-bottom:5px}.tab{padding:4px;font-size:12px}
+ #mMake .btn{font-size:14px;padding:6px 22px}
+ .box{max-height:96vh}
+}
+@media(hover:none){.kt .lbl .lw{display:none}}
 </style>
 </head>
 <body>
@@ -393,11 +435,13 @@ const isMine=k=>mine.some(m=>m.id===k.id);
 
 /* ===== River (perspective lanes) ===== */
 const river=$("river");
+function VK(){return Math.min(1.35,Math.max(.5,innerHeight/800,innerWidth>innerHeight?0:innerWidth/700))}
+let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{const k=VK();river.querySelectorAll(".sc").forEach(e=>e.style.transform=`translateY(-85%) scale(${e.dataset.b*k})`)},150)});
 function addToRiver(k,first,lane){
- const el=document.createElement("div"),m=isMine(k),y=lane??(4+Math.random()*78),sc=.38+y/82*.85,dur=CONFIG.FLOAT_SEC*(1.5-sc*.5)*(.9+Math.random()*.2);
+ const el=document.createElement("div"),m=isMine(k),y=lane??(4+Math.random()*78),sc=(.38+y/82*.85)*VK(),dur=CONFIG.FLOAT_SEC*(1.5-sc*.5)*(.9+Math.random()*.2);
  el.className="kt"+(m?" mine":"");el.dataset.id=k.id;
  el.style.top=y+"%";el.style.zIndex=Math.round(y)+(m?100:0);el.style.animationDuration=dur+"s";el.style.animationDelay=(first?-Math.random()*dur:0)+"s";
- el.innerHTML=`<div class="sc" style="transform:translateY(-85%) scale(${sc})"><div class="streak"></div><div class="halo"></div><div class="bob" style="animation-delay:${-Math.random()*3}s">${art(k)}</div><div class="lbl">${av(k)}<span>${m?"⭐ ":""}${esc(k.name)}</span>${k.wish?`<span class="lw">· ${esc(k.wish)}</span>`:""}</div></div>`;
+ el.innerHTML=`<div class="sc" data-b="${sc/VK()}" style="transform:translateY(-85%) scale(${sc})"><div class="streak"></div><div class="halo"></div><div class="bob" style="animation-delay:${-Math.random()*3}s">${art(k)}</div><div class="lbl">${av(k)}<span>${m?"⭐ ":""}${esc(k.name)}</span>${k.wish?`<span class="lw">· ${esc(k.wish)}</span>`:""}</div></div>`;
  el.querySelector(".sc").onclick=()=>view(k);river.appendChild(el);return el;
 }
 function renderList(){const q=$("q").value.trim();
