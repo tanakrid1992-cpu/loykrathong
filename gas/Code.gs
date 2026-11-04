@@ -7,8 +7,8 @@ const SHEET = 'krathong';
 const FOLDER = 'ลอยกระทงออนไลน์2569_รูปผู้ลอย';
 const HEAD = ['id','created_at','name','wish','img','base','flower','candle','deco','photo','approved','photo_file_id'];
 const BAD = ['เหี้ย','สัส','ควย','เย็ด','หี','แตด','ส้นตีน','ไอ้สัตว์','ชิบหาย','อีดอก','fuck','shit','bitch'];
-const LIMIT = 300;            // จำนวนกระทงล่าสุดที่ส่งให้หน้าเว็บ
-const CACHE_SEC = 15;         // แคชผลลัพธ์ลดภาระ quota
+const LIMIT = 200;            // จำนวนกระทงล่าสุดที่ส่งให้หน้าเว็บ (ข้อมูลทั้งหมดยังอยู่ในชีตตลอดไป)
+const CACHE_SEC = 5;          // แคชผลลัพธ์ลดภาระ quota
 
 function sheet_() {
   const ss = SpreadsheetApp.getActive();
@@ -27,14 +27,20 @@ function pub_(r) { // ส่งเฉพาะข้อมูลที่แส�
     img:r[4], base:r[5], flower:r[6], candle:r[7], deco:r[8], photo:r[9] };
 }
 
-function doGet() {
+function list_() {
   const cache = CacheService.getScriptCache(), hit = cache.get('list');
-  if (hit) return ContentService.createTextOutput(hit).setMimeType(ContentService.MimeType.JSON);
+  if (hit) return JSON.parse(hit);
   const v = sheet_().getDataRange().getValues(); v.shift();
   const ok = v.filter(r => r[0] && r[10] !== false && String(r[10]).toUpperCase() !== 'FALSE');
-  const res = JSON.stringify({ total: ok.length, rows: ok.slice(-LIMIT).reverse().map(pub_) });
-  try { cache.put('list', res, CACHE_SEC); } catch (e) {}
-  return ContentService.createTextOutput(res).setMimeType(ContentService.MimeType.JSON);
+  const res = { total: ok.length, rows: ok.slice(-LIMIT).reverse().map(pub_) };
+  try { cache.put('list', JSON.stringify(res), CACHE_SEC); } catch (e) {}
+  return res;
+}
+
+function doGet(e) {
+  const res = list_(), since = e && e.parameter && e.parameter.since;
+  if (since) res.rows = res.rows.filter(r => r.created_at > since);  // ส่งเฉพาะกระทงใหม่
+  return out_(res);
 }
 
 function doPost(e) {

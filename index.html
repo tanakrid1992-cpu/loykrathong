@@ -276,7 +276,7 @@ textarea{resize:none;height:66px}
 
 <script>
 /* ===== CONFIG ===== */
-const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",API_URL:"",RIVER_MAX:35,FLOAT_SEC:140};
+const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",API_URL:"",POLL_SEC:6,RIVER_MAX:35,FLOAT_SEC:140};
 
 const OPT={
  base:[["banana","🍃","ใบตอง",1],["bread","🍞","ขนมปัง",1],["trunk","🌴","ต้นกล้วย",1],["coco","🥥","กะลา",1],["lotus","🪷","กลีบบัว",1]],
@@ -494,9 +494,13 @@ function today(){const d=new Date().toDateString();$("today").textContent=data.f
 async function share(){const u=location.href,t="มาลอยกระทงออนไลน์กับเทศบาลตำบลคลองตำหรุ 🪷";
  try{if(navigator.share)await navigator.share({title:t,text:t,url:u});else{await navigator.clipboard.writeText(u);toast("📋 คัดลอกลิงก์แล้ว")}}catch(e){}}
 preview();load().then(today);
-if(useDB)setInterval(async()=>{try{const j=await api(),ids=new Set(data.map(d=>String(d.id)));
- const fresh=(j.rows||[]).filter(k=>!ids.has(String(k.id)));total=j.total||total;$("count").textContent=total;
- if(fresh.length){data.unshift(...fresh);fresh.forEach(k=>addToRiver(k,false));ticker();today()}}catch(e){}},30000);
+const POLL=CONFIG.POLL_SEC*1000;let since="";
+async function poll(){if(document.hidden)return;try{
+ since=data.reduce((m,d)=>d.created_at>m?d.created_at:m,since);
+ const r=await fetch(CONFIG.API_URL+"?since="+encodeURIComponent(since)+"&t="+Date.now()),j=await r.json(),ids=new Set(data.map(d=>String(d.id)));
+ const fresh=(j.rows||[]).filter(k=>!ids.has(String(k.id)));total=Math.max(total,j.total||0);$("count").textContent=total;
+ if(fresh.length){data.unshift(...fresh);fresh.forEach(k=>addToRiver(k,false));ticker();today();if(fresh.length<4)toast("🪷 "+fresh.map(k=>k.name).join(", ")+" เพิ่งลอยกระทง")}}catch(e){}}
+if(useDB){setInterval(poll,POLL);document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()})}
 
 </script>
 </body>
