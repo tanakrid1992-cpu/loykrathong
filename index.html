@@ -209,7 +209,16 @@ textarea{resize:none;height:66px}
  #mMake .btn{font-size:14px;padding:6px 22px}
  .box{max-height:96vh}
 }
-@media(hover:none){.kt .lbl .lw{display:none}}
+
+
+/* ===== ป้ายบนกระทง: รูป + ชื่อ + คำอธิษฐาน (กึ่งกลาง) ===== */
+.kt .lbl{top:auto!important;bottom:94%;left:50%;transform:translateX(-50%) scale(var(--ls,1));transform-origin:50% 100%;opacity:1!important;background:none!important;box-shadow:none!important;padding:0!important;
+ display:flex;flex-direction:column;align-items:center;gap:3px;width:200px;white-space:normal;text-align:center;pointer-events:none}
+.kt .lbl .avb{width:58px;height:58px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);box-shadow:0 0 14px rgba(255,200,90,.75),0 3px 8px rgba(0,0,0,.6);background:#223}
+.kt .lbl .nm{font-size:15px;font-weight:600;color:#fff;padding:2px 12px;border-radius:12px;background:rgba(5,12,40,.72);border:1px solid rgba(255,215,122,.55);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kt .lbl .lw{font-size:12.5px;font-weight:300;line-height:1.35;color:#fff7dc;max-width:190px;padding:2px 8px;border-radius:8px;background:rgba(0,0,0,.42);text-shadow:0 1px 2px #000;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.kt.mine .lbl .nm{background:linear-gradient(90deg,#ffe08a,#ff9b5a)!important;color:#2b1600;border-color:transparent;box-shadow:0 0 12px #ffb35a}
+.kt.mine .lbl .avb{border-color:#fff;box-shadow:0 0 22px #ffe08a}
 </style>
 </head>
 <body>
@@ -275,7 +284,7 @@ textarea{resize:none;height:66px}
 
 <script>
 /* ===== CONFIG ===== */
-const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",API_URL:"",POLL_SEC:6,RIVER_MAX:35,FLOAT_SEC:140};
+const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",API_URL:"",POLL_SEC:6,RIVER_MAX:innerWidth<600?14:innerWidth<1025?24:35,FLOAT_SEC:140};
 
 const OPT={
  base:[["banana","🍃","ใบตอง",1],["bread","🍞","ขนมปัง",1],["trunk","🌴","ต้นกล้วย",1],["coco","🥥","กะลา",1],["lotus","🪷","กลีบบัว",1]],
@@ -442,13 +451,14 @@ function fitBg(){const W=innerWidth,H=innerHeight,ar=W/H,b=ar<.8?BGS[0]:ar<1.55?
  document.documentElement.style.setProperty("--hz",Math.min(80,Math.max(35,wy/H*100+1))+"%")}
 fitBg();addEventListener("resize",fitBg);
 const river=$("river");
+function LS(sc){return Math.min(1,Math.max(.75,sc))/sc}
 function VK(){return Math.min(1.35,Math.max(.5,innerHeight/800,innerWidth>innerHeight?0:innerWidth/700))}
-let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{const k=VK();river.querySelectorAll(".sc").forEach(e=>e.style.transform=`translateY(-85%) scale(${e.dataset.b*k})`)},150)});
+let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{const k=VK();river.querySelectorAll(".sc").forEach(e=>{const sc=e.dataset.b*k;e.style.transform=`translateY(-85%) scale(${sc})`;e.style.setProperty("--ls",LS(sc))})},150)});
 function addToRiver(k,first,lane){
  const el=document.createElement("div"),m=isMine(k),y=lane??(4+Math.random()*78),sc=(.38+y/82*.85)*VK(),dur=CONFIG.FLOAT_SEC*(1.5-sc*.5)*(.9+Math.random()*.2);
  el.className="kt"+(m?" mine":"");el.dataset.id=k.id;
  el.style.top=y+"%";el.style.zIndex=Math.round(y)+(m?100:0);el.style.animationDuration=dur+"s";el.style.animationDelay=(first?-Math.random()*dur:0)+"s";
- el.innerHTML=`<div class="sc" data-b="${sc/VK()}" style="transform:translateY(-85%) scale(${sc})"><div class="streak"></div><div class="halo"></div><div class="bob" style="animation-delay:${-Math.random()*3}s">${art(k)}</div><div class="lbl">${av(k)}<span>${m?"⭐ ":""}${esc(k.name)}</span>${k.wish?`<span class="lw">· ${esc(k.wish)}</span>`:""}</div></div>`;
+ el.innerHTML=`<div class="sc" data-b="${sc/VK()}" style="transform:translateY(-85%) scale(${sc});--ls:${LS(sc)}"><div class="streak"></div><div class="halo"></div><div class="bob" style="animation-delay:${-Math.random()*3}s">${art(k)}</div><div class="lbl">${okPhoto(k.photo)?`<img class="avb" src="${k.photo}" alt="">`:""}<span class="nm">${m?"⭐ ":""}${esc(k.name)}</span>${k.wish?`<span class="lw">${esc(k.wish)}</span>`:""}</div></div>`;
  el.querySelector(".sc").onclick=()=>view(k);river.appendChild(el);return el;
 }
 function renderList(){const q=$("q").value.trim();
