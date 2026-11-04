@@ -8,8 +8,7 @@
 <!-- ฐานข้อมูล: Google Sheet ผ่าน Google Apps Script (ดู gas/Code.gs และ README.md) แล้วใส่ URL ใน CONFIG.API_URL -->
 <style>
 :root{--cy:#3ee6ff;--gold:#ffd77a;--gold2:#f5b942;--panel:rgba(10,16,44,.92);--hz:63%}
-#bg{position:absolute;inset:0;background:#0b1440 url(bg.webp) center bottom/cover no-repeat}
-@media(max-aspect-ratio:1/1){#bg{background-position:86% bottom}}
+#bg{position:absolute;inset:0;background:#0b1440 center bottom/cover no-repeat;transition:background-image .3s}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;background:#040817;font-family:'Mitr',sans-serif;color:#fff}
 #scene{position:fixed;inset:0;overflow:hidden}
@@ -434,6 +433,14 @@ function demoSeed(){const n=["สมชาย","มาลี","น้องเ�
 const isMine=k=>mine.some(m=>m.id===k.id);
 
 /* ===== River (perspective lanes) ===== */
+/* ===== ฉากหลังอัตโนมัติ: PC / Tablet / Smartphone ===== */
+const BGS=[{src:"bg-phone.webp",w:941,h:1672,water:.55},{src:"bg-tablet.webp",w:1448,h:1086,water:.66},{src:"bg.webp",w:1672,h:941,water:.62}];
+let curBg="";
+function fitBg(){const W=innerWidth,H=innerHeight,ar=W/H,b=ar<.8?BGS[0]:ar<1.55?BGS[1]:BGS[2];
+ if(b.src!==curBg){curBg=b.src;$("bg").style.backgroundImage=`url(${b.src})`}
+ const k=Math.max(W/b.w,H/b.h),ih=b.h*k,wy=b.water*ih-(ih-H);   // ภาพชิดล่าง
+ document.documentElement.style.setProperty("--hz",Math.min(80,Math.max(35,wy/H*100+1))+"%")}
+fitBg();addEventListener("resize",fitBg);
 const river=$("river");
 function VK(){return Math.min(1.35,Math.max(.5,innerHeight/800,innerWidth>innerHeight?0:innerWidth/700))}
 let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{const k=VK();river.querySelectorAll(".sc").forEach(e=>e.style.transform=`translateY(-85%) scale(${e.dataset.b*k})`)},150)});
