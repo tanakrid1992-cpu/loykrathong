@@ -284,7 +284,7 @@ textarea{resize:none;height:66px}
 
 <script>
 /* ===== CONFIG ===== */
-const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",API_URL:"",POLL_SEC:6,RIVER_MAX:innerWidth<600?14:innerWidth<1025?24:35,FLOAT_SEC:140};
+const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",API_URL:"",POLL_SEC:6,RIVER_MAX:innerWidth<600?22:innerWidth<1025?35:50,FLOAT_SEC:140};
 
 const OPT={
  base:[["banana","🍃","ใบตอง",1],["bread","🍞","ขนมปัง",1],["trunk","🌴","ต้นกล้วย",1],["coco","🥥","กะลา",1],["lotus","🪷","กลีบบัว",1]],
@@ -451,11 +451,11 @@ function fitBg(){const W=innerWidth,H=innerHeight,ar=W/H,b=ar<.8?BGS[0]:ar<1.55?
  document.documentElement.style.setProperty("--hz",Math.min(80,Math.max(35,wy/H*100+1))+"%")}
 fitBg();addEventListener("resize",fitBg);
 const river=$("river");
-function LS(sc){return Math.min(1,Math.max(.75,sc))/sc}
-function VK(){return Math.min(1.35,Math.max(.5,innerHeight/800,innerWidth>innerHeight?0:innerWidth/700))}
+function LS(sc){return Math.min(1,Math.max(.55,sc*1.1))/sc}
+function VK(){return Math.min(1.3,Math.max(.5,Math.min(innerHeight/800,innerWidth/520)))}
 let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{const k=VK();river.querySelectorAll(".sc").forEach(e=>{const sc=e.dataset.b*k;e.style.transform=`translateY(-85%) scale(${sc})`;e.style.setProperty("--ls",LS(sc))})},150)});
 function addToRiver(k,first,lane){
- const el=document.createElement("div"),m=isMine(k),y=lane??(4+Math.random()*78),sc=(.38+y/82*.85)*VK(),dur=CONFIG.FLOAT_SEC*(1.5-sc*.5)*(.9+Math.random()*.2);
+ const el=document.createElement("div"),m=isMine(k),y=lane??(1+82*Math.pow(Math.random(),1.7)),sc=(.2+Math.pow(y/83,1.25)*.95)*VK(),dur=CONFIG.FLOAT_SEC*(1.5-sc*.5)*(.9+Math.random()*.2);
  el.className="kt"+(m?" mine":"");el.dataset.id=k.id;
  el.style.top=y+"%";el.style.zIndex=Math.round(y)+(m?100:0);el.style.animationDuration=dur+"s";el.style.animationDelay=(first?-Math.random()*dur:0)+"s";
  el.innerHTML=`<div class="sc" data-b="${sc/VK()}" style="transform:translateY(-85%) scale(${sc});--ls:${LS(sc)}"><div class="streak"></div><div class="halo"></div><div class="bob" style="animation-delay:${-Math.random()*3}s">${art(k)}</div><div class="lbl">${okPhoto(k.photo)?`<img class="avb" src="${k.photo}" alt="">`:""}<span class="nm">${m?"⭐ ":""}${esc(k.name)}</span>${k.wish?`<span class="lw">${esc(k.wish)}</span>`:""}</div></div>`;
@@ -483,7 +483,7 @@ async function launch(){
  if(busy)return;busy=true;$("go").disabled=true;
  try{const k=await save({name,wish,...sel,photo});mine.unshift(k);localStorage.setItem("kt_mine",JSON.stringify(mine.slice(0,20)));
   if(useDB)data.unshift(k);$("count").textContent=++total;ticker();today();close_(mMake);
-  const el=addToRiver(k,false,70);el.style.animationDelay=-CONFIG.FLOAT_SEC*.06+"s";
+  const el=addToRiver(k,false,45);el.style.animationDelay=-CONFIG.FLOAT_SEC*.06+"s";
   burst(6);for(let i=0;i<10;i++)setTimeout(lantern,i*220);
   toast("🎉 ลอยกระทงสำเร็จ! ขอให้สมความปรารถนา ⭐");$("wish").value="";$("wc").textContent="0/200";photo=null;$("photo").value="";$("phImg").innerHTML="📷<small>อัปโหลด</small>";
  }catch(e){toast("ส่งไม่สำเร็จ: "+(e.message||"ลองใหม่อีกครั้ง"))}
