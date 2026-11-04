@@ -219,7 +219,7 @@ textarea{resize:none;height:66px}
 .kt .lbl .lw{font-size:12.5px;font-weight:300;line-height:1.35;color:#fff7dc;max-width:190px;padding:2px 8px;border-radius:8px;background:rgba(0,0,0,.42);text-shadow:0 1px 2px #000;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .kt.mine .lbl .nm{background:linear-gradient(90deg,#ffe08a,#ff9b5a)!important;color:#2b1600;border-color:transparent;box-shadow:0 0 12px #ffb35a}
 .kt.mine .lbl .avb{border-color:#fff;box-shadow:0 0 22px #ffe08a}
-</style>
+.kt{transition:top 2.5s ease,opacity 2s}.kt .sc{transition:transform 2.5s ease}</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute"><defs>
@@ -421,7 +421,7 @@ async function load(){
  $("count").textContent=total;
  mine.forEach(m=>{if(!data.find(d=>d.id===m.id))data.push(m)});
  const list=[...data.filter(d=>isMine(d)),...data.filter(d=>!isMine(d))].slice(0,CONFIG.RIVER_MAX);
- list.forEach(k=>addToRiver(k,true));ticker();
+ list.sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at))).forEach(k=>addToRiver(k,true));ticker();
 }
 async function save(k){
  if(useDB){const r=await fetch(CONFIG.API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(k)});const j=await r.json();if(!j.ok)throw new Error(j.error||"fail");return j.row}
@@ -453,13 +453,19 @@ fitBg();addEventListener("resize",fitBg);
 const river=$("river");
 function LS(sc){return Math.min(1,Math.max(.55,sc*1.1))/sc}
 function VK(){return Math.min(1.3,Math.max(.5,Math.min(innerHeight/800,innerWidth/520)))}
-let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(()=>{const k=VK();river.querySelectorAll(".sc").forEach(e=>{const sc=e.dataset.b*k;e.style.transform=`translateY(-85%) scale(${sc})`;e.style.setProperty("--ls",LS(sc))})},150)});
-function addToRiver(k,first,lane){
- const el=document.createElement("div"),m=isMine(k),y=lane??(1+82*Math.pow(Math.random(),1.7)),sc=(.2+Math.pow(y/83,1.25)*.95)*VK(),dur=CONFIG.FLOAT_SEC*(1.5-sc*.5)*(.9+Math.random()*.2);
- el.className="kt"+(m?" mine":"");el.dataset.id=k.id;
- el.style.top=y+"%";el.style.zIndex=Math.round(y)+(m?100:0);el.style.animationDuration=dur+"s";el.style.animationDelay=(first?-Math.random()*dur:0)+"s";
- el.innerHTML=`<div class="sc" data-b="${sc/VK()}" style="transform:translateY(-85%) scale(${sc});--ls:${LS(sc)}"><div class="streak"></div><div class="halo"></div><div class="bob" style="animation-delay:${-Math.random()*3}s">${art(k)}</div><div class="lbl">${okPhoto(k.photo)?`<img class="avb" src="${k.photo}" alt="">`:""}<span class="nm">${m?"⭐ ":""}${esc(k.name)}</span>${k.wish?`<span class="lw">${esc(k.wish)}</span>`:""}</div></div>`;
- el.querySelector(".sc").onclick=()=>view(k);river.appendChild(el);return el;
+let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(layout,150)});
+/* เรียงตามลำดับ: ใหม่สุดอยู่หน้าสุด เก่ากว่าขยับไปด้านหลัง */
+const RV=[];
+function layout(){const n=RV.length,k=VK();RV.forEach((el,i)=>{const t=n>1?i/(n-1):0,y=Math.max(1,Math.min(84,2+80*Math.pow(1-t,1.35)+(+el.dataset.j))),sc=(.2+Math.pow(y/83,1.25)*.95)*k;
+ el.style.top=y+"%";el.style.zIndex=Math.round(y)+(el.classList.contains("mine")?100:0);const s=el.firstElementChild;s.style.transform=`translateY(-85%) scale(${sc})`;s.style.setProperty("--ls",LS(sc))})}
+function addToRiver(k,first){
+ const el=document.createElement("div"),m=isMine(k),dur=CONFIG.FLOAT_SEC*(.9+Math.random()*.25);
+ el.className="kt"+(m?" mine":"");el.dataset.id=k.id;el.dataset.j=(Math.random()*4-2).toFixed(2);
+ el.style.animationDuration=dur+"s";el.style.animationDelay=(first?-Math.random()*dur:-dur*(.05+Math.random()*.1))+"s";
+ el.innerHTML=`<div class="sc"><div class="streak"></div><div class="halo"></div><div class="bob" style="animation-delay:${-Math.random()*3}s">${art(k)}</div><div class="lbl">${okPhoto(k.photo)?`<img class="avb" src="${k.photo}" alt="">`:""}<span class="nm">${m?"⭐ ":""}${esc(k.name)}</span>${k.wish?`<span class="lw">${esc(k.wish)}</span>`:""}</div></div>`;
+ el.querySelector(".sc").onclick=()=>view(k);river.appendChild(el);
+ if(first)RV.push(el);else{RV.unshift(el);while(RV.length>CONFIG.RIVER_MAX){const o=RV.pop();o.style.opacity=0;setTimeout(()=>o.remove(),2000)}}
+ layout();return el;
 }
 function renderList(){const q=$("q").value.trim();
  $("list").innerHTML=data.filter(d=>!q||d.name.includes(q)).slice(0,150).map((d,i)=>`<div class="wish" data-i="${data.indexOf(d)}"><b>${isMine(d)?"⭐ ":""}${esc(d.name)}</b><br>${esc(d.wish||"-")}</div>`).join("")||'<p class="small c">ไม่พบ</p>'}
@@ -483,7 +489,7 @@ async function launch(){
  if(busy)return;busy=true;$("go").disabled=true;
  try{const k=await save({name,wish,...sel,photo});mine.unshift(k);localStorage.setItem("kt_mine",JSON.stringify(mine.slice(0,20)));
   if(useDB)data.unshift(k);$("count").textContent=++total;ticker();today();close_(mMake);
-  const el=addToRiver(k,false,45);el.style.animationDelay=-CONFIG.FLOAT_SEC*.06+"s";
+  const el=addToRiver(k,false);
   burst(6);for(let i=0;i<10;i++)setTimeout(lantern,i*220);
   toast("🎉 ลอยกระทงสำเร็จ! ขอให้สมความปรารถนา ⭐");$("wish").value="";$("wc").textContent="0/200";photo=null;$("photo").value="";$("phImg").innerHTML="📷<small>อัปโหลด</small>";
  }catch(e){toast("ส่งไม่สำเร็จ: "+(e.message||"ลองใหม่อีกครั้ง"))}
@@ -516,7 +522,7 @@ async function poll(){if(document.hidden)return;try{
  since=data.reduce((m,d)=>d.created_at>m?d.created_at:m,since);
  const r=await fetch(CONFIG.API_URL+"?since="+encodeURIComponent(since)+"&t="+Date.now()),j=await r.json(),ids=new Set(data.map(d=>String(d.id)));
  const fresh=(j.rows||[]).filter(k=>!ids.has(String(k.id)));total=Math.max(total,j.total||0);$("count").textContent=total;
- if(fresh.length){data.unshift(...fresh);fresh.forEach(k=>addToRiver(k,false));ticker();today();if(fresh.length<4)toast("🪷 "+fresh.map(k=>k.name).join(", ")+" เพิ่งลอยกระทง")}}catch(e){}}
+ if(fresh.length){data.unshift(...fresh);fresh.slice().reverse().forEach(k=>addToRiver(k,false));ticker();today();if(fresh.length<4)toast("🪷 "+fresh.map(k=>k.name).join(", ")+" เพิ่งลอยกระทง")}}catch(e){}}
 if(useDB){setInterval(poll,POLL);document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()})}
 
 </script>
