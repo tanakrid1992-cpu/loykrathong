@@ -227,7 +227,6 @@ textarea{resize:none;height:66px}
 @keyframes land{0%{opacity:0;transform:scale(.2)}35%{opacity:1}100%{opacity:0;transform:scale(1.6)}}
 .chr img:hover{filter:brightness(1) drop-shadow(0 0 12px rgba(255,220,130,.8))}
 @keyframes ladyBob{50%{transform:translateY(-3%)}}
-#mbtn.off{opacity:.55}
 </style>
 </head>
 <body>
@@ -259,7 +258,6 @@ textarea{resize:none;height:66px}
 </div>
 
 <div class="dock">
-  <button class="ic" id="mbtn" onclick="toggleMusic()">🔊<span>ดนตรี</span></button>
   <button class="ic" onclick="openList()">🙏<span>คำอธิษฐาน</span></button>
   <button class="btn" onclick="openMake()">🪷 ลอยกระทง</button>
 </div>
@@ -548,7 +546,7 @@ async function poll(){if(document.hidden)return;try{
 if(useDB){setInterval(poll,POLL);document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()})}
 
 /* ===== ดนตรีคลอ: สังเคราะห์สดด้วย Web Audio (บันไดเสียงไทยเพนทาโทนิก ขิม + ฉิ่ง + โดรน) เล่นวนไม่สิ้นสุด ===== */
-const MUSIC={on:localStorage.getItem("kt_music")!=="off",ctx:null,out:null,next:0,step:0,deg:4,timer:null};
+const MUSIC={on:true,ctx:null,out:null,next:0,step:0,deg:4,timer:null};
 function mStart(){if(MUSIC.ctx){MUSIC.ctx.resume();return}
  const C=new (window.AudioContext||window.webkitAudioContext)(),out=C.createGain();out.gain.value=0;out.connect(C.destination);
  out.gain.linearRampToValueAtTime(.22,C.currentTime+3);
@@ -569,11 +567,11 @@ function mSched(){const C=MUSIC.ctx,beat=60/68/2;while(MUSIC.next<C.currentTime+
   pluck(SCALE[MUSIC.deg],t,.09);if(s%4===0)pluck(SCALE[Math.max(0,MUSIC.deg-3)]/2,t,.06)}
  if(s%4===0)ching(t,s%8===0);if(s===0&&Math.random()<.5)MUSIC.deg=4;
  MUSIC.next+=beat*(s%2?.92:1.08);MUSIC.step++}}
-function mUI(){$("mbtn").firstChild.textContent=MUSIC.on?"🔊":"🔇";$("mbtn").classList.toggle("off",!MUSIC.on)}
-function toggleMusic(){MUSIC.on=!MUSIC.on;localStorage.setItem("kt_music",MUSIC.on?"on":"off");if(MUSIC.on)mStart();else if(MUSIC.ctx)MUSIC.ctx.suspend();mUI()}
-["pointerdown","keydown","touchstart"].forEach(ev=>addEventListener(ev,function f(e){if(e.target.closest&&e.target.closest("#mbtn"))return;if(MUSIC.on)mStart()},{once:true,passive:true}));
+/* เล่นทันที: ลองเปิดเสียงตั้งแต่โหลดหน้า ถ้าเบราว์เซอร์บล็อก จะเริ่มเองเมื่อผู้ใช้แตะ/เลื่อน/คลิกครั้งแรกที่ใดก็ได้ */
+try{mStart()}catch(e){}
+const kick=()=>{try{mStart();if(MUSIC.ctx&&MUSIC.ctx.state==="running")KE.forEach(ev=>removeEventListener(ev,kick,true))}catch(e){}};
+const KE=["pointerdown","touchstart","touchend","click","keydown","wheel","scroll"];KE.forEach(ev=>addEventListener(ev,kick,{capture:true,passive:true}));
 document.addEventListener("visibilitychange",()=>{if(!MUSIC.ctx)return;if(document.hidden)MUSIC.ctx.suspend();else if(MUSIC.on)MUSIC.ctx.resume()});
-mUI();
 </script>
 </body>
 </html>
