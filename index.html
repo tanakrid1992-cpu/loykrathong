@@ -221,7 +221,7 @@ textarea{resize:none;height:66px}
 .kt.mine .lbl .nm{background:linear-gradient(90deg,#ffe08a,#ff9b5a)!important;color:#2b1600;border-color:transparent;box-shadow:0 0 12px #ffb35a}
 .kt.mine .lbl .avb{border-color:#fff;box-shadow:0 0 22px #ffe08a}
 .kt{transition:top 2.5s ease,opacity 2s}.kt .sc{transition:transform 2.5s ease}.chr{position:absolute;pointer-events:none}#man{z-index:1}#man2{z-index:2}
-.chr img{position:absolute;left:0;bottom:0;width:100%;height:100%;object-fit:contain;object-position:bottom;pointer-events:auto;cursor:pointer;transform:translateY(100%);transition:transform 2.8s cubic-bezier(.2,.9,.3,1);filter:brightness(.86) contrast(1.06) saturate(.92) drop-shadow(0 0 5px rgba(255,200,120,.3))}
+.chr img{-webkit-box-reflect:below -2px linear-gradient(transparent 55%,rgba(255,255,255,.22));position:absolute;left:0;bottom:0;width:100%;height:100%;object-fit:contain;object-position:bottom;pointer-events:auto;cursor:pointer;transform:translateY(100%);transition:transform 2.8s cubic-bezier(.2,.9,.3,1);filter:brightness(.86) contrast(1.06) saturate(.92) drop-shadow(0 0 5px rgba(255,200,120,.3))}
 .chr.up img{transform:translateY(0);animation:ladyBob 4s ease-in-out 3s infinite}
 .chr img:hover{filter:brightness(1) drop-shadow(0 0 12px rgba(255,220,130,.8))}
 @keyframes ladyBob{50%{transform:translateY(-3%)}}
@@ -453,21 +453,20 @@ const isMine=k=>mine.some(m=>m.id===k.id);
 
 /* ===== River (perspective lanes) ===== */
 /* ===== ฉากหลังอัตโนมัติ: PC / Tablet / Smartphone ===== */
-const BGS=[{src:"bg-phone.webp",ov:"piles-phone.webp",w:941,h:1672,water:.55,piles:[[270,804,225,315,847],[325,807,297,355,839],[67,797,-10,185,875]]},{src:"bg-tablet.webp",ov:"piles-tablet.webp",w:1448,h:1086,water:.66,piles:[[405,580,325,485,640],[505,586,460,555,627],[95,567,-20,250,683]]},{src:"bg.webp",ov:"piles.webp",w:1672,h:941,water:.62,piles:[[465,427,380,560,495],[580,434,530,640,480],[110,412,-30,300,545]]}];
-// ตัวละครหลังกองเกลือ: pile = กองที่ (2 = กองแรก, 0 = กองที่ 2, 1 = กองที่ 3), H = ความสูงเท่าของกองเกลือ, DX = เลื่อนซ้าย/ขวา, back = ระยะยืนถอยหลังกอง, delay = เวลาไสลด์ขึ้น (ms)
-const CHARS=[{id:"lady",pile:1,H:2.5,AR:241/620,DX:.04,back:.15,delay:1200},{id:"man",pile:0,H:2.2,AR:219/620,DX:0,back:.15,delay:2400},{id:"man2",pile:2,H:1.85,AR:228/620,DX:.16,back:.03,delay:3600}];
+const BGS=[{src:"bg-phone.webp",stage:{y:872,h:215},ov:"piles-phone.webp",w:941,h:1672,water:.55,piles:[[270,804,225,315,847],[325,807,297,355,839],[67,797,-10,185,875]]},{src:"bg-tablet.webp",stage:{y:645,h:175},ov:"piles-tablet.webp",w:1448,h:1086,water:.66,piles:[[405,580,325,485,640],[505,586,460,555,627],[95,567,-20,250,683]]},{src:"bg.webp",stage:{y:490,h:150},ov:"piles.webp",w:1672,h:941,water:.62,piles:[[465,427,380,560,495],[580,434,530,640,480],[110,412,-30,300,545]]}];
+// slot: -1 = ซ้าย, 0 = กลาง, 1 = ขวา · stage.y/h ใน BGS = แนวเท้าและความสูงตัวละคร (พิกเซลของภาพฉาก) · delay = เวลาไสลด์ขึ้น (ms)
+const CHARS=[{id:"lady",slot:-1,AR:241/620,delay:1200},{id:"man2",slot:0,AR:228/620,delay:2000},{id:"man",slot:1,AR:219/620,delay:2800}];
 let curBg="";
 function fitBg(){const W=innerWidth,H=innerHeight,ar=W/H,b=ar<.8?BGS[0]:ar<1.55?BGS[1]:BGS[2];
  if(b.src!==curBg){curBg=b.src;$("bg").style.backgroundImage=`url(${b.src})`;$("piles").style.backgroundImage=`url(${b.ov})`}
  const k=Math.max(W/b.w,H/b.h),ih=b.h*k,wy=b.water*ih-(ih-H);   // ภาพชิดล่าง
  let ox=(W-b.w*k)/2;const lx=b.piles[2][0]*k+ox;if(lx<45)ox=Math.max(W-b.w*k,Math.min(0,ox+45-lx)); // ให้เห็นกองแรกบนจอแคบ
  $("bg").style.backgroundPosition=$("piles").style.backgroundPosition=`${ox}px bottom`;
- CHARS.forEach(c=>placeChar(c,b,k,ox,H-b.h*k));
+ CHARS.forEach(c=>placeChar(c,b,k,ox,H-b.h*k,W));
  document.documentElement.style.setProperty("--hz",Math.min(80,Math.max(35,wy/H*100+1))+"%")}
-function placeChar(c,b,k,ox,oy){const [ax,ay,bl,br,by]=b.piles[c.pile],X=x=>x*k+ox,Y=y=>y*k+oy,ph=Y(by)-Y(ay),L=ph*c.H,w=L*c.AR,
- foot=Y(by)-ph*(c.back??.38),left=X(ax)-w/2+(X(br)-X(bl))*c.DX,top=foot-L,el=$(c.id);
- Object.assign(el.style,{left:left+"px",top:top+"px",width:w+"px",height:L+"px",
-  clipPath:"inset(-80px -60px 0 -60px)"})}
+// ยืนเรียงกึ่งกลางจอบนคันนาริมน้ำ: ผู้หญิง (ซ้าย) · ชุดม่วง (กลาง) · ชุดเขียว (ขวา)
+function placeChar(c,b,k,ox,oy,W){const L=b.stage.h*k,w=L*c.AR,gap=L*.42,foot=b.stage.y*k+oy,el=$(c.id);
+ Object.assign(el.style,{left:(W/2+c.slot*gap-w/2)+"px",top:(foot-L)+"px",width:w+"px",height:L+"px",zIndex:c.slot?2:3,clipPath:"inset(-80px -60px 0 -60px)"})}
 fitBg();addEventListener("resize",fitBg);CHARS.forEach(c=>setTimeout(()=>$(c.id).classList.add("up"),c.delay));
 const river=$("river");
 function LS(sc){return Math.min(1,Math.max(.55,sc*1.1))/sc}
