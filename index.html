@@ -221,8 +221,10 @@ textarea{resize:none;height:66px}
 .kt.mine .lbl .nm{background:linear-gradient(90deg,#ffe08a,#ff9b5a)!important;color:#2b1600;border-color:transparent;box-shadow:0 0 12px #ffb35a}
 .kt.mine .lbl .avb{border-color:#fff;box-shadow:0 0 22px #ffe08a}
 .kt{transition:top 2.5s ease,opacity 2s}.kt .sc{transition:transform 2.5s ease}.chr{position:absolute;pointer-events:none}#man{z-index:1}#man2{z-index:2}
-.chr img{-webkit-box-reflect:below -2px linear-gradient(transparent 55%,rgba(255,255,255,.22));position:absolute;left:0;bottom:0;width:100%;height:100%;object-fit:contain;object-position:bottom;pointer-events:auto;cursor:pointer;transform:translateY(100%);transition:transform 2.8s cubic-bezier(.2,.9,.3,1);filter:brightness(.86) contrast(1.06) saturate(.92) drop-shadow(0 0 5px rgba(255,200,120,.3))}
-.chr.up img{transform:translateY(0);animation:ladyBob 4s ease-in-out 3s infinite}
+.chr img{-webkit-box-reflect:below -2px linear-gradient(transparent 55%,rgba(255,255,255,.22));position:absolute;left:0;bottom:0;width:100%;height:100%;object-fit:contain;object-position:bottom;pointer-events:auto;cursor:pointer;transform:translateY(-110vh) scale(.6);opacity:0;transition:transform 2.6s cubic-bezier(.22,1,.36,1),opacity 1s;filter:brightness(.86) contrast(1.06) saturate(.92) drop-shadow(0 0 5px rgba(255,200,120,.3))}
+.chr.up img{transform:translateY(0) scale(1);opacity:1;animation:ladyBob 4s ease-in-out 3s infinite}
+.chr.up::after{content:"";position:absolute;left:-30%;right:-30%;bottom:-6%;height:22%;border-radius:50%;background:radial-gradient(rgba(255,225,140,.75),transparent 70%);animation:land 1.6s ease-out 1.9s both;pointer-events:none}
+@keyframes land{0%{opacity:0;transform:scale(.2)}35%{opacity:1}100%{opacity:0;transform:scale(1.6)}}
 .chr img:hover{filter:brightness(1) drop-shadow(0 0 12px rgba(255,220,130,.8))}
 @keyframes ladyBob{50%{transform:translateY(-3%)}}
 </style>
@@ -455,7 +457,7 @@ const isMine=k=>mine.some(m=>m.id===k.id);
 /* ===== ฉากหลังอัตโนมัติ: PC / Tablet / Smartphone ===== */
 const BGS=[{src:"bg-phone.webp",stage:{y:872,h:215},ov:"piles-phone.webp",w:941,h:1672,water:.55,piles:[[270,804,225,315,847],[325,807,297,355,839],[67,797,-10,185,875]]},{src:"bg-tablet.webp",stage:{y:645,h:175},ov:"piles-tablet.webp",w:1448,h:1086,water:.66,piles:[[405,580,325,485,640],[505,586,460,555,627],[95,567,-20,250,683]]},{src:"bg.webp",stage:{y:490,h:150},ov:"piles.webp",w:1672,h:941,water:.62,piles:[[465,427,380,560,495],[580,434,530,640,480],[110,412,-30,300,545]]}];
 // slot: -1 = ซ้าย, 0 = กลาง, 1 = ขวา · stage.y/h ใน BGS = แนวเท้าและความสูงตัวละคร (พิกเซลของภาพฉาก) · delay = เวลาไสลด์ขึ้น (ms)
-const CHARS=[{id:"lady",slot:-1,AR:241/620,delay:1200},{id:"man2",slot:0,AR:228/620,delay:2000},{id:"man",slot:1,AR:219/620,delay:2800}];
+const CHARS=[{id:"lady",slot:-1,AR:241/620,delay:1000},{id:"man",slot:1,AR:219/620,delay:2600},{id:"man2",slot:0,AR:228/620,delay:4200}];
 let curBg="";
 function fitBg(){const W=innerWidth,H=innerHeight,ar=W/H,b=ar<.8?BGS[0]:ar<1.55?BGS[1]:BGS[2];
  if(b.src!==curBg){curBg=b.src;$("bg").style.backgroundImage=`url(${b.src})`;$("piles").style.backgroundImage=`url(${b.ov})`}
@@ -466,8 +468,8 @@ function fitBg(){const W=innerWidth,H=innerHeight,ar=W/H,b=ar<.8?BGS[0]:ar<1.55?
  document.documentElement.style.setProperty("--hz",Math.min(80,Math.max(35,wy/H*100+1))+"%")}
 // ยืนเรียงกึ่งกลางจอบนคันนาริมน้ำ: ผู้หญิง (ซ้าย) · ชุดม่วง (กลาง) · ชุดเขียว (ขวา)
 function placeChar(c,b,k,ox,oy,W){const L=b.stage.h*k,w=L*c.AR,gap=L*.42,foot=b.stage.y*k+oy,el=$(c.id);
- Object.assign(el.style,{left:(W/2+c.slot*gap-w/2)+"px",top:(foot-L)+"px",width:w+"px",height:L+"px",zIndex:c.slot?2:3,clipPath:"inset(-80px -60px 0 -60px)"})}
-fitBg();addEventListener("resize",fitBg);CHARS.forEach(c=>setTimeout(()=>$(c.id).classList.add("up"),c.delay));
+ Object.assign(el.style,{left:(W/2+c.slot*gap-w/2)+"px",top:(foot-L)+"px",width:w+"px",height:L+"px",zIndex:c.slot?2:3})}
+fitBg();addEventListener("resize",fitBg);CHARS.forEach(c=>setTimeout(()=>{$(c.id).classList.add("up");setTimeout(()=>{const r=$(c.id).getBoundingClientRect();for(let i=0;i<26;i++){const a=Math.random()*6.28,v=1+Math.random()*2.5;P.push({x:r.left+r.width/2,y:r.bottom-6,vx:Math.cos(a)*v,vy:-Math.abs(Math.sin(a)*v),l:40+Math.random()*20,c:i%2?"#ffe08a":"#3ee6ff"})}},2100)},c.delay));
 const river=$("river");
 function LS(sc){return Math.min(1,Math.max(.55,sc*1.1))/sc}
 function VK(){return Math.min(1.3,Math.max(.5,Math.min(innerHeight/800,innerWidth/520)))}
