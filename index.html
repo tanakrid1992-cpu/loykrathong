@@ -453,7 +453,7 @@ const isMine=k=>mine.some(m=>m.id===k.id);
 /* ===== ฉากหลังอัตโนมัติ: PC / Tablet / Smartphone ===== */
 const BGS=[{src:"bg-phone.webp",w:941,h:1672,water:.55,piles:[[270,804,225,315,847],[325,807,297,355,839],[67,797,-10,185,875]]},{src:"bg-tablet.webp",w:1448,h:1086,water:.66,piles:[[405,580,325,485,640],[505,586,460,555,627],[95,567,-20,250,683]]},{src:"bg.webp",w:1672,h:941,water:.62,piles:[[465,427,380,560,495],[580,434,530,640,480],[110,412,-30,300,545]]}];
 // ตัวละครหลังกองเกลือ: pile = กองที่ (2 = กองแรก, 0 = กองที่ 2, 1 = กองที่ 3), H = ความสูงเท่าของกองเกลือ, DX = เลื่อนซ้าย/ขวา, delay = เวลาไสลด์ขึ้น (ms)
-const CHARS=[{id:"lady",pile:1,H:3.6,AR:241/620,DX:.05,delay:1200},{id:"man",pile:0,H:2.8,AR:219/620,DX:0,delay:2400},{id:"man2",pile:2,H:2.25,AR:228/620,DX:.22,delay:3600}];
+const CHARS=[{id:"lady",pile:1,H:3.6,AR:241/620,DX:.05,delay:1200},{id:"man",pile:0,H:2.8,AR:219/620,DX:0,delay:2400},{id:"man2",pile:2,H:2.25,AR:228/620,DX:.06,delay:3600}];
 let curBg="";
 function fitBg(){const W=innerWidth,H=innerHeight,ar=W/H,b=ar<.8?BGS[0]:ar<1.55?BGS[1]:BGS[2];
  if(b.src!==curBg){curBg=b.src;$("bg").style.backgroundImage=`url(${b.src})`}
