@@ -455,7 +455,7 @@ const isMine=k=>mine.some(m=>m.id===k.id);
 
 /* ===== River (perspective lanes) ===== */
 /* ===== ฉากหลังอัตโนมัติ: PC / Tablet / Smartphone ===== */
-const BGS=[{src:"bg-phone.webp",stage:{y:872,h:215},ov:"piles-phone.webp",w:941,h:1672,water:.55,piles:[[270,804,225,315,847],[325,807,297,355,839],[67,797,-10,185,875]]},{src:"bg-tablet.webp",stage:{y:645,h:175},ov:"piles-tablet.webp",w:1448,h:1086,water:.66,piles:[[405,580,325,485,640],[505,586,460,555,627],[95,567,-20,250,683]]},{src:"bg.webp",stage:{y:490,h:150},ov:"piles.webp",w:1672,h:941,water:.62,piles:[[465,427,380,560,495],[580,434,530,640,480],[110,412,-30,300,545]]}];
+const BGS=[{src:"bg-phone.webp",stage:{y:872,h:215},ov:"piles-phone.webp",w:941,h:1672,water:.55,piles:[[270,804,225,315,847],[325,807,297,355,839],[67,797,-10,185,875]]},{src:"bg-tablet.webp",stage:{y:645,h:175},ov:"piles-tablet.webp",w:1448,h:1086,water:.66,piles:[[405,580,325,485,640],[505,586,460,555,627],[95,567,-20,250,683]]},{src:"bg.webp",stage:{y:533,h:165},ov:"piles.webp",w:1672,h:941,water:.62,piles:[[465,427,380,560,495],[580,434,530,640,480],[110,412,-30,300,545]]}];
 // slot: -1 = ซ้าย, 0 = กลาง, 1 = ขวา · stage.y/h ใน BGS = แนวเท้าและความสูงตัวละคร (พิกเซลของภาพฉาก) · delay = เวลาไสลด์ขึ้น (ms)
 const CHARS=[{id:"lady",slot:-1,AR:241/620,delay:1000},{id:"man",slot:1,AR:219/620,delay:2600},{id:"man2",slot:0,AR:228/620,delay:4200}];
 let curBg="";
