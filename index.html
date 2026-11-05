@@ -227,6 +227,7 @@ textarea{resize:none;height:66px}
 @keyframes land{0%{opacity:0;transform:scale(.2)}35%{opacity:1}100%{opacity:0;transform:scale(1.6)}}
 .chr img:hover{filter:brightness(1) drop-shadow(0 0 12px rgba(255,220,130,.8))}
 @keyframes ladyBob{50%{transform:translateY(-3%)}}
+#mbtn.off{opacity:.55}
 </style>
 </head>
 <body>
@@ -258,6 +259,7 @@ textarea{resize:none;height:66px}
 </div>
 
 <div class="dock">
+  <button class="ic" id="mbtn" onclick="toggleMusic()">🔊<span>ดนตรี</span></button>
   <button class="ic" onclick="openList()">🙏<span>คำอธิษฐาน</span></button>
   <button class="btn" onclick="openMake()">🪷 ลอยกระทง</button>
 </div>
@@ -545,6 +547,33 @@ async function poll(){if(document.hidden)return;try{
  if(fresh.length){data.unshift(...fresh);fresh.slice().reverse().forEach(k=>addToRiver(k,false));ticker();today();if(fresh.length<4)toast("🪷 "+fresh.map(k=>k.name).join(", ")+" เพิ่งลอยกระทง")}}catch(e){}}
 if(useDB){setInterval(poll,POLL);document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()})}
 
+/* ===== ดนตรีคลอ: สังเคราะห์สดด้วย Web Audio (บันไดเสียงไทยเพนทาโทนิก ขิม + ฉิ่ง + โดรน) เล่นวนไม่สิ้นสุด ===== */
+const MUSIC={on:localStorage.getItem("kt_music")!=="off",ctx:null,out:null,next:0,step:0,deg:4,timer:null};
+function mStart(){if(MUSIC.ctx){MUSIC.ctx.resume();return}
+ const C=new (window.AudioContext||window.webkitAudioContext)(),out=C.createGain();out.gain.value=0;out.connect(C.destination);
+ out.gain.linearRampToValueAtTime(.22,C.currentTime+3);
+ const rv=C.createConvolver(),len=C.sampleRate*3,ir=C.createBuffer(2,len,C.sampleRate);
+ for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}
+ rv.buffer=ir;const wet=C.createGain();wet.gain.value=.45;rv.connect(wet);wet.connect(out);
+ const bus=C.createGain();bus.connect(out);bus.connect(rv);
+ [65.41,98].forEach(f=>{const o=C.createOscillator(),g=C.createGain(),l=C.createOscillator(),lg=C.createGain();o.type="sine";o.frequency.value=f;g.gain.value=.05;
+  l.frequency.value=.07;lg.gain.value=.025;l.connect(lg);lg.connect(g.gain);o.connect(g);g.connect(bus);o.start();l.start()});
+ Object.assign(MUSIC,{ctx:C,out:bus,next:C.currentTime+.3});MUSIC.timer=setInterval(mSched,100)}
+const SCALE=[261.63,293.66,329.63,392,440,523.25,587.33,659.25,783.99,880];
+function pluck(f,t,v){const C=MUSIC.ctx;[1,2.01].forEach((m,i)=>{const o=C.createOscillator(),g=C.createGain();o.type=i?"sine":"triangle";o.frequency.value=f*m;
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v/(i?3:1),t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+(i?.6:1.6));o.connect(g);g.connect(MUSIC.out);o.start(t);o.stop(t+1.7)})}
+function ching(t,open){const C=MUSIC.ctx;[2793,3520,4186].forEach(f=>{const o=C.createOscillator(),g=C.createGain();o.frequency.value=f;
+ g.gain.setValueAtTime(.018,t);g.gain.exponentialRampToValueAtTime(.0001,t+(open?1.4:.12));o.connect(g);g.connect(MUSIC.out);o.start(t);o.stop(t+1.5)})}
+function mSched(){const C=MUSIC.ctx,beat=60/68/2;while(MUSIC.next<C.currentTime+.4){const t=MUSIC.next,s=MUSIC.step%16;
+ if(Math.random()<(s%2?.55:.9)){MUSIC.deg=Math.max(0,Math.min(SCALE.length-1,MUSIC.deg+[-2,-1,-1,0,1,1,2][Math.floor(Math.random()*7)]));
+  pluck(SCALE[MUSIC.deg],t,.09);if(s%4===0)pluck(SCALE[Math.max(0,MUSIC.deg-3)]/2,t,.06)}
+ if(s%4===0)ching(t,s%8===0);if(s===0&&Math.random()<.5)MUSIC.deg=4;
+ MUSIC.next+=beat*(s%2?.92:1.08);MUSIC.step++}}
+function mUI(){$("mbtn").firstChild.textContent=MUSIC.on?"🔊":"🔇";$("mbtn").classList.toggle("off",!MUSIC.on)}
+function toggleMusic(){MUSIC.on=!MUSIC.on;localStorage.setItem("kt_music",MUSIC.on?"on":"off");if(MUSIC.on)mStart();else if(MUSIC.ctx)MUSIC.ctx.suspend();mUI()}
+["pointerdown","keydown","touchstart"].forEach(ev=>addEventListener(ev,function f(e){if(e.target.closest&&e.target.closest("#mbtn"))return;if(MUSIC.on)mStart()},{once:true,passive:true}));
+document.addEventListener("visibilitychange",()=>{if(!MUSIC.ctx)return;if(document.hidden)MUSIC.ctx.suspend();else if(MUSIC.on)MUSIC.ctx.resume()});
+mUI();
 </script>
 </body>
 </html>
