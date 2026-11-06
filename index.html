@@ -311,7 +311,7 @@ textarea{resize:none;height:66px}
 
 <script>
 /* ===== CONFIG ===== */
-const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",API_URL:"",POLL_SEC:6,RIVER_MAX:innerWidth<600?16:innerWidth<1025?24:32,FLOAT_SEC:140};
+const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",API_URL:"",POLL_SEC:6,SHOW:50,RIVER_MAX:innerWidth<600?16:innerWidth<1025?24:32,FLOAT_SEC:140};
 
 const OPT={
  base:[["banana","🍃","ใบตอง",1],["bread","🍞","ขนมปัง",1],["trunk","🌴","ต้นกล้วย",1],["coco","🥥","กะลา",1],["lotus","🪷","กลีบบัว",1]],
@@ -445,7 +445,7 @@ let total=0;
 async function load(){
  if(useDB){try{const j=await api();data=j.rows||[];total=j.total||data.length}catch(e){console.warn(e);toast("โหลดข้อมูลไม่สำเร็จ")}}
  else{data=JSON.parse(localStorage.getItem("kt_demo")||"null")||demoSeed();total=data.length}
- $("count").textContent=total;
+ data=data.sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at))).slice(0,CONFIG.SHOW);$("count").textContent=total;
  mine.forEach(m=>{if(!data.find(d=>d.id===m.id))data.push(m)});
  const list=[...data.filter(d=>isMine(d)),...data.filter(d=>!isMine(d))].slice(0,CONFIG.RIVER_MAX);
  list.sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at))).forEach(k=>addToRiver(k,true));ticker();
@@ -454,7 +454,7 @@ async function save(k){
  if(useDB){const r=await fetch(CONFIG.API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(k)});const j=await r.json();if(!j.ok)throw new Error(j.error||"fail");return j.row}
  k.id=crypto.randomUUID();k.created_at=new Date().toISOString();data.unshift(k);localStorage.setItem("kt_demo",JSON.stringify(data.slice(0,60)));return k;
 }
-function ticker(){const items=data.filter(d=>d.wish).slice(0,40);if(!items.length)return;
+function ticker(){const items=data.filter(d=>d.wish).slice(0,CONFIG.SHOW);if(!items.length)return;
  $("tk").innerHTML=items.map(d=>`<span class="tki" data-id="${esc(d.id)}">${av(d)}<b>${esc(d.name)}</b><span>“${esc(d.wish)}”</span></span>`).join("");
  $("tk").style.animationDuration=Math.max(30,items.reduce((a,d)=>a+String(d.wish).length+String(d.name).length,0)*.22)+"s"}
 $("tk").onclick=e=>{const t=e.target.closest(".tki");if(t){const k=data.find(d=>String(d.id)===t.dataset.id);if(k)view(k)}};
@@ -508,7 +508,7 @@ function addToRiver(k,first){
  layout();return el;
 }
 function renderList(){const q=$("q").value.trim();
- $("list").innerHTML=data.filter(d=>!q||d.name.includes(q)).slice(0,150).map((d,i)=>`<div class="wish" data-i="${data.indexOf(d)}"><b>${isMine(d)?"⭐ ":""}${esc(d.name)}</b><br>${esc(d.wish||"-")}</div>`).join("")||'<p class="small c">ไม่พบ</p>'}
+ $("list").innerHTML=data.filter(d=>!q||d.name.includes(q)).slice(0,CONFIG.SHOW).map((d,i)=>`<div class="wish" data-i="${data.indexOf(d)}"><b>${isMine(d)?"⭐ ":""}${esc(d.name)}</b><br>${esc(d.wish||"-")}</div>`).join("")||'<p class="small c">ไม่พบ</p>'}
 $("list").onclick=e=>{const w=e.target.closest(".wish");if(w)view(data[w.dataset.i])};
 function view(k){$("mSvg").innerHTML=art(k);const vp=$("vPh");vp.hidden=!okPhoto(k.photo);if(okPhoto(k.photo))vp.src=k.photo;$("vName").textContent=(isMine(k)?"⭐ ":"")+k.name;$("vWish").textContent=k.wish||"";
  $("vTime").textContent=k.created_at?new Date(k.created_at).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"}):"";open_(mView);setTimeout(()=>sparkle(mView.querySelector(".box")),200)}
@@ -528,7 +528,7 @@ async function launch(){
  if(BAD.some(w=>(name+wish).toLowerCase().includes(w)))return toast("⚠️ กรุณาใช้ถ้อยคำที่สุภาพ");
  if(busy)return;busy=true;$("go").disabled=true;
  try{const k=await save({name,wish,...sel,photo});mine.unshift(k);localStorage.setItem("kt_mine",JSON.stringify(mine.slice(0,20)));
-  if(useDB)data.unshift(k);$("count").textContent=++total;ticker();today();close_(mMake);
+  if(useDB)data.unshift(k);data.length=Math.min(data.length,CONFIG.SHOW);$("count").textContent=++total;ticker();today();close_(mMake);
   const el=addToRiver(k,false);
   burst(6);for(let i=0;i<10;i++)setTimeout(lantern,i*220);
   toast("🎉 ลอยกระทงสำเร็จ! ขอให้สมความปรารถนา ⭐");$("wish").value="";$("wc").textContent="0/200";photo=null;$("photo").value="";$("phImg").innerHTML="📷<small>อัปโหลด</small>";
@@ -566,7 +566,7 @@ async function poll(){if(document.hidden)return;try{
  since=data.reduce((m,d)=>d.created_at>m?d.created_at:m,since);
  const r=await fetch(CONFIG.API_URL+"?since="+encodeURIComponent(since)+"&t="+Date.now()),j=await r.json(),ids=new Set(data.map(d=>String(d.id)));
  const fresh=(j.rows||[]).filter(k=>!ids.has(String(k.id)));total=Math.max(total,j.total||0);$("count").textContent=total;
- if(fresh.length){data.unshift(...fresh);fresh.slice().reverse().forEach(k=>addToRiver(k,false));ticker();today();if(fresh.length<4)toast("🪷 "+fresh.map(k=>k.name).join(", ")+" เพิ่งลอยกระทง")}}catch(e){}}
+ if(fresh.length){data.unshift(...fresh);data.length=Math.min(data.length,CONFIG.SHOW);fresh.slice().reverse().forEach(k=>addToRiver(k,false));ticker();today();if(fresh.length<4)toast("🪷 "+fresh.map(k=>k.name).join(", ")+" เพิ่งลอยกระทง")}}catch(e){}}
 if(useDB){setInterval(poll,POLL);document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()})}
 
 /* ===== ดนตรีคลอ: สังเคราะห์สดด้วย Web Audio (บันไดเสียงไทยเพนทาโทนิก ขิม + ฉิ่ง + โดรน) เล่นวนไม่สิ้นสุด ===== */

@@ -7,7 +7,7 @@ const SHEET = 'krathong';
 const FOLDER = 'ลอยกระทงออนไลน์2569_รูปผู้ลอย';
 const HEAD = ['id','created_at','name','wish','img','base','flower','candle','deco','photo','approved','photo_file_id'];
 const BAD = ['เหี้ย','สัส','ควย','เย็ด','หี','แตด','ส้นตีน','ไอ้สัตว์','ชิบหาย','อีดอก','fuck','shit','bitch'];
-const LIMIT = 200;            // จำนวนกระทงล่าสุดที่ส่งให้หน้าเว็บ (ข้อมูลทั้งหมดยังอยู่ในชีตตลอดไป)
+const LIMIT = 50;             // แสดงเฉพาะผู้ลอย 50 ลำดับล่าสุด (ข้อมูลทั้งหมดยังเก็บในชีตถาวร)
 const CACHE_SEC = 5;          // แคชผลลัพธ์ลดภาระ quota
 
 function sheet_() {
