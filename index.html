@@ -470,16 +470,17 @@ const isMine=k=>mine.some(m=>m.id===k.id);
 
 /* ===== River (perspective lanes) ===== */
 /* ===== ฉากหลังอัตโนมัติ: PC / Tablet / Smartphone ===== */
-const BGS=[{src:"bg-phone.webp",stage:{berm:[150,882,900,859],h:215},ov:"piles-phone.webp",w:941,h:1672,water:.55,piles:[[270,804,225,315,847],[325,807,297,355,839],[67,797,-10,185,875]]},{src:"bg-tablet.webp",stage:{berm:[350,678,1150,654],h:185},ov:"piles-tablet.webp",w:1448,h:1086,water:.66,piles:[[405,580,325,485,640],[505,586,460,555,627],[95,567,-20,250,683]]},{src:"bg.webp",stage:{berm:[500,542,1200,519],h:165},ov:"piles.webp",w:1672,h:941,water:.62,piles:[[465,427,380,560,495],[580,434,530,640,480],[110,412,-30,300,545]]}];
+const BGS=[{src:"bg-phone.webp",moon:180,stage:{berm:[150,882,900,859],h:215},ov:"piles-phone.webp",w:941,h:1672,water:.55,piles:[[270,804,225,315,847],[325,807,297,355,839],[67,797,-10,185,875]]},{src:"bg-tablet.webp",moon:192,stage:{berm:[350,678,1150,654],h:185},ov:"piles-tablet.webp",w:1448,h:1086,water:.66,piles:[[405,580,325,485,640],[505,586,460,555,627],[95,567,-20,250,683]]},{src:"bg.webp",moon:39,stage:{berm:[500,542,1200,519],h:165},ov:"piles.webp",w:1672,h:941,water:.62,piles:[[465,427,380,560,495],[580,434,530,640,480],[110,412,-30,300,545]]}];
 // slot: -1 = ซ้าย, 0 = กลาง, 1 = ขวา · stage.berm ใน BGS = เส้นขอบคันนาเกลือ [x1,y1,x2,y2], stage.h = ความสูงตัวละคร (พิกเซลของภาพฉาก) · delay = เวลาไสลด์ขึ้น (ms)
 const CHARS=[{id:"lady",slot:-1,AR:241/620,delay:1000},{id:"man",slot:1,AR:219/620,delay:2600},{id:"man2",slot:0,AR:228/620,delay:4200}];
 let curBg="";
 function fitBg(){const W=innerWidth,H=innerHeight,ar=W/H,b=ar<.8?BGS[0]:ar<1.55?BGS[1]:BGS[2];
  if(b.src!==curBg){curBg=b.src;$("bg").style.backgroundImage=`url(${b.src})`;$("piles").style.backgroundImage=`url(${b.ov})`}
- const k=Math.max(W/b.w,H/b.h),ih=b.h*k,wy=b.water*ih-(ih-H);   // ภาพชิดล่าง
+ const k=Math.max(W/b.w,H/b.h),ih=b.h*k,tk=($("ticker")||{}).offsetHeight||34,
+  oy=Math.min(0,Math.max(H-ih,tk+30-b.moon*k)),wy=b.water*ih+oy;   // ชิดล่าง แต่เลื่อนลงให้พระจันทร์ไม่ติดขอบบน
  let ox=(W-b.w*k)/2;const lx=b.piles[2][0]*k+ox;if(lx<45)ox=Math.max(W-b.w*k,Math.min(0,ox+45-lx)); // ให้เห็นกองแรกบนจอแคบ
- $("bg").style.backgroundPosition=$("piles").style.backgroundPosition=`${ox}px bottom`;
- CHARS.forEach(c=>placeChar(c,b,k,ox,H-b.h*k,W));
+ $("bg").style.backgroundPosition=$("piles").style.backgroundPosition=`${ox}px ${oy}px`;
+ CHARS.forEach(c=>placeChar(c,b,k,ox,oy,W));
  document.documentElement.style.setProperty("--hz",Math.min(80,Math.max(35,wy/H*100+1))+"%")}
 // ยืนเรียงกึ่งกลางจอบนคันนาริมน้ำ: ผู้หญิง (ซ้าย) · ชุดม่วง (กลาง) · ชุดเขียว (ขวา)
 function placeChar(c,b,k,ox,oy,W){const L=b.stage.h*k,w=L*c.AR,gap=L*.42,cx=W/2+c.slot*gap,[x1,y1,x2,y2]=b.stage.berm,
