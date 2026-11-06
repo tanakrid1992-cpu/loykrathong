@@ -13,8 +13,7 @@ const CACHE_SEC = 5;          // แคชผลลัพธ์ลดภาร�
 function sheet_() {
   const ss = SpreadsheetApp.getActive();
   let sh = ss.getSheetByName(SHEET);
-  if (!sh) { sh = ss.insertSheet(SHEET); sh.appendRow(HEAD); sh.setFrozenRows(1);
-    sh.getRange('K2:K').insertCheckboxes(); }
+  if (!sh) { sh = ss.insertSheet(SHEET); sh.appendRow(HEAD); sh.setFrozenRows(1); }
   return sh;
 }
 function folder_() {
@@ -27,10 +26,27 @@ function pub_(r) { // ส่งเฉพาะข้อมูลที่แส�
     img:r[4], base:r[5], flower:r[6], candle:r[7], deco:r[8], photo:r[9] };
 }
 
+function lastRowA_(sh) {
+  const n = sh.getLastRow(); if (n < 2) return 1;
+  const a = sh.getRange(1, 1, n, 1).getValues();
+  for (let i = a.length - 1; i >= 0; i--) if (a[i][0] !== '') return i + 1;
+  return 1;
+}
+
+/** รันครั้งเดียวจาก editor: ย้ายข้อมูลที่ไปตกอยู่ท้ายชีตขึ้นมาเรียงต่อกัน และลบ checkbox ว่าง */
+function repair() {
+  const sh = sheet_(), n = sh.getLastRow(); if (n < 2) return;
+  const v = sh.getRange(2, 1, n - 1, HEAD.length).getValues().filter(r => r[0] !== '');
+  sh.getRange(2, 1, sh.getMaxRows() - 1, HEAD.length).clearDataValidations().clearContent();
+  if (v.length) { sh.getRange(2, 1, v.length, HEAD.length).setValues(v); sh.getRange(2, 11, v.length, 1).insertCheckboxes(); }
+  CacheService.getScriptCache().remove('list');
+}
+
 function list_() {
   const cache = CacheService.getScriptCache(), hit = cache.get('list');
   if (hit) return JSON.parse(hit);
-  const v = sheet_().getDataRange().getValues(); v.shift();
+  const sh = sheet_(), n = lastRowA_(sh);
+  const v = n < 2 ? [] : sh.getRange(2, 1, n - 1, HEAD.length).getValues();
   const ok = v.filter(r => r[0] && r[10] !== false && String(r[10]).toUpperCase() !== 'FALSE');
   const res = { total: ok.length, rows: ok.slice(-LIMIT).reverse().map(pub_) };
   try { cache.put('list', JSON.stringify(res), CACHE_SEC); } catch (e) {}
@@ -63,7 +79,11 @@ function doPost(e) {
       pick(d.img, /^k\d\d$/), pick(d.base, /^\w{1,12}$/), pick(d.flower, /^\w{1,12}$/),
       pick(d.candle, /^\w{1,12}$/), pick(d.deco, /^\w{1,12}$/), photo, true, fid];
     const lock = LockService.getScriptLock(); lock.waitLock(10000);
-    try { sheet_().appendRow(row); } finally { lock.releaseLock(); }
+    try {
+      const sh = sheet_(), n = lastRowA_(sh) + 1;           // แถวถัดไปตามคอลัมน์ A (ไม่สนช่อง checkbox ว่าง)
+      sh.getRange(n, 1, 1, row.length).setValues([row]);
+      sh.getRange(n, 11).insertCheckboxes().setValue(true);  // คอลัมน์ approved
+    } finally { lock.releaseLock(); }
     CacheService.getScriptCache().remove('list');
     return out_({ ok:true, row: pub_(row) });
   } catch (err) { return out_({ ok:false, error:'ระบบขัดข้อง ลองใหม่อีกครั้ง' }); }
