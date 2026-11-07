@@ -321,7 +321,15 @@ const OPT={
 const COL={banana:["#3f9a4a","#22622c"],bread:["#d9a25b","#9a6427"],trunk:["#ebe5c8","#ada37c"],coco:["#7a4a26","#45280f"],lotus:["#f7a6c8","#c95889"],
  marigold:"#ffb21f",rose:"#e8284e",orchid:"#a45ee5",jasmine:"#fffdf5",lotusf:"#ff8fbf"};
 const DECO={coin:"🪙",star:"⭐",heart:"💖",butterfly:"🦋",fish:"🐟"};
-const BAD=["เหี้ย","สัส","ควย","เย็ด","หี","แตด","ส้นตีน","ไอ้สัตว์","ชิบหาย","อีดอก","fuck","shit","bitch"];
+/* ===== กรองคำหยาบ: ตัดช่องว่าง/สัญลักษณ์/ตัวซ้ำ เพื่อจับคำเลี่ยง เช่น "ค ว ย", "เห๊ี้ยยย", "f.u.c.k" ===== */
+const BAD=["เหี้ย","เหี่ย","เหี้ยะ","เหี๊ย","ไอ้สัส","อีสัส","สัส","ไอ้สัด","อีสัด","ควย","เย็ด","เย็ส","หี","หน้าหี","แตด","ส้นตีน","ตีนสั้น","ไอ้สัตว์","อีสัตว์",
+ "ชิบหาย","ฉิบหาย","อีดอก","ดอกทอง","อีตอแหล","ตอแหล","กะหรี่","ระยำ","จัญไร","ไอ้เวร","อีเวร","มึง","พ่อมึง","แม่มึง","ไอ้ควาย","อีควาย","ไอ้ห่า","อีห่า",
+ "เสือก","สถุน","ร่าน","จิ๋ม","เงี่ยน","สันดาน","ไอ้บ้า","อีบ้า","ไอ้โง่","อีโง่","อีเหี้ย","ไอ้เหี้ย","หน้าตัวเมีย","ปี้กัน","โคตรพ่อ","โคตรแม่",
+ "fuck","fck","fuk","shit","bitch","asshole","dick","pussy","cunt","motherfucker","wtf","stfu","bastard","slut","whore"];
+const OK_WORDS=["หีบ","สัสดี","แกงกะหรี่","กะหรี่ปั๊บ","ผงกะหรี่","ข้าวกะหรี่","ร่านี้","ร่าเริง"];
+const normTxt=s=>String(s||"").toLowerCase().replace(/[\s​-‍﻿.,\-_*+!@#$%^&()=\/\\|'"~`:;?<>\[\]{}0-9๐-๙\u0e48-\u0e4b]/g,"").replace(/(.)\1+/g,"$1");
+const NBAD=BAD.map(normTxt),NOK=OK_WORDS.map(normTxt);
+function isBad(...t){let s=normTxt(t.join(""));NOK.forEach(w=>{s=s.split(w).join("")});return NBAD.some(w=>s.includes(w))}
 let sel={img:"k02",base:"banana",flower:"marigold",candle:"gold",deco:"star"},data=[],mine=JSON.parse(localStorage.getItem("kt_mine")||"[]");
 const $=id=>document.getElementById(id);
 
@@ -453,12 +461,12 @@ async function fbInit(){
  firebase.initializeApp(CONFIG.FIREBASE);const db=firebase.database();FB={db,ref:db.ref("krathong"),total:db.ref("stats/total")};
  FB.total.on("value",s=>{total=s.val()||0;$("count").textContent=total});
  const q=FB.ref.orderByChild("created_at").limitToLast(CONFIG.SHOW);
- const snap=await q.once("value");const rows=[];snap.forEach(c=>{const v=c.val();if(v&&v.approved!==false)rows.push(fbRow(c.key,v))});
+ const snap=await q.once("value");const rows=[];snap.forEach(c=>{const v=c.val();if(v&&v.approved!==false&&!isBad(v.name)&&!isBad(v.wish))rows.push(fbRow(c.key,v))});
  return rows;
 }
 function fbListen(){
  const q=FB.ref.orderByChild("created_at").limitToLast(CONFIG.SHOW);
- q.on("child_added",c=>{const v=c.val(),id=c.key;if(!v||v.approved===false||pendingIds.has(id)||data.some(d=>String(d.id)===id))return;
+ q.on("child_added",c=>{const v=c.val(),id=c.key;if(!v||v.approved===false||pendingIds.has(id)||data.some(d=>String(d.id)===id)||isBad(v.name)||isBad(v.wish))return;
   const k=fbRow(id,v);data.unshift(k);data.length=Math.min(data.length,CONFIG.SHOW);addToRiver(k,false);ticker();today();toast("🪷 "+k.name+" เพิ่งลอยกระทง")});
  q.on("child_changed",c=>{if(c.val()&&c.val().approved===false)fbHide(c.key)});
  FB.ref.on("child_removed",c=>fbHide(c.key));
@@ -488,7 +496,7 @@ async function save(k){
  if(useDB){const r=await fetch(CONFIG.API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(k)});const j=await r.json();if(!j.ok)throw new Error(j.error||"fail");return j.row}
  k.id=crypto.randomUUID();k.created_at=new Date().toISOString();data.unshift(k);localStorage.setItem("kt_demo",JSON.stringify(data.slice(0,60)));return k;
 }
-function ticker(){const items=data.filter(d=>d.wish).slice(0,CONFIG.SHOW);if(!items.length)return;
+function ticker(){const items=data.filter(d=>d.wish&&!isBad(d.name,d.wish)&&!isBad(d.name)&&!isBad(d.wish)).slice(0,CONFIG.SHOW);if(!items.length)return;
  $("tk").innerHTML=items.map(d=>`<span class="tki" data-id="${esc(d.id)}">${av(d)}<b>${esc(d.name)}</b><span>“${esc(d.wish)}”</span></span>`).join("");
  $("tk").style.animationDuration=Math.max(30,items.reduce((a,d)=>a+String(d.wish).length+String(d.name).length,0)*.22)+"s"}
 $("tk").onclick=e=>{const t=e.target.closest(".tki");if(t){const k=data.find(d=>String(d.id)===t.dataset.id);if(k)view(k)}};
@@ -547,7 +555,7 @@ let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(layout,150)
 const RV=[];
 function layout(){const n=RV.length,k=VK();RV.forEach((el,i)=>{const t=n>1?i/(n-1):0,y=Math.max(1,Math.min(84,2+80*Math.pow(1-t,1.35)+(+el.dataset.j))),sc=(.2+Math.pow(y/83,1.25)*.95)*k;
  el.style.top=y+"%";el.style.zIndex=Math.round(y)+(el.classList.contains("mine")?100:0);const s=el.firstElementChild;s.style.transform=`translateY(-85%) scale(${sc})`;s.style.setProperty("--ls",LS(sc))})}
-function addToRiver(k,first){
+function addToRiver(k,first){if(isBad(k.name)||isBad(k.wish))return null;
  const el=document.createElement("div"),m=isMine(k),dur=CONFIG.FLOAT_SEC*(.9+Math.random()*.25);
  el.className="kt"+(m?" mine":"");el.dataset.id=k.id;el.dataset.j=(Math.random()*4-2).toFixed(2);
  el.style.animationDuration=dur+"s";el.style.animationDelay=(first?-Math.random()*dur:-dur*(.05+Math.random()*.1))+"s";
@@ -557,7 +565,7 @@ function addToRiver(k,first){
  layout();return el;
 }
 function renderList(){const q=$("q").value.trim();
- $("list").innerHTML=data.filter(d=>!q||d.name.includes(q)).slice(0,CONFIG.SHOW).map((d,i)=>`<div class="wish" data-i="${data.indexOf(d)}"><b>${isMine(d)?"⭐ ":""}${esc(d.name)}</b><br>${esc(d.wish||"-")}</div>`).join("")||'<p class="small c">ไม่พบ</p>'}
+ $("list").innerHTML=data.filter(d=>(!q||d.name.includes(q))&&!isBad(d.name)&&!isBad(d.wish)).slice(0,CONFIG.SHOW).map((d,i)=>`<div class="wish" data-i="${data.indexOf(d)}"><b>${isMine(d)?"⭐ ":""}${esc(d.name)}</b><br>${esc(d.wish||"-")}</div>`).join("")||'<p class="small c">ไม่พบ</p>'}
 $("list").onclick=e=>{const w=e.target.closest(".wish");if(w)view(data[w.dataset.i])};
 function view(k){$("mSvg").innerHTML=art(k);const vp=$("vPh");vp.hidden=!okPhoto(k.photo);if(okPhoto(k.photo))vp.src=k.photo;$("vName").textContent=(isMine(k)?"⭐ ":"")+k.name;$("vWish").textContent=k.wish||"";
  $("vTime").textContent=k.created_at?new Date(k.created_at).toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"}):"";open_(mView);setTimeout(()=>sparkle(mView.querySelector(".box")),200)}
@@ -574,11 +582,11 @@ let busy=false;
 async function launch(){
  const name=$("name").value.trim(),wish=$("wish").value.trim();
  if(!name)return toast("กรุณาใส่ชื่อ");if(!$("agree").checked)return toast("กรุณาติ๊กยินยอม PDPA");
- if(BAD.some(w=>(name+wish).toLowerCase().includes(w)))return toast("⚠️ กรุณาใช้ถ้อยคำที่สุภาพ");
+ if(isBad(name)||isBad(wish))return toast("⚠️ กรุณาใช้ถ้อยคำที่สุภาพ");
  if(busy)return;busy=true;$("go").disabled=true;
  try{const k=await save({name,wish,...sel,photo});mine.unshift(k);localStorage.setItem("kt_mine",JSON.stringify(mine.slice(0,20)));
   if(useDB||useFB)data.unshift(k);data.length=Math.min(data.length,CONFIG.SHOW);if(!useFB)$("count").textContent=++total;ticker();today();close_(mMake);
-  const el=addToRiver(k,false);
+  const el=addToRiver(k,false);if(!el)return;
   burst(6);for(let i=0;i<10;i++)setTimeout(lantern,i*220);
   toast("🎉 ลอยกระทงสำเร็จ! ขอให้สมความปรารถนา ⭐");$("wish").value="";$("wc").textContent="0/200";photo=null;$("photo").value="";$("phImg").innerHTML="📷<small>อัปโหลด</small>";
  }catch(e){toast("ส่งไม่สำเร็จ: "+(e.message||"ลองใหม่อีกครั้ง"))}
@@ -614,7 +622,7 @@ const POLL=CONFIG.POLL_SEC*1000;let since="";
 async function poll(){if(document.hidden)return;try{
  since=data.reduce((m,d)=>d.created_at>m?d.created_at:m,since);
  const r=await fetch(CONFIG.API_URL+"?since="+encodeURIComponent(since)+"&t="+Date.now()),j=await r.json(),ids=new Set(data.map(d=>String(d.id)));
- const fresh=(j.rows||[]).filter(k=>!ids.has(String(k.id)));total=Math.max(total,j.total||0);$("count").textContent=total;
+ const fresh=(j.rows||[]).filter(k=>!ids.has(String(k.id))&&!isBad(k.name)&&!isBad(k.wish));total=Math.max(total,j.total||0);$("count").textContent=total;
  if(fresh.length){data.unshift(...fresh);data.length=Math.min(data.length,CONFIG.SHOW);fresh.slice().reverse().forEach(k=>addToRiver(k,false));ticker();today();if(fresh.length<4)toast("🪷 "+fresh.map(k=>k.name).join(", ")+" เพิ่งลอยกระทง")}}catch(e){}}
 if(useDB&&!useFB){setInterval(poll,POLL);document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()})}
 
