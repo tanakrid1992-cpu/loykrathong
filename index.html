@@ -324,12 +324,22 @@ const DECO={coin:"🪙",star:"⭐",heart:"💖",butterfly:"🦋",fish:"🐟"};
 /* ===== กรองคำหยาบ: ตัดช่องว่าง/สัญลักษณ์/ตัวซ้ำ เพื่อจับคำเลี่ยง เช่น "ค ว ย", "เห๊ี้ยยย", "f.u.c.k" ===== */
 const BAD=["เหี้ย","เหี่ย","เหี้ยะ","เหี๊ย","ไอ้สัส","อีสัส","สัส","ไอ้สัด","อีสัด","ควย","เย็ด","เย็ส","หี","หน้าหี","แตด","ส้นตีน","ตีนสั้น","ไอ้สัตว์","อีสัตว์",
  "ชิบหาย","ฉิบหาย","อีดอก","ดอกทอง","อีตอแหล","ตอแหล","กะหรี่","ระยำ","จัญไร","ไอ้เวร","อีเวร","มึง","พ่อมึง","แม่มึง","ไอ้ควาย","อีควาย","ไอ้ห่า","อีห่า",
- "เสือก","สถุน","ร่าน","จิ๋ม","เงี่ยน","สันดาน","ไอ้บ้า","อีบ้า","ไอ้โง่","อีโง่","อีเหี้ย","ไอ้เหี้ย","หน้าตัวเมีย","ปี้กัน","โคตรพ่อ","โคตรแม่",
- "fuck","fck","fuk","shit","bitch","asshole","dick","pussy","cunt","motherfucker","wtf","stfu","bastard","slut","whore"];
-const OK_WORDS=["หีบ","สัสดี","แกงกะหรี่","กะหรี่ปั๊บ","ผงกะหรี่","ข้าวกะหรี่","ร่านี้","ร่าเริง"];
+ "เสือก","สถุน","ร่าน","จิ๋ม","เงี่ยน","สันดาน","ไอ้บ้า","อีบ้า","ไอ้โง่","อีโง่","อีเหี้ย","ไอ้เหี้ย","หน้าตัวเมีย","ปี้กัน","โคตรพ่อ","โคตรแม่","หำ","ไอ้หำ","อีหำ","เย็ดแม่","ควาย",
+ "wtf","stfu"];
+const OK_WORDS=["ควายไถนา","ควายป่า","ควายเผือก","เลี้ยงควาย","หำแหล","หีบ","สัสดี","แกงกะหรี่","กะหรี่ปั๊บ","ผงกะหรี่","ข้าวกะหรี่","ร่านี้","ร่าเริง"];
 const normTxt=s=>String(s||"").toLowerCase().replace(/[\s​-‍﻿.,\-_*+!@#$%^&()=\/\\|'"~`:;?<>\[\]{}0-9๐-๙\u0e48-\u0e4b]/g,"").replace(/(.)\1+/g,"$1");
 const NBAD=BAD.map(normTxt),NOK=OK_WORDS.map(normTxt);
-function isBad(...t){let s=normTxt(t.join(""));NOK.forEach(w=>{s=s.split(w).join("")});return NBAD.some(w=>s.includes(w))}
+/* อังกฤษ/คาราโอเกะ: แปลง leet (1→i 0→o 3→e 4→a @→a $→s) แล้วเช็ค 2 แบบ: ทั้งคำ (คำสั้นที่อาจซ้ำคำปกติ) และคำย่อยในข้อความต่อกัน */
+const LAT_WORD=["hee","hii","heeya","hia","kuy","kuay","kuai","kuey","yed","yedmae","mung","isus","esus","isas","aisus","aisas","edok","idok","eedok","aidok","dick","sus"];
+const LAT_SUB=["fuck","fuk","fck","fxck","fvck","fcuk","phuck","shit","bitch","btch","asshole","pussy","cunt","motherf","bastard","slut","whore","dickhead",
+ "birthwithmother","fuckyou","fuckyourmother","sonofabitch","isus","esus","aisus","edok","idok","eedok","heeya","kuay","yedmae","nigger","nigga","retard"];
+const LAT_OK=["shiitake","hiya","yesus","jesus","edokument"];
+function latBad(t){const x=String(t||"").toLowerCase().replace(/1/g,"i").replace(/0/g,"o").replace(/3/g,"e").replace(/[4@]/g,"a").replace(/\$/g,"s").replace(/!/g,"i");
+ const toks=x.split(/[^a-z]+/).filter(Boolean).map(w=>w.replace(/(.)\1{2,}/g,"$1$1"));
+ if(toks.some(w=>LAT_WORD.includes(w)||LAT_WORD.includes(w.replace(/(.)\1+/g,"$1"))))return true;
+ let j=x.replace(/[^a-z]/g,"");LAT_OK.forEach(w=>{j=j.split(w).join("")});const jc=j.replace(/(.)\1+/g,"$1");
+ return LAT_SUB.some(w=>j.includes(w)||jc.includes(w.replace(/(.)\1+/g,"$1")))}
+function isBad(...t){const raw=t.join(" ");if(latBad(raw))return true;let s=normTxt(t.join(""));NOK.forEach(w=>{s=s.split(w).join("")});return NBAD.some(w=>s.includes(w))}
 let sel={img:"k02",base:"banana",flower:"marigold",candle:"gold",deco:"star"},data=[],mine=JSON.parse(localStorage.getItem("kt_mine")||"[]");
 const $=id=>document.getElementById(id);
 
