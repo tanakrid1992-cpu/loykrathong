@@ -310,7 +310,7 @@ textarea{resize:none;height:66px}
 
 <script>
 /* ===== CONFIG ===== */
-const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",API_URL:"https://script.google.com/macros/s/AKfycbxJs4i25-sPe7NqemT5VVX96dl5nkrf-EdJOw-gLgfhNZMgI5i548C2-wjR5IvP2ogS/exec",POLL_SEC:6,SHOW:50,RIVER_MAX:innerWidth<600?16:innerWidth<1025?24:32,FLOAT_SEC:140};
+const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",FIREBASE:{apiKey:"",authDomain:"",databaseURL:"",projectId:"",appId:""},API_URL:"https://script.google.com/macros/s/AKfycbxJs4i25-sPe7NqemT5VVX96dl5nkrf-EdJOw-gLgfhNZMgI5i548C2-wjR5IvP2ogS/exec",POLL_SEC:6,SHOW:50,RIVER_MAX:innerWidth<600?16:innerWidth<1025?24:32,FLOAT_SEC:140};
 
 const OPT={
  base:[["banana","🍃","ใบตอง",1],["bread","🍞","ขนมปัง",1],["trunk","🌴","ต้นกล้วย",1],["coco","🥥","กะลา",1],["lotus","🪷","กลีบบัว",1]],
@@ -441,15 +441,50 @@ const okPhoto=u=>typeof u==="string"&&(/^https:\/\/lh3\.googleusercontent\.com\/
 const av=k=>okPhoto(k.photo)?`<img class="av" src="${k.photo}" alt="">`:`<span class="av avt">🙏</span>`;
 async function api(){const r=await fetch(CONFIG.API_URL+"?t="+Date.now());return r.json()}
 let total=0;
+/* ===== Firebase Realtime Database (เรียลไทม์ < 1 วินาที) — ใส่ค่าใน CONFIG.FIREBASE เพื่อเปิดใช้ =====
+   Google Sheet (API_URL) ยังรับสำเนาข้อมูลทุกกระทงไว้เป็นคลังถาวร/ส่งออก Excel */
+const useFB=!!(CONFIG.FIREBASE&&CONFIG.FIREBASE.databaseURL);
+let FB=null;const pendingIds=new Set();
+function loadJS(src){return new Promise((ok,no)=>{const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+const fbRow=(id,v)=>({id,name:v.name,wish:v.wish||"",img:v.img||null,base:v.base,flower:v.flower,candle:v.candle,deco:v.deco,photo:v.photo||null,
+ created_at:new Date(typeof v.created_at==="number"?v.created_at:Date.now()).toISOString()});
+async function fbInit(){
+ const V="10.12.2";await loadJS(`https://www.gstatic.com/firebasejs/${V}/firebase-app-compat.js`);await loadJS(`https://www.gstatic.com/firebasejs/${V}/firebase-database-compat.js`);
+ firebase.initializeApp(CONFIG.FIREBASE);const db=firebase.database();FB={db,ref:db.ref("krathong"),total:db.ref("stats/total")};
+ FB.total.on("value",s=>{total=s.val()||0;$("count").textContent=total});
+ const q=FB.ref.orderByChild("created_at").limitToLast(CONFIG.SHOW);
+ const snap=await q.once("value");const rows=[];snap.forEach(c=>{const v=c.val();if(v&&v.approved!==false)rows.push(fbRow(c.key,v))});
+ return rows;
+}
+function fbListen(){
+ const q=FB.ref.orderByChild("created_at").limitToLast(CONFIG.SHOW);
+ q.on("child_added",c=>{const v=c.val(),id=c.key;if(!v||v.approved===false||pendingIds.has(id)||data.some(d=>String(d.id)===id))return;
+  const k=fbRow(id,v);data.unshift(k);data.length=Math.min(data.length,CONFIG.SHOW);addToRiver(k,false);ticker();today();toast("🪷 "+k.name+" เพิ่งลอยกระทง")});
+ q.on("child_changed",c=>{if(c.val()&&c.val().approved===false)fbHide(c.key)});
+ FB.ref.on("child_removed",c=>fbHide(c.key));
+}
+function fbHide(id){const i=data.findIndex(d=>String(d.id)===id);if(i>-1)data.splice(i,1);
+ const el=river.querySelector(`.kt[data-id="${CSS.escape(id)}"]`);if(el){const j=RV.indexOf(el);if(j>-1)RV.splice(j,1);el.style.opacity=0;setTimeout(()=>el.remove(),1500);layout()}ticker();today()}
+async function fbSave(k){
+ const r=FB.ref.push();pendingIds.add(r.key);
+ const rec={name:k.name,wish:k.wish||"",img:k.img||null,base:k.base,flower:k.flower,candle:k.candle,deco:k.deco,photo:k.photo||null,approved:true,created_at:firebase.database.ServerValue.TIMESTAMP};
+ Object.keys(rec).forEach(x=>rec[x]===null&&delete rec[x]);
+ await r.set(rec);FB.total.transaction(n=>(n||0)+1);
+ if(CONFIG.API_URL)fetch(CONFIG.API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(k)}).catch(()=>{}); // สำเนาลง Google Sheet
+ return {...k,id:r.key,created_at:new Date().toISOString()};
+}
 async function load(){
- if(useDB){try{const j=await api();data=j.rows||[];total=j.total||data.length}catch(e){console.warn(e);toast("โหลดข้อมูลไม่สำเร็จ")}}
+ if(useFB){try{data=await fbInit()}catch(e){console.warn(e);toast("เชื่อมต่อฐานข้อมูลไม่สำเร็จ")}}
+ else if(useDB){try{const j=await api();data=j.rows||[];total=j.total||data.length}catch(e){console.warn(e);toast("โหลดข้อมูลไม่สำเร็จ")}}
  else{data=JSON.parse(localStorage.getItem("kt_demo")||"null")||demoSeed();total=data.length}
  data=data.sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at))).slice(0,CONFIG.SHOW);$("count").textContent=total;
  mine.forEach(m=>{if(!data.find(d=>d.id===m.id))data.push(m)});
  const list=[...data.filter(d=>isMine(d)),...data.filter(d=>!isMine(d))].slice(0,CONFIG.RIVER_MAX);
  list.sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at))).forEach(k=>addToRiver(k,true));ticker();
+ if(useFB&&FB)fbListen();
 }
 async function save(k){
+ if(useFB)return fbSave(k);
  if(useDB){const r=await fetch(CONFIG.API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(k)});const j=await r.json();if(!j.ok)throw new Error(j.error||"fail");return j.row}
  k.id=crypto.randomUUID();k.created_at=new Date().toISOString();data.unshift(k);localStorage.setItem("kt_demo",JSON.stringify(data.slice(0,60)));return k;
 }
@@ -542,7 +577,7 @@ async function launch(){
  if(BAD.some(w=>(name+wish).toLowerCase().includes(w)))return toast("⚠️ กรุณาใช้ถ้อยคำที่สุภาพ");
  if(busy)return;busy=true;$("go").disabled=true;
  try{const k=await save({name,wish,...sel,photo});mine.unshift(k);localStorage.setItem("kt_mine",JSON.stringify(mine.slice(0,20)));
-  if(useDB)data.unshift(k);data.length=Math.min(data.length,CONFIG.SHOW);$("count").textContent=++total;ticker();today();close_(mMake);
+  if(useDB||useFB)data.unshift(k);data.length=Math.min(data.length,CONFIG.SHOW);if(!useFB)$("count").textContent=++total;ticker();today();close_(mMake);
   const el=addToRiver(k,false);
   burst(6);for(let i=0;i<10;i++)setTimeout(lantern,i*220);
   toast("🎉 ลอยกระทงสำเร็จ! ขอให้สมความปรารถนา ⭐");$("wish").value="";$("wc").textContent="0/200";photo=null;$("photo").value="";$("phImg").innerHTML="📷<small>อัปโหลด</small>";
@@ -581,7 +616,7 @@ async function poll(){if(document.hidden)return;try{
  const r=await fetch(CONFIG.API_URL+"?since="+encodeURIComponent(since)+"&t="+Date.now()),j=await r.json(),ids=new Set(data.map(d=>String(d.id)));
  const fresh=(j.rows||[]).filter(k=>!ids.has(String(k.id)));total=Math.max(total,j.total||0);$("count").textContent=total;
  if(fresh.length){data.unshift(...fresh);data.length=Math.min(data.length,CONFIG.SHOW);fresh.slice().reverse().forEach(k=>addToRiver(k,false));ticker();today();if(fresh.length<4)toast("🪷 "+fresh.map(k=>k.name).join(", ")+" เพิ่งลอยกระทง")}}catch(e){}}
-if(useDB){setInterval(poll,POLL);document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()})}
+if(useDB&&!useFB){setInterval(poll,POLL);document.addEventListener("visibilitychange",()=>{if(!document.hidden)poll()})}
 
 /* ===== ดนตรีคลอ: สังเคราะห์สดด้วย Web Audio (บันไดเสียงไทยเพนทาโทนิก ขิม + ฉิ่ง + โดรน) เล่นวนไม่สิ้นสุด ===== */
 const MUSIC={on:true,ctx:null,out:null,next:0,step:0,deg:4,timer:null};

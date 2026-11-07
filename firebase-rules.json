@@ -1,0 +1,27 @@
+{
+  "rules": {
+    "krathong": {
+      ".read": true,
+      ".indexOn": ["created_at"],
+      "$id": {
+        ".write": "!data.exists() && newData.exists()",
+        ".validate": "newData.hasChildren(['name','created_at','approved']) && newData.child('created_at').val() === now && newData.child('approved').val() === true",
+        "name":   { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40" },
+        "wish":   { ".validate": "newData.isString() && newData.val().length <= 200" },
+        "photo":  { ".validate": "newData.isString() && newData.val().length < 60000 && newData.val().beginsWith('data:image/jpeg;base64,')" },
+        "img":    { ".validate": "newData.isString() && newData.val().length <= 4" },
+        "base":   { ".validate": "newData.isString() && newData.val().length <= 12" },
+        "flower": { ".validate": "newData.isString() && newData.val().length <= 12" },
+        "candle": { ".validate": "newData.isString() && newData.val().length <= 12" },
+        "deco":   { ".validate": "newData.isString() && newData.val().length <= 12" },
+        "approved":   { ".validate": "newData.isBoolean()" },
+        "created_at": { ".validate": "newData.isNumber()" },
+        "$other": { ".validate": false }
+      }
+    },
+    "stats": {
+      ".read": true,
+      "total": { ".write": true, ".validate": "newData.isNumber() && newData.val() === (data.exists() ? data.val() : 0) + 1" }
+    }
+  }
+}
