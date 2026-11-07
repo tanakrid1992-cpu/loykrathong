@@ -620,16 +620,9 @@ if(useDB&&!useFB){setInterval(poll,POLL);document.addEventListener("visibilitych
 
 /* ===== ดนตรีคลอ: สังเคราะห์สดด้วย Web Audio (บันไดเสียงไทยเพนทาโทนิก ขิม + ฉิ่ง + โดรน) เล่นวนไม่สิ้นสุด ===== */
 const MUSIC={on:true,ctx:null,out:null,next:0,step:0,deg:4,timer:null};
-function mStart(){if(MUSIC.ctx){MUSIC.ctx.resume();return}
- const C=new (window.AudioContext||window.webkitAudioContext)(),out=C.createGain();out.gain.value=0;out.connect(C.destination);
- out.gain.linearRampToValueAtTime(.22,C.currentTime+3);
- const rv=C.createConvolver(),len=C.sampleRate*3,ir=C.createBuffer(2,len,C.sampleRate);
- for(let ch=0;ch<2;ch++){const d=ir.getChannelData(ch);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}
- rv.buffer=ir;const wet=C.createGain();wet.gain.value=.45;rv.connect(wet);wet.connect(out);
- const bus=C.createGain();bus.connect(out);bus.connect(rv);
- [65.41,98].forEach(f=>{const o=C.createOscillator(),g=C.createGain(),l=C.createOscillator(),lg=C.createGain();o.type="sine";o.frequency.value=f;g.gain.value=.05;
-  l.frequency.value=.07;lg.gain.value=.025;l.connect(lg);lg.connect(g.gain);o.connect(g);g.connect(bus);o.start();l.start()});
- Object.assign(MUSIC,{ctx:C,out:bus,next:C.currentTime+.3});MUSIC.timer=setInterval(mSched,100)}
+/* เพลงคลอ: ไฟล์ music.mp3 เล่นวนไม่หยุด (สตรีมทีละส่วน ไม่ต้องโหลดทั้งไฟล์) */
+const BGM=new Audio("music.mp3");BGM.loop=true;BGM.preload="none";BGM.volume=0;
+function mStart(){if(!BGM.paused)return;const p=BGM.play();if(p)p.then(()=>{MUSIC.ctx={state:"running"};let v=0;const t=setInterval(()=>{v=Math.min(.55,v+.05);BGM.volume=v;if(v>=.55)clearInterval(t)},200)}).catch(()=>{})}
 const SCALE=[261.63,293.66,329.63,392,440,523.25,587.33,659.25,783.99,880];
 function pluck(f,t,v){const C=MUSIC.ctx;[1,2.01].forEach((m,i)=>{const o=C.createOscillator(),g=C.createGain();o.type=i?"sine":"triangle";o.frequency.value=f*m;
  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v/(i?3:1),t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+(i?.6:1.6));o.connect(g);g.connect(MUSIC.out);o.start(t);o.stop(t+1.7)})}
@@ -644,7 +637,7 @@ function mSched(){const C=MUSIC.ctx,beat=60/68/2;while(MUSIC.next<C.currentTime+
 try{mStart()}catch(e){}
 const kick=()=>{try{mStart();if(MUSIC.ctx&&MUSIC.ctx.state==="running")KE.forEach(ev=>removeEventListener(ev,kick,true))}catch(e){}};
 const KE=["pointerdown","touchstart","touchend","click","keydown","wheel","scroll"];KE.forEach(ev=>addEventListener(ev,kick,{capture:true,passive:true}));
-document.addEventListener("visibilitychange",()=>{if(!MUSIC.ctx)return;if(document.hidden)MUSIC.ctx.suspend();else if(MUSIC.on)MUSIC.ctx.resume()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)BGM.pause();else if(MUSIC.ctx)BGM.play().catch(()=>{})});
 </script>
 </body>
 </html>
