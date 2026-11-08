@@ -310,7 +310,7 @@ textarea{resize:none;height:66px}
 
 <script>
 /* ===== CONFIG ===== */
-const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",FIREBASE:{apiKey:"AIzaSyC1bgFPWYius-4Q1IJ0j61SjBMs6tG9t48",authDomain:"tanakrid90-46d47.firebaseapp.com",databaseURL:"https://tanakrid90-46d47-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"tanakrid90-46d47",appId:"1:824337779321:web:dcf5243cb80ea9ee7022a8"},API_URL:"https://script.google.com/macros/s/AKfycbxJs4i25-sPe7NqemT5VVX96dl5nkrf-EdJOw-gLgfhNZMgI5i548C2-wjR5IvP2ogS/exec",POLL_SEC:6,SHOW:50,RIVER_MAX:innerWidth<600?16:innerWidth<1025?24:32,FLOAT_SEC:140};
+const CONFIG={PORTAL_URL:"https://klongtamru-smartcity.in.th",FIREBASE:{apiKey:"AIzaSyC1bgFPWYius-4Q1IJ0j61SjBMs6tG9t48",authDomain:"tanakrid90-46d47.firebaseapp.com",databaseURL:"https://tanakrid90-46d47-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"tanakrid90-46d47",appId:"1:824337779321:web:dcf5243cb80ea9ee7022a8"},API_URL:"https://script.google.com/macros/s/AKfycbxJs4i25-sPe7NqemT5VVX96dl5nkrf-EdJOw-gLgfhNZMgI5i548C2-wjR5IvP2ogS/exec",POLL_SEC:6,SHOW:50,RIVER_MAX:innerWidth<600?10:innerWidth<1025?16:22,FLOAT_SEC:120};
 
 const OPT={
  base:[["banana","🍃","ใบตอง",1],["bread","🍞","ขนมปัง",1],["trunk","🌴","ต้นกล้วย",1],["coco","🥥","กะลา",1],["lotus","🪷","กลีบบัว",1]],
@@ -563,12 +563,15 @@ function VK(){return Math.min(1.3,Math.max(.5,Math.min(innerHeight/800,innerWidt
 let rz;addEventListener("resize",()=>{clearTimeout(rz);rz=setTimeout(layout,150)});
 /* เรียงตามลำดับ: ใหม่สุดอยู่หน้าสุด เก่ากว่าขยับไปด้านหลัง */
 const RV=[];
-function layout(){const n=RV.length,k=VK();RV.forEach((el,i)=>{const t=n>1?i/(n-1):0,y=Math.max(1,Math.min(84,2+80*Math.pow(1-t,1.35)+(+el.dataset.j))),sc=(.2+Math.pow(y/83,1.25)*.95)*k;
+function layout(){const n=RV.length,k=VK();RV.forEach((el,i)=>{const t=n>1?i/(n-1):0,y=Math.max(1,Math.min(84,4+76*Math.pow(1-t,1.05)+(+el.dataset.j))),sc=(.2+Math.pow(y/83,1.25)*.95)*k;
  el.style.top=y+"%";el.style.zIndex=Math.round(y)+(el.classList.contains("mine")?100:0);const s=el.firstElementChild;s.style.transform=`translateY(-85%) scale(${sc})`;s.style.setProperty("--ls",LS(sc))})}
 function addToRiver(k,first){if(isBad(k.name)||isBad(k.wish))return null;
- const el=document.createElement("div"),m=isMine(k),dur=CONFIG.FLOAT_SEC*(.9+Math.random()*.25);
- el.className="kt"+(m?" mine":"");el.dataset.id=k.id;el.dataset.j=(Math.random()*4-2).toFixed(2);
- el.style.animationDuration=dur+"s";el.style.animationDelay=(first?-Math.random()*dur:-dur*(.05+Math.random()*.1))+"s";
+ const el=document.createElement("div"),m=isMine(k),dur=CONFIG.FLOAT_SEC;
+ el.className="kt"+(m?" mine":"");el.dataset.id=k.id;el.dataset.j=(Math.random()*1.6-.8).toFixed(2);
+ /* ระยะห่างแนวนอน: ทุกใบลอยความเร็วเท่ากัน และเว้นระยะจากใบก่อนหน้าด้วยอัตราส่วนทองคำ → ไม่ทับกัน ไหลวนสม่ำเสมอ */
+ const nb=first?RV[RV.length-1]:RV[0],now=performance.now(),pr=e=>(e._q+(now-e._t)/1000/dur)%1;
+ let q=nb?(first?pr(nb)-.382:pr(nb)+.382):.12;if(!first&&RV[1]){const d=((q-pr(RV[1]))%1+1)%1;if(d<.12||d>.88)q+=.19}q=((q%1)+1)%1;el._q=q;el._t=now;
+ el.style.animationDuration=dur+"s";el.style.animationDelay=(-q*dur)+"s";
  el.innerHTML=`<div class="sc"><div class="streak"></div><div class="halo"></div><div class="bob" style="animation-delay:${-Math.random()*3}s">${art(k)}</div><div class="lbl">${okPhoto(k.photo)?`<img class="avb" src="${k.photo}" alt="">`:""}<span class="nm">${m?"⭐ ":""}${esc(k.name)}</span>${k.wish?`<span class="lw">${esc(k.wish)}</span>`:""}</div></div>`;
  el.querySelector(".sc").onclick=()=>view(k);river.appendChild(el);
  if(first)RV.push(el);else{RV.unshift(el);while(RV.length>CONFIG.RIVER_MAX){const o=RV.pop();o.style.opacity=0;setTimeout(()=>o.remove(),2000)}}
