@@ -508,8 +508,8 @@ body {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(0, 0, 10, .55);
-  backdrop-filter: blur(3px);
+  background: rgba(0, 0, 10, .6);
+  visibility: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1609,6 +1609,8 @@ textarea {
   font-size: 16px;
   padding: 9px 24px;
 }
+.modal.show{visibility:visible}
+.modal:not(.show) *{visibility:hidden}
 </style>
 </head>
 <body>
