@@ -4,8 +4,8 @@
       ".read": true,
       ".indexOn": ["created_at"],
       "$id": {
-        ".write": "!data.exists() && newData.exists()",
-        ".validate": "newData.hasChildren(['name','created_at','approved']) && newData.child('created_at').val() === now && newData.child('approved').val() === true",
+        ".write": "(!data.exists() && newData.exists()) || (auth != null && auth.token.email === 'admin@klongtamru-smartcity.in.th')",
+        ".validate": "(auth != null && auth.token.email === 'admin@klongtamru-smartcity.in.th') || (newData.hasChildren(['name','created_at','approved']) && newData.child('created_at').val() === now && newData.child('approved').val() === true)",
         "name":   { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40" },
         "wish":   { ".validate": "newData.isString() && newData.val().length <= 200" },
         "photo":  { ".validate": "newData.isString() && newData.val().length < 60000 && newData.val().beginsWith('data:image/jpeg;base64,')" },
@@ -21,7 +21,10 @@
     },
     "stats": {
       ".read": true,
-      "total": { ".write": true, ".validate": "newData.isNumber() && newData.val() === (data.exists() ? data.val() : 0) + 1" }
+      "total": {
+        ".write": true,
+        ".validate": "newData.isNumber() && (newData.val() === (data.exists() ? data.val() : 0) + 1 || (auth != null && auth.token.email === 'admin@klongtamru-smartcity.in.th'))"
+      }
     }
   }
 }
