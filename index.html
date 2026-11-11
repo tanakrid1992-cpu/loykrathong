@@ -245,6 +245,15 @@ textarea{resize:none;height:66px}
 #tk,.lantern,.firefly{will-change:transform}.kt{contain:layout style}
 .chr.hero img{filter:brightness(1.05) drop-shadow(0 0 6px rgba(255,214,110,.9))}
 .ttl h1 .logo{height:1.5em;width:auto;vertical-align:-.38em;margin-right:.1em;filter:drop-shadow(0 0 6px rgba(255,215,120,.6))}
+#bless{position:fixed;inset:0;z-index:40;background:rgba(3,6,25,0);transition:background .6s;cursor:pointer}
+#bless.on{background:rgba(3,6,25,.62)}
+#bless .bfig{position:fixed;object-fit:contain;transition:all .7s cubic-bezier(.2,1.1,.3,1);filter:drop-shadow(0 0 22px rgba(255,210,120,.8));z-index:1}
+#bless .bcard{position:fixed;left:50%;bottom:6vh;transform:translate(-50%,40px);opacity:0;transition:all .6s .35s;width:min(560px,92vw);text-align:center;
+ background:linear-gradient(135deg,rgba(40,20,80,.92),rgba(10,25,70,.92));border:1.5px solid #ffd77a;border-radius:22px;padding:16px 18px 14px;box-shadow:0 0 40px rgba(255,200,90,.45);z-index:2}
+#bless.on .bcard{opacity:1;transform:translate(-50%,0)}
+#bless .bt{color:#ffd77a;font-weight:600;font-size:15px;margin-bottom:6px}
+#bless .bm{font-size:clamp(18px,2.6vw,26px);line-height:1.45;color:#fff;text-shadow:0 0 12px rgba(255,210,120,.6);margin-bottom:12px}
+#bless .bgo{font-size:16px;padding:9px 24px}
 </style>
 </head>
 <body>
@@ -526,6 +535,27 @@ const isMine=k=>mine.some(m=>m.id===k.id);
 /* ===== ฉากหลังอัตโนมัติ: PC / Tablet / Smartphone ===== */
 const BGS=[{src:"bg-phone.webp",moon:180,stage:{berm:[150,882,900,859],h:215},ov:"piles-phone.webp",w:941,h:1672,water:.55,piles:[[270,804,225,315,847],[325,807,297,355,839],[67,797,-10,185,875]]},{src:"bg-tablet.webp",moon:192,stage:{berm:[350,678,1150,654],h:185},ov:"piles-tablet.webp",w:1448,h:1086,water:.66,piles:[[405,580,325,485,640],[505,586,460,555,627],[95,567,-20,250,683]]},{src:"bg.webp",moon:39,stage:{berm:[500,542,1200,519],h:165},ov:"piles.webp",w:1672,h:941,water:.62,piles:[[465,427,380,560,495],[580,434,530,640,480],[110,412,-30,300,545]]}];
 // slot: -1 = ซ้าย, 0 = กลาง, 1 = ขวา · stage.berm ใน BGS = เส้นขอบคันนาเกลือ [x1,y1,x2,y2], stage.h = ความสูงตัวละคร (พิกเซลของภาพฉาก) · delay = เวลาไสลด์ขึ้น (ms)
+/* ===== คลิกตัวละคร: ลอยออกมาข้างหน้าพร้อมคำอวยพรสุ่ม (300 คำ) ===== */
+const BW=["มีสุขภาพแข็งแรง","ร่ำรวยเงินทอง","ครอบครัวอบอุ่น","การงานก้าวหน้า","โชคดีมีชัย","ปราศจากโรคภัย","สมหวังทุกประการ","ค้าขายเจริญรุ่งเรือง",
+ "มีความสุขทุกวัน","แคล้วคลาดปลอดภัย","จิตใจผ่องใส","มีแต่สิ่งดีๆ เข้ามา","ประสบความสำเร็จ","อายุมั่นขวัญยืน","เงินทองไหลมาเทมา","ความรักสดใส",
+ "หน้าที่การงานมั่นคง","ลูกหลานเป็นคนดี","มีกินมีใช้ไม่ขาดมือ","เจริญด้วยอายุ วรรณะ สุขะ พละ","ทุกข์โศกโรคภัยหายไปกับสายน้ำ","คิดสิ่งใดสมปรารถนา",
+ "เรียนเก่งสอบได้คะแนนดี","มีโชคลาภไม่ขาดสาย","มีเพื่อนดีมิตรแท้"];
+const BP=["ขอให้","ขออำนาจแม่พระคงคาอำนวยพรให้","ขอพรวันลอยกระทงให้ท่าน","ขอแสงจันทร์วันเพ็ญส่องนำให้ท่าน","ชาวคลองตำหรุขออวยพรให้ท่าน"];
+const BLESS=[];for(let i=0;i<BW.length;i++)for(let j=i+1;j<BW.length&&BLESS.length<300;j++)BLESS.push(`${BP[BLESS.length%BP.length]}${BW[i]} และ${BW[j]}`);
+let lastBless=-1;
+function blessFrom(img){
+ if($("bless"))return;const r=img.getBoundingClientRect(),ov=document.createElement("div");ov.id="bless";
+ let i;do{i=Math.floor(Math.random()*BLESS.length)}while(i===lastBless&&BLESS.length>1);lastBless=i;
+ const H=Math.min(innerHeight*.62,560),W=H*(r.width/r.height);
+ ov.innerHTML=`<img class="bfig" src="${img.src}" alt=""><div class="bcard"><div class="bt">🪷 คำอวยพร 🪷</div><div class="bm">${BLESS[i]}</div><button class="btn bgo">🪷 ลอยกระทง</button></div>`;
+ document.body.appendChild(ov);const f=ov.querySelector(".bfig");img.style.visibility="hidden";
+ Object.assign(f.style,{left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px"});
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{ov.classList.add("on");Object.assign(f.style,{left:(innerWidth-W)/2+"px",top:Math.max(10,innerHeight*.06)+"px",width:W+"px",height:H+"px"})}));
+ setTimeout(()=>{const c=f.getBoundingClientRect();for(let k=0;k<60;k++){const a=Math.random()*6.28,v=1.5+Math.random()*3.5;P.push({x:c.left+c.width/2,y:c.top+c.height*.45,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1,l:50+Math.random()*30,c:k%3?"#ffe08a":"#3ee6ff"})}},700);
+ const close=go=>{ov.classList.remove("on");Object.assign(f.style,{left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px"});
+  setTimeout(()=>{ov.remove();img.style.visibility="";if(go)openMake()},650)};
+ ov.onclick=e=>close(!!e.target.closest(".bgo"));
+}
 /* ===== กรุ๊ปตัวละคร: ลอยลงจากฟ้าตามลำดับในกรุ๊ป (คนแรกในรายการลงก่อน) =====
    slot: -1 = ซ้าย, 0 = กลาง, 1 = ขวา · AR = กว้าง/สูง ของรูป · เพิ่มกรุ๊ป 2,3,4 ได้โดยเพิ่ม [...] ต่อท้าย
    มีมากกว่า 1 กรุ๊ป: แต่ละกรุ๊ปอยู่ GROUP_SEC วินาที แล้วลอยกลับขึ้นฟ้า กรุ๊ปถัดไปลงมาแทน (วนไปเรื่อยๆ) */
@@ -536,7 +566,7 @@ const GROUPS=[
 let CHARS=[],gi=0;
 function showGroup(n){const box=$("chars");box.innerHTML="";
  CHARS=GROUPS[n].map((c,i)=>({...c,id:"chr"+i,delay:600+i*DROP_GAP}));
- CHARS.forEach(c=>{const d=document.createElement("div");d.className="chr";d.id=c.id;d.style.zIndex=c.slot?1:2;if(c.star)d.classList.add("hero");d.innerHTML=`<img src="${c.img}" alt="" onclick="openMake()">`;box.appendChild(d)});
+ CHARS.forEach(c=>{const d=document.createElement("div");d.className="chr";d.id=c.id;d.style.zIndex=c.slot?1:2;if(c.star)d.classList.add("hero");d.innerHTML=`<img src="${c.img}" alt="" onclick="blessFrom(this)">`;box.appendChild(d)});
  fitBg();
  CHARS.forEach(c=>setTimeout(()=>{const el=$(c.id);if(!el)return;el.classList.add("up");setTimeout(()=>{const r=el.getBoundingClientRect();for(let i=0;i<26;i++){const a=Math.random()*6.28,v=1+Math.random()*2.5;P.push({x:r.left+r.width/2,y:r.bottom-6,vx:Math.cos(a)*v,vy:-Math.abs(Math.sin(a)*v),l:40+Math.random()*20,c:i%2?"#ffe08a":"#3ee6ff"})}},2100)},c.delay));
  if(GROUPS.length>1)setTimeout(()=>{CHARS.forEach((c,i)=>setTimeout(()=>{const el=$(c.id);if(el)el.classList.remove("up")},i*400));
