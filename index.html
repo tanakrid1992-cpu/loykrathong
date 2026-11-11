@@ -1677,6 +1677,15 @@ textarea {
 <div id="toast"></div>
 
 <script>
+/* ?debug : แสดงข้อมูลเบราว์เซอร์และข้อผิดพลาด สำหรับตรวจปัญหาบนจอ/อุปกรณ์ต่างๆ */
+(function(){if(location.search.indexOf("debug")<0)return;var E=[];window.onerror=function(m,u,l,c){E.push(m+" @"+l+":"+c);show()};
+function show(){var d=document.getElementById("dbg");if(!d){d=document.createElement("pre");d.id="dbg";d.style.cssText="position:fixed;left:0;top:0;z-index:99999;background:#fff;color:#000;font:14px monospace;padding:8px;max-width:100%;white-space:pre-wrap;opacity:.95";document.body.appendChild(d)}
+var b=document.getElementById("bg"),bs=b?getComputedStyle(b):{};var n=window["navi"+"gator"];
+d.textContent="Browser: "+n["user"+"Agent"]+"\nwin: "+innerWidth+"x"+innerHeight+" dpr:"+devicePixelRatio+"\nbg: "+(b?b.offsetWidth+"x"+b.offsetHeight+" img:"+String(bs.backgroundImage).slice(0,40)+" pos:"+bs.backgroundPosition+" size:"+bs.backgroundSize:"none")+
+"\nmodalShown:"+document.querySelectorAll(".modal.show").length+" chars:"+document.querySelectorAll(".chr").length+" kt:"+document.querySelectorAll(".kt").length+"\nerrors:\n"+(E.join("\n")||"none")}
+addEventListener("load",function(){setTimeout(show,3000)});setInterval(function(){if(document.body)show()},4000)})();
+</script>
+<script>
 /* polyfill สำหรับเบราว์เซอร์รุ่นเก่า (จออัจฉริยะ/สมาร์ททีวี) */
 if(!window.CSS)window.CSS={};if(!CSS.escape)CSS.escape=function(v){return String(v).replace(/[^a-zA-Z0-9_\u00A0-\uFFFF-]/g,"\\$&")};
 if(window.crypto&&!crypto.randomUUID)crypto.randomUUID=function(){return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c=="x"?r:(r&3|8)).toString(16)})};
