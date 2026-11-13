@@ -2345,7 +2345,7 @@ function showGroup(n) {
 }
 let curBg = "";
 function fitBg() {
-  const W = innerWidth, H = innerHeight, ar = W / H, b = ar < 0.8 ? BGS[0] : ar < 1.55 ? BGS[1] : BGS[2];
+  const sc = $("scene"), W = sc.clientWidth || innerWidth, H = sc.clientHeight || innerHeight, ar = W / H, b = ar < 0.8 ? BGS[0] : ar < 1.55 ? BGS[1] : BGS[2];
   if (b.src !== curBg) {
     curBg = b.src;
     $("bg").style.backgroundImage = `url(${b.src})`;
@@ -2356,6 +2356,7 @@ function fitBg() {
   const lx = b.piles[2][0] * k + ox;
   if (lx < 45) ox = Math.max(W - b.w * k, Math.min(0, ox + 45 - lx));
   $("bg").style.backgroundPosition = $("piles").style.backgroundPosition = `${ox}px ${oy}px`;
+  $("bg").style.backgroundSize = $("piles").style.backgroundSize = `${b.w * k}px ${b.h * k}px`;
   CHARS.forEach((c) => placeChar(c, b, k, ox, oy, W));
   document.documentElement.style.setProperty("--hz", Math.min(80, Math.max(35, wy / H * 100 + 1)) + "%");
 }
@@ -2364,6 +2365,12 @@ function placeChar(c, b, k, ox, oy, W) {
   Object.assign(el.style, { left: cx2 - w / 2 + "px", top: foot - L + "px", width: w + "px", height: L + "px", zIndex: c.slot ? 2 : 3 });
 }
 addEventListener("resize", fitBg);
+addEventListener("orientationchange", () => setTimeout(fitBg, 300));
+addEventListener("load", fitBg);
+addEventListener("pageshow", fitBg);
+if (window.visualViewport) visualViewport.addEventListener("resize", fitBg);
+if (window.ResizeObserver) new ResizeObserver(fitBg).observe($("scene"));
+[500, 1500, 3000].forEach((t) => setTimeout(fitBg, t));
 showGroup(0);
 const river = $("river");
 (function() {
