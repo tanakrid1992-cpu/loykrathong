@@ -1641,6 +1641,7 @@ textarea {
 
 <div class="dock">
   <button class="ic" onclick="openList()">🙏<span>คำอธิษฐาน</span></button>
+  <button class="ic" onclick="findMine()">⭐<span>กระทงของฉัน</span></button>
   <button class="btn" onclick="openMake()">🪷 ลอยกระทง</button>
 </div>
 
@@ -2449,21 +2450,33 @@ function view(k) {
   open_(mView);
   setTimeout(() => sparkle(mView.querySelector(".box")), 200);
 }
+let fmI = 0;
 function findMine() {
-  const els = [...river.querySelectorAll(".kt.mine")];
-  const el = els.find((e) => {
-    const r2 = e.getBoundingClientRect();
-    return r2.left > 0 && r2.left < innerWidth - 60;
-  }) || els[0];
-  if (!el) return toast("\u0E22\u0E31\u0E07\u0E44\u0E21\u0E48\u0E21\u0E35\u0E01\u0E23\u0E30\u0E17\u0E07\u0E02\u0E2D\u0E07\u0E04\u0E38\u0E13 \u0E01\u0E14 \u{1FAB7} \u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07 \u0E01\u0E48\u0E2D\u0E19\u0E19\u0E30");
-  const r = el.querySelector("svg").getBoundingClientRect();
-  if (r.left < 0 || r.left > innerWidth) {
-    toast("\u2B50 \u0E01\u0E23\u0E30\u0E17\u0E07\u0E02\u0E2D\u0E07\u0E04\u0E38\u0E13\u0E01\u0E33\u0E25\u0E31\u0E07\u0E25\u0E2D\u0E22\u0E01\u0E25\u0E31\u0E1A\u0E21\u0E32 \u0E23\u0E2D\u0E2A\u0E31\u0E01\u0E04\u0E23\u0E39\u0E48\u0E19\u0E30");
-    return;
+  if (!mine.length) {
+    toast("\u0E22\u0E31\u0E07\u0E44\u0E21\u0E48\u0E21\u0E35\u0E01\u0E23\u0E30\u0E17\u0E07\u0E02\u0E2D\u0E07\u0E04\u0E38\u0E13 \u0E25\u0E2D\u0E22\u0E01\u0E48\u0E2D\u0E19\u0E19\u0E30 \u{1FAB7}");
+    return openMake();
   }
-  el.querySelector(".sc").animate([{ filter: "brightness(1)" }, { filter: "brightness(2.2)" }, { filter: "brightness(1)" }], { duration: 1500, iterations: 2 });
-  firework(r.left + r.width / 2, r.top - 60);
-  toast("\u2B50 \u0E19\u0E35\u0E48\u0E04\u0E37\u0E2D\u0E01\u0E23\u0E30\u0E17\u0E07\u0E02\u0E2D\u0E07\u0E04\u0E38\u0E13");
+  const k = mine[fmI++ % mine.length];
+  let el = RV.find((e) => e.dataset.id === String(k.id));
+  if (!el) el = addToRiver(k, false);
+  if (!el) return toast("\u0E44\u0E21\u0E48\u0E1E\u0E1A\u0E01\u0E23\u0E30\u0E17\u0E07");
+  RV.splice(RV.indexOf(el), 1);
+  RV.splice(Math.min(2, RV.length), 0, el);
+  const dur = CONFIG.FLOAT_SEC, q = (160 + innerWidth * 0.42) / (innerWidth + 220);
+  el.style.animation = "none";
+  void el.offsetWidth;
+  el.style.animation = "";
+  el.style.animationDuration = dur + "s";
+  el.style.animationDelay = -q * dur + "s";
+  el._q = q;
+  el._t = performance.now();
+  layout();
+  setTimeout(() => {
+    const r = el.querySelector("svg").getBoundingClientRect();
+    el.querySelector(".sc").animate([{ filter: "brightness(1)" }, { filter: "brightness(2.2)" }, { filter: "brightness(1)" }], { duration: 1500, iterations: 2 });
+    firework(r.left + r.width / 2, r.top - 60);
+    toast("\u2B50 \u0E19\u0E35\u0E48\u0E04\u0E37\u0E2D\u0E01\u0E23\u0E30\u0E17\u0E07\u0E02\u0E2D\u0E07\u0E04\u0E38\u0E13" + (mine.length > 1 ? ` (${(fmI - 1) % mine.length + 1}/${mine.length})` : ""));
+  }, 2600);
 }
 let busy = false;
 async function launch() {
