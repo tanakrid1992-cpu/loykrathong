@@ -1687,36 +1687,114 @@ d.textContent="Browser: "+n["user"+"Agent"]+"\nwin: "+innerWidth+"x"+innerHeight
 addEventListener("load",function(){setTimeout(show,3000)});setInterval(function(){if(document.body)show()},4000)})();
 </script>
 <script>
+/* ES5 polyfills สำหรับจออัจฉริยะ/สมาร์ททีวีรุ่นเก่า */
+(function(){var A=Array.prototype,S=String.prototype,O=Object;
+if(!O.assign)O.assign=function(t){for(var i=1;i<arguments.length;i++){var s=arguments[i];if(s)for(var k in s)if(O.prototype.hasOwnProperty.call(s,k))t[k]=s[k]}return t};
+if(!O.entries)O.entries=function(o){return O.keys(o).map(function(k){return[k,o[k]]})};
+if(!O.values)O.values=function(o){return O.keys(o).map(function(k){return o[k]})};
+if(!A.find)A.find=function(f,t){for(var i=0;i<this.length;i++)if(f.call(t,this[i],i,this))return this[i]};
+if(!A.findIndex)A.findIndex=function(f,t){for(var i=0;i<this.length;i++)if(f.call(t,this[i],i,this))return i;return-1};
+if(!A.includes)A.includes=function(v){return this.indexOf(v)>-1};
+if(!A.fill)A.fill=function(v){for(var i=0;i<this.length;i++)this[i]=v;return this};
+if(!Array.from)Array.from=function(a,f){var r=[],n=a.length;if(n==null&&a.forEach){a.forEach(function(x){r.push(x)})}else for(var i=0;i<n;i++)r.push(a[i]);return f?r.map(f):r};
+if(!Array.of)Array.of=function(){return A.slice.call(arguments)};
+if(!S.includes)S.includes=function(s,p){return this.indexOf(s,p)>-1};
+if(!S.startsWith)S.startsWith=function(s,p){return this.substr(p||0,s.length)===s};
+if(!S.endsWith)S.endsWith=function(s){return this.slice(-s.length)===s};
+if(!S.repeat)S.repeat=function(n){return new Array(n+1).join(this)};
+if(!S.padStart)S.padStart=function(n,c){var s=String(this);c=c||" ";while(s.length<n)s=c+s;return s.slice(-n)};
+if(!Math.sign)Math.sign=function(x){return x>0?1:x<0?-1:x};
+if(!Number.isNaN)Number.isNaN=function(x){return x!==x};
+if(window.NodeList&&!NodeList.prototype.forEach)NodeList.prototype.forEach=A.forEach;
+if(window.Element&&!Element.prototype.closest)Element.prototype.closest=function(s){var e=this,m=e.matches||e.webkitMatchesSelector||e.msMatchesSelector;while(e&&e.nodeType===1){if((e.matches||e.webkitMatchesSelector).call(e,s))return e;e=e.parentElement}return null};
+if(window.Element&&!Element.prototype.matches)Element.prototype.matches=Element.prototype.webkitMatchesSelector;
+if(window.Element&&!Element.prototype.remove)Element.prototype.remove=function(){if(this.parentNode)this.parentNode.removeChild(this)};
+if(window.Element&&!Element.prototype.animate)Element.prototype.animate=function(){return{}};
+if(!window.performance)window.performance={};if(!performance.now)performance.now=function(){return Date.now()};
+})();
+function _callSpread(a, e, l) { return a.apply(e, l); }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var r, e, o = "function" == typeof Symbol ? Symbol : {}, n = o.iterator || "@@iterator", a = o.toStringTag || "@@toStringTag"; function i(o, n, a, i) { var u = n && n.prototype instanceof Generator ? n : Generator, f = Object.create(u.prototype); return _regeneratorDefine2(f, "_invoke", function (t, o, n) { var a, i, u, f = 0, p = n || [], y = !1, G = { p: 0, n: 0, v: r, a: l, f: l.bind(r, 4), d: function d(t, e) { return a = t, i = 0, u = r, G.n = e, c; } }; function l(t, o) { for (i = t, u = o, e = 0; !y && f && !n && e < p.length; e++) { var n, a = p[e], l = G.p, F = a[2]; t > 3 ? (n = F === o) && (u = a[(i = a[4]) ? 5 : (i = 3, 3)], a[4] = a[5] = r) : a[0] <= l && ((n = t < 2 && l < a[1]) ? (i = 0, G.v = o, G.n = a[1]) : l < F && (n = t < 3 || a[0] > o || o > F) && (a[4] = t, a[5] = o, G.n = F, i = 0)); } if (n || t > 1) return c; throw y = !0, o; } return function (n, p, F) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && l(p, F), i = p, u = F; (e = i < 2 ? r : u) || !y;) { a || (i ? (i > 1 && (G.n = i < 3 ? -1 : u), l(i, u)) : G.v = u); try { if (f = 2, a) { if (i || (n = "next"), e = a[n]) { if (!(e = e.call(a, u))) throw TypeError("iterator result is not an object"); if (!e.done) return e; u = e.value, i < 2 && (i = 0); } else 1 === i && (e = a.return) && e.call(a), i < 2 && (u = TypeError("The iterator does not provide a '" + n + "' method"), i = 1); a = r; } else if ((e = (y = G.n < 0) ? u : t.call(o, G)) !== c) break; } catch (t) { a = r, i = 1, u = t; } finally { f = 1; } } return { value: e, done: y }; }; }(o, a, i), !0), f; } var c = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} e = Object.getPrototypeOf; var u = [][n] ? e(e([][n]())) : (_regeneratorDefine2(e = {}, n, function () { return this; }), e), f = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(u); function p(r) { return Object.setPrototypeOf ? Object.setPrototypeOf(r, GeneratorFunctionPrototype) : (r.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(r, a, "GeneratorFunction")), r.prototype = Object.create(f), r; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(f, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, a, "GeneratorFunction"), _regeneratorDefine2(f), _regeneratorDefine2(f, a, "Generator"), _regeneratorDefine2(f, n, function () { return this; }), _regeneratorDefine2(f, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: p }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function _slicedToArray(e, i) { return _iterableToArrayLimit(e, i) || _unsupportedIterableToArray(e, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArrayLimit(r, t) { var e = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (Array.isArray(r) && (null == e || e === ("undefined" != typeof Symbol && [][Symbol.iterator]) || e === []["@@iterator"])) return r; if (null != e) { var l, n, i, a, u = [], o = !0, f = !1; try { if (i = (e = e.call(r)).next, 0 === t) { if (Object(e) !== e) return; o = !1; } else for (; !(o = (l = i.call(e)).done) && (u.push(l.value), u.length !== t); o = !0); } catch (r) { f = !0, n = r; } finally { try { if (!o && null != e.return && (a = e.return(), Object(a) !== a)) return; } finally { if (f) throw n; } } return u; } }
+function _toConsumableArray(a) { return _arrayWithoutHoles(a) || _iterableToArray(a) || _unsupportedIterableToArray(a) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(r) { var e = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (Array.isArray(r) && (null == e || e === ("undefined" != typeof Symbol && [][Symbol.iterator]) || e === []["@@iterator"])) return r; if (null != e) { for (var t, o = [], a = e.call(r); !(t = a.next()).done;) o.push(t.value); return o; } }
+function _arrayWithoutHoles(a) { if (Array.isArray(a)) return _arrayLikeToArray(a); }
+function _createForOfIteratorHelper(e, t) { var _n = "undefined" != typeof Symbol && e[Symbol.iterator] || e["@@iterator"]; if (!_n) { if (Array.isArray(e) || (_n = _unsupportedIterableToArray(e)) || t && e && "number" == typeof e.length) { _n && (e = _n); var o = 0, F = function F() {}; return { s: F, n: function n() { return o >= e.length ? { done: !0 } : { done: !1, value: e[o++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var a, u, i = !0; return { s: function s() { _n = _n.call(e); }, n: function n() { i = !0; var r = _n.next(); return r.done ? { done: !0 } : { value: r.value, done: i = !1 }; }, e: function e(r) { a = !0, u = r; }, f: function f() { try { i || null == _n.return || _n.return(); } finally { if (a) throw u; } } }; }
+function _unsupportedIterableToArray(t, e) { if (t) { if ("string" == typeof t) return _arrayLikeToArray(t, e); var o = {}.toString.call(t).slice(8, -1); return "Object" === o && t.constructor && (o = t.constructor.name), "Map" === o || "Set" === o ? Array.from(t) : "Arguments" === o || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(o) ? _arrayLikeToArray(t, e) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 /* polyfill สำหรับเบราว์เซอร์รุ่นเก่า (จออัจฉริยะ/สมาร์ททีวี) */
-if(!window.CSS)window.CSS={};if(!CSS.escape)CSS.escape=function(v){return String(v).replace(/[^a-zA-Z0-9_\u00A0-\uFFFF-]/g,"\\$&")};
-if(window.crypto&&!crypto.randomUUID)crypto.randomUUID=function(){return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c=="x"?r:(r&3|8)).toString(16)})};
+if (!window.CSS) window.CSS = {};
+if (!CSS.escape) CSS.escape = function (v) {
+  return String(v).replace(/[^a-zA-Z0-9_\u00A0-\uFFFF-]/g, "\\$&");
+};
+if (window.crypto && !crypto.randomUUID) crypto.randomUUID = function () {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0;
+    return (c == "x" ? r : r & 3 | 8).toString(16);
+  });
+};
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp.call(b, prop))
-      __defNormalProp(a, prop, b[prop]);
-  if (__getOwnPropSymbols)
-    for (var prop of __getOwnPropSymbols(b)) {
-      if (__propIsEnum.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
+var __defNormalProp = function __defNormalProp(obj, key, value) {
+  return key in obj ? __defProp(obj, key, {
+    enumerable: true,
+    configurable: true,
+    writable: true,
+    value: value
+  }) : obj[key] = value;
+};
+var __spreadValues = function __spreadValues(a, b) {
+  for (var prop in b || (b = {})) if (__hasOwnProp.call(b, prop)) __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols) {
+    var _iterator = _createForOfIteratorHelper(__getOwnPropSymbols(b)),
+      _step;
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var prop = _step.value;
+        if (__propIsEnum.call(b, prop)) __defNormalProp(a, prop, b[prop]);
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
     }
+  }
   return a;
 };
-var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-const CONFIG = { PORTAL_URL: "https://klongtamru-smartcity.in.th", FIREBASE: { apiKey: "AIzaSyC1bgFPWYius-4Q1IJ0j61SjBMs6tG9t48", authDomain: "tanakrid90-46d47.firebaseapp.com", databaseURL: "https://tanakrid90-46d47-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "tanakrid90-46d47", appId: "1:824337779321:web:dcf5243cb80ea9ee7022a8" }, API_URL: "https://script.google.com/macros/s/AKfycbxJs4i25-sPe7NqemT5VVX96dl5nkrf-EdJOw-gLgfhNZMgI5i548C2-wjR5IvP2ogS/exec", POLL_SEC: 6, SHOW: 50, RIVER_MAX: innerWidth < 600 ? 10 : innerWidth < 1025 ? 16 : 22, FLOAT_SEC: 120 };
-const OPT = {
-  base: [["banana", "\u{1F343}", "\u0E43\u0E1A\u0E15\u0E2D\u0E07", 1], ["bread", "\u{1F35E}", "\u0E02\u0E19\u0E21\u0E1B\u0E31\u0E07", 1], ["trunk", "\u{1F334}", "\u0E15\u0E49\u0E19\u0E01\u0E25\u0E49\u0E27\u0E22", 1], ["coco", "\u{1F965}", "\u0E01\u0E30\u0E25\u0E32", 1], ["lotus", "\u{1FAB7}", "\u0E01\u0E25\u0E35\u0E1A\u0E1A\u0E31\u0E27", 1]],
-  flower: [["marigold", "\u{1F33C}", "\u0E14\u0E32\u0E27\u0E40\u0E23\u0E37\u0E2D\u0E07"], ["rose", "\u{1F339}", "\u0E01\u0E38\u0E2B\u0E25\u0E32\u0E1A"], ["orchid", "\u{1F49C}", "\u0E01\u0E25\u0E49\u0E27\u0E22\u0E44\u0E21\u0E49"], ["jasmine", "\u{1F90D}", "\u0E21\u0E30\u0E25\u0E34"], ["lotusf", "\u{1F338}", "\u0E1A\u0E31\u0E27\u0E0A\u0E21\u0E1E\u0E39"]],
-  candle: [["gold", "\u{1F56F}\uFE0F", "\u0E40\u0E17\u0E35\u0E22\u0E19\u0E17\u0E2D\u0E07"], ["white", "\u{1F90D}", "\u0E40\u0E17\u0E35\u0E22\u0E19\u0E02\u0E32\u0E27"], ["triple", "\u{1F525}", "\u0E18\u0E39\u0E1B 3 + \u0E40\u0E17\u0E35\u0E22\u0E19"]],
-  deco: [["none", "\u2796", "\u0E44\u0E21\u0E48\u0E21\u0E35"], ["coin", "\u{1FA99}", "\u0E40\u0E2B\u0E23\u0E35\u0E22\u0E0D"], ["star", "\u2B50", "\u0E14\u0E32\u0E27"], ["heart", "\u{1F496}", "\u0E2B\u0E31\u0E27\u0E43\u0E08"], ["butterfly", "\u{1F98B}", "\u0E1C\u0E35\u0E40\u0E2A\u0E37\u0E49\u0E2D"], ["fish", "\u{1F41F}", "\u0E1B\u0E25\u0E32\u0E17\u0E2D\u0E07"]]
+var __spreadProps = function __spreadProps(a, b) {
+  return __defProps(a, __getOwnPropDescs(b));
 };
-const COL = {
+var CONFIG = {
+  PORTAL_URL: "https://klongtamru-smartcity.in.th",
+  FIREBASE: {
+    apiKey: "AIzaSyC1bgFPWYius-4Q1IJ0j61SjBMs6tG9t48",
+    authDomain: "tanakrid90-46d47.firebaseapp.com",
+    databaseURL: "https://tanakrid90-46d47-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "tanakrid90-46d47",
+    appId: "1:824337779321:web:dcf5243cb80ea9ee7022a8"
+  },
+  API_URL: "https://script.google.com/macros/s/AKfycbxJs4i25-sPe7NqemT5VVX96dl5nkrf-EdJOw-gLgfhNZMgI5i548C2-wjR5IvP2ogS/exec",
+  POLL_SEC: 6,
+  SHOW: 50,
+  RIVER_MAX: innerWidth < 600 ? 10 : innerWidth < 1025 ? 16 : 22,
+  FLOAT_SEC: 120
+};
+var OPT = {
+  base: [["banana", "\uD83C\uDF43", "\u0E43\u0E1A\u0E15\u0E2D\u0E07", 1], ["bread", "\uD83C\uDF5E", "\u0E02\u0E19\u0E21\u0E1B\u0E31\u0E07", 1], ["trunk", "\uD83C\uDF34", "\u0E15\u0E49\u0E19\u0E01\u0E25\u0E49\u0E27\u0E22", 1], ["coco", "\uD83E\uDD65", "\u0E01\u0E30\u0E25\u0E32", 1], ["lotus", "\uD83E\uDEB7", "\u0E01\u0E25\u0E35\u0E1A\u0E1A\u0E31\u0E27", 1]],
+  flower: [["marigold", "\uD83C\uDF3C", "\u0E14\u0E32\u0E27\u0E40\u0E23\u0E37\u0E2D\u0E07"], ["rose", "\uD83C\uDF39", "\u0E01\u0E38\u0E2B\u0E25\u0E32\u0E1A"], ["orchid", "\uD83D\uDC9C", "\u0E01\u0E25\u0E49\u0E27\u0E22\u0E44\u0E21\u0E49"], ["jasmine", "\uD83E\uDD0D", "\u0E21\u0E30\u0E25\u0E34"], ["lotusf", "\uD83C\uDF38", "\u0E1A\u0E31\u0E27\u0E0A\u0E21\u0E1E\u0E39"]],
+  candle: [["gold", "\uD83D\uDD6F\uFE0F", "\u0E40\u0E17\u0E35\u0E22\u0E19\u0E17\u0E2D\u0E07"], ["white", "\uD83E\uDD0D", "\u0E40\u0E17\u0E35\u0E22\u0E19\u0E02\u0E32\u0E27"], ["triple", "\uD83D\uDD25", "\u0E18\u0E39\u0E1B 3 + \u0E40\u0E17\u0E35\u0E22\u0E19"]],
+  deco: [["none", "\u2796", "\u0E44\u0E21\u0E48\u0E21\u0E35"], ["coin", "\uD83E\uDE99", "\u0E40\u0E2B\u0E23\u0E35\u0E22\u0E0D"], ["star", "\u2B50", "\u0E14\u0E32\u0E27"], ["heart", "\uD83D\uDC96", "\u0E2B\u0E31\u0E27\u0E43\u0E08"], ["butterfly", "\uD83E\uDD8B", "\u0E1C\u0E35\u0E40\u0E2A\u0E37\u0E49\u0E2D"], ["fish", "\uD83D\uDC1F", "\u0E1B\u0E25\u0E32\u0E17\u0E2D\u0E07"]]
+};
+var COL = {
   banana: ["#3f9a4a", "#22622c"],
   bread: ["#d9a25b", "#9a6427"],
   trunk: ["#ebe5c8", "#ada37c"],
@@ -1728,302 +1806,284 @@ const COL = {
   jasmine: "#fffdf5",
   lotusf: "#ff8fbf"
 };
-const DECO = { coin: "\u{1FA99}", star: "\u2B50", heart: "\u{1F496}", butterfly: "\u{1F98B}", fish: "\u{1F41F}" };
-const BAD = [
-  "\u0E40\u0E2B\u0E35\u0E49\u0E22",
-  "\u0E40\u0E2B\u0E35\u0E48\u0E22",
-  "\u0E40\u0E2B\u0E35\u0E49\u0E22\u0E30",
-  "\u0E40\u0E2B\u0E35\u0E4A\u0E22",
-  "\u0E44\u0E2D\u0E49\u0E2A\u0E31\u0E2A",
-  "\u0E2D\u0E35\u0E2A\u0E31\u0E2A",
-  "\u0E2A\u0E31\u0E2A",
-  "\u0E44\u0E2D\u0E49\u0E2A\u0E31\u0E14",
-  "\u0E2D\u0E35\u0E2A\u0E31\u0E14",
-  "\u0E04\u0E27\u0E22",
-  "\u0E40\u0E22\u0E47\u0E14",
-  "\u0E40\u0E22\u0E47\u0E2A",
-  "\u0E2B\u0E35",
-  "\u0E2B\u0E19\u0E49\u0E32\u0E2B\u0E35",
-  "\u0E41\u0E15\u0E14",
-  "\u0E2A\u0E49\u0E19\u0E15\u0E35\u0E19",
-  "\u0E15\u0E35\u0E19\u0E2A\u0E31\u0E49\u0E19",
-  "\u0E44\u0E2D\u0E49\u0E2A\u0E31\u0E15\u0E27\u0E4C",
-  "\u0E2D\u0E35\u0E2A\u0E31\u0E15\u0E27\u0E4C",
-  "\u0E0A\u0E34\u0E1A\u0E2B\u0E32\u0E22",
-  "\u0E09\u0E34\u0E1A\u0E2B\u0E32\u0E22",
-  "\u0E2D\u0E35\u0E14\u0E2D\u0E01",
-  "\u0E14\u0E2D\u0E01\u0E17\u0E2D\u0E07",
-  "\u0E2D\u0E35\u0E15\u0E2D\u0E41\u0E2B\u0E25",
-  "\u0E15\u0E2D\u0E41\u0E2B\u0E25",
-  "\u0E01\u0E30\u0E2B\u0E23\u0E35\u0E48",
-  "\u0E23\u0E30\u0E22\u0E33",
-  "\u0E08\u0E31\u0E0D\u0E44\u0E23",
-  "\u0E44\u0E2D\u0E49\u0E40\u0E27\u0E23",
-  "\u0E2D\u0E35\u0E40\u0E27\u0E23",
-  "\u0E21\u0E36\u0E07",
-  "\u0E1E\u0E48\u0E2D\u0E21\u0E36\u0E07",
-  "\u0E41\u0E21\u0E48\u0E21\u0E36\u0E07",
-  "\u0E44\u0E2D\u0E49\u0E04\u0E27\u0E32\u0E22",
-  "\u0E2D\u0E35\u0E04\u0E27\u0E32\u0E22",
-  "\u0E44\u0E2D\u0E49\u0E2B\u0E48\u0E32",
-  "\u0E2D\u0E35\u0E2B\u0E48\u0E32",
-  "\u0E40\u0E2A\u0E37\u0E2D\u0E01",
-  "\u0E2A\u0E16\u0E38\u0E19",
-  "\u0E23\u0E48\u0E32\u0E19",
-  "\u0E08\u0E34\u0E4B\u0E21",
-  "\u0E40\u0E07\u0E35\u0E48\u0E22\u0E19",
-  "\u0E2A\u0E31\u0E19\u0E14\u0E32\u0E19",
-  "\u0E44\u0E2D\u0E49\u0E1A\u0E49\u0E32",
-  "\u0E2D\u0E35\u0E1A\u0E49\u0E32",
-  "\u0E44\u0E2D\u0E49\u0E42\u0E07\u0E48",
-  "\u0E2D\u0E35\u0E42\u0E07\u0E48",
-  "\u0E2D\u0E35\u0E40\u0E2B\u0E35\u0E49\u0E22",
-  "\u0E44\u0E2D\u0E49\u0E40\u0E2B\u0E35\u0E49\u0E22",
-  "\u0E2B\u0E19\u0E49\u0E32\u0E15\u0E31\u0E27\u0E40\u0E21\u0E35\u0E22",
-  "\u0E1B\u0E35\u0E49\u0E01\u0E31\u0E19",
-  "\u0E42\u0E04\u0E15\u0E23\u0E1E\u0E48\u0E2D",
-  "\u0E42\u0E04\u0E15\u0E23\u0E41\u0E21\u0E48",
-  "\u0E2B\u0E33",
-  "\u0E44\u0E2D\u0E49\u0E2B\u0E33",
-  "\u0E2D\u0E35\u0E2B\u0E33",
-  "\u0E40\u0E22\u0E47\u0E14\u0E41\u0E21\u0E48",
-  "\u0E04\u0E27\u0E32\u0E22",
-  "wtf",
-  "stfu"
-];
-const OK_WORDS = ["\u0E04\u0E27\u0E32\u0E22\u0E44\u0E16\u0E19\u0E32", "\u0E04\u0E27\u0E32\u0E22\u0E1B\u0E48\u0E32", "\u0E04\u0E27\u0E32\u0E22\u0E40\u0E1C\u0E37\u0E2D\u0E01", "\u0E40\u0E25\u0E35\u0E49\u0E22\u0E07\u0E04\u0E27\u0E32\u0E22", "\u0E2B\u0E33\u0E41\u0E2B\u0E25", "\u0E2B\u0E35\u0E1A", "\u0E2A\u0E31\u0E2A\u0E14\u0E35", "\u0E41\u0E01\u0E07\u0E01\u0E30\u0E2B\u0E23\u0E35\u0E48", "\u0E01\u0E30\u0E2B\u0E23\u0E35\u0E48\u0E1B\u0E31\u0E4A\u0E1A", "\u0E1C\u0E07\u0E01\u0E30\u0E2B\u0E23\u0E35\u0E48", "\u0E02\u0E49\u0E32\u0E27\u0E01\u0E30\u0E2B\u0E23\u0E35\u0E48", "\u0E23\u0E48\u0E32\u0E19\u0E35\u0E49", "\u0E23\u0E48\u0E32\u0E40\u0E23\u0E34\u0E07"];
-const normTxt = (s) => String(s || "").toLowerCase().replace(/[\s​-‍﻿.,\-_*+!@#$%^&()=\/\\|'"~`:;?<>\[\]{}0-9๐-๙\u0e48-\u0e4b]/g, "").replace(/(.)\1+/g, "$1");
-const NBAD = BAD.map(normTxt), NOK = OK_WORDS.map(normTxt);
-const LAT_WORD = ["hee", "hii", "heeya", "hia", "kuy", "kuay", "kuai", "kuey", "yed", "yedmae", "mung", "isus", "esus", "isas", "aisus", "aisas", "edok", "idok", "eedok", "aidok", "dick", "sus"];
-const LAT_SUB = [
-  "fuck",
-  "fuk",
-  "fck",
-  "fxck",
-  "fvck",
-  "fcuk",
-  "phuck",
-  "shit",
-  "bitch",
-  "btch",
-  "asshole",
-  "pussy",
-  "cunt",
-  "motherf",
-  "bastard",
-  "slut",
-  "whore",
-  "dickhead",
-  "birthwithmother",
-  "fuckyou",
-  "fuckyourmother",
-  "sonofabitch",
-  "isus",
-  "esus",
-  "aisus",
-  "edok",
-  "idok",
-  "eedok",
-  "heeya",
-  "kuay",
-  "yedmae",
-  "nigger",
-  "nigga",
-  "retard"
-];
-const LAT_OK = ["shiitake", "hiya", "yesus", "jesus", "edokument"];
+var DECO = {
+  coin: "\uD83E\uDE99",
+  star: "\u2B50",
+  heart: "\uD83D\uDC96",
+  butterfly: "\uD83E\uDD8B",
+  fish: "\uD83D\uDC1F"
+};
+var BAD = ["\u0E40\u0E2B\u0E35\u0E49\u0E22", "\u0E40\u0E2B\u0E35\u0E48\u0E22", "\u0E40\u0E2B\u0E35\u0E49\u0E22\u0E30", "\u0E40\u0E2B\u0E35\u0E4A\u0E22", "\u0E44\u0E2D\u0E49\u0E2A\u0E31\u0E2A", "\u0E2D\u0E35\u0E2A\u0E31\u0E2A", "\u0E2A\u0E31\u0E2A", "\u0E44\u0E2D\u0E49\u0E2A\u0E31\u0E14", "\u0E2D\u0E35\u0E2A\u0E31\u0E14", "\u0E04\u0E27\u0E22", "\u0E40\u0E22\u0E47\u0E14", "\u0E40\u0E22\u0E47\u0E2A", "\u0E2B\u0E35", "\u0E2B\u0E19\u0E49\u0E32\u0E2B\u0E35", "\u0E41\u0E15\u0E14", "\u0E2A\u0E49\u0E19\u0E15\u0E35\u0E19", "\u0E15\u0E35\u0E19\u0E2A\u0E31\u0E49\u0E19", "\u0E44\u0E2D\u0E49\u0E2A\u0E31\u0E15\u0E27\u0E4C", "\u0E2D\u0E35\u0E2A\u0E31\u0E15\u0E27\u0E4C", "\u0E0A\u0E34\u0E1A\u0E2B\u0E32\u0E22", "\u0E09\u0E34\u0E1A\u0E2B\u0E32\u0E22", "\u0E2D\u0E35\u0E14\u0E2D\u0E01", "\u0E14\u0E2D\u0E01\u0E17\u0E2D\u0E07", "\u0E2D\u0E35\u0E15\u0E2D\u0E41\u0E2B\u0E25", "\u0E15\u0E2D\u0E41\u0E2B\u0E25", "\u0E01\u0E30\u0E2B\u0E23\u0E35\u0E48", "\u0E23\u0E30\u0E22\u0E33", "\u0E08\u0E31\u0E0D\u0E44\u0E23", "\u0E44\u0E2D\u0E49\u0E40\u0E27\u0E23", "\u0E2D\u0E35\u0E40\u0E27\u0E23", "\u0E21\u0E36\u0E07", "\u0E1E\u0E48\u0E2D\u0E21\u0E36\u0E07", "\u0E41\u0E21\u0E48\u0E21\u0E36\u0E07", "\u0E44\u0E2D\u0E49\u0E04\u0E27\u0E32\u0E22", "\u0E2D\u0E35\u0E04\u0E27\u0E32\u0E22", "\u0E44\u0E2D\u0E49\u0E2B\u0E48\u0E32", "\u0E2D\u0E35\u0E2B\u0E48\u0E32", "\u0E40\u0E2A\u0E37\u0E2D\u0E01", "\u0E2A\u0E16\u0E38\u0E19", "\u0E23\u0E48\u0E32\u0E19", "\u0E08\u0E34\u0E4B\u0E21", "\u0E40\u0E07\u0E35\u0E48\u0E22\u0E19", "\u0E2A\u0E31\u0E19\u0E14\u0E32\u0E19", "\u0E44\u0E2D\u0E49\u0E1A\u0E49\u0E32", "\u0E2D\u0E35\u0E1A\u0E49\u0E32", "\u0E44\u0E2D\u0E49\u0E42\u0E07\u0E48", "\u0E2D\u0E35\u0E42\u0E07\u0E48", "\u0E2D\u0E35\u0E40\u0E2B\u0E35\u0E49\u0E22", "\u0E44\u0E2D\u0E49\u0E40\u0E2B\u0E35\u0E49\u0E22", "\u0E2B\u0E19\u0E49\u0E32\u0E15\u0E31\u0E27\u0E40\u0E21\u0E35\u0E22", "\u0E1B\u0E35\u0E49\u0E01\u0E31\u0E19", "\u0E42\u0E04\u0E15\u0E23\u0E1E\u0E48\u0E2D", "\u0E42\u0E04\u0E15\u0E23\u0E41\u0E21\u0E48", "\u0E2B\u0E33", "\u0E44\u0E2D\u0E49\u0E2B\u0E33", "\u0E2D\u0E35\u0E2B\u0E33", "\u0E40\u0E22\u0E47\u0E14\u0E41\u0E21\u0E48", "\u0E04\u0E27\u0E32\u0E22", "wtf", "stfu"];
+var OK_WORDS = ["\u0E04\u0E27\u0E32\u0E22\u0E44\u0E16\u0E19\u0E32", "\u0E04\u0E27\u0E32\u0E22\u0E1B\u0E48\u0E32", "\u0E04\u0E27\u0E32\u0E22\u0E40\u0E1C\u0E37\u0E2D\u0E01", "\u0E40\u0E25\u0E35\u0E49\u0E22\u0E07\u0E04\u0E27\u0E32\u0E22", "\u0E2B\u0E33\u0E41\u0E2B\u0E25", "\u0E2B\u0E35\u0E1A", "\u0E2A\u0E31\u0E2A\u0E14\u0E35", "\u0E41\u0E01\u0E07\u0E01\u0E30\u0E2B\u0E23\u0E35\u0E48", "\u0E01\u0E30\u0E2B\u0E23\u0E35\u0E48\u0E1B\u0E31\u0E4A\u0E1A", "\u0E1C\u0E07\u0E01\u0E30\u0E2B\u0E23\u0E35\u0E48", "\u0E02\u0E49\u0E32\u0E27\u0E01\u0E30\u0E2B\u0E23\u0E35\u0E48", "\u0E23\u0E48\u0E32\u0E19\u0E35\u0E49", "\u0E23\u0E48\u0E32\u0E40\u0E23\u0E34\u0E07"];
+var normTxt = function normTxt(s) {
+  return String(s || "").toLowerCase().replace(/[\s​-‍﻿.,\-_*+!@#$%^&()=\/\\|'"~`:;?<>\[\]{}0-9๐-๙\u0e48-\u0e4b]/g, "").replace(/(.)\1+/g, "$1");
+};
+var NBAD = BAD.map(normTxt),
+  NOK = OK_WORDS.map(normTxt);
+var LAT_WORD = ["hee", "hii", "heeya", "hia", "kuy", "kuay", "kuai", "kuey", "yed", "yedmae", "mung", "isus", "esus", "isas", "aisus", "aisas", "edok", "idok", "eedok", "aidok", "dick", "sus"];
+var LAT_SUB = ["fuck", "fuk", "fck", "fxck", "fvck", "fcuk", "phuck", "shit", "bitch", "btch", "asshole", "pussy", "cunt", "motherf", "bastard", "slut", "whore", "dickhead", "birthwithmother", "fuckyou", "fuckyourmother", "sonofabitch", "isus", "esus", "aisus", "edok", "idok", "eedok", "heeya", "kuay", "yedmae", "nigger", "nigga", "retard"];
+var LAT_OK = ["shiitake", "hiya", "yesus", "jesus", "edokument"];
 function latBad(t) {
-  const x = String(t || "").toLowerCase().replace(/1/g, "i").replace(/0/g, "o").replace(/3/g, "e").replace(/[4@]/g, "a").replace(/\$/g, "s").replace(/!/g, "i");
-  const toks = x.split(/[^a-z]+/).filter(Boolean).map((w) => w.replace(/(.)\1{2,}/g, "$1$1"));
-  if (toks.some((w) => LAT_WORD.includes(w) || LAT_WORD.includes(w.replace(/(.)\1+/g, "$1")))) return true;
-  let j = x.replace(/[^a-z]/g, "");
-  LAT_OK.forEach((w) => {
+  var x = String(t || "").toLowerCase().replace(/1/g, "i").replace(/0/g, "o").replace(/3/g, "e").replace(/[4@]/g, "a").replace(/\$/g, "s").replace(/!/g, "i");
+  var toks = x.split(/[^a-z]+/).filter(Boolean).map(function (w) {
+    return w.replace(/(.)\1{2,}/g, "$1$1");
+  });
+  if (toks.some(function (w) {
+    return LAT_WORD.includes(w) || LAT_WORD.includes(w.replace(/(.)\1+/g, "$1"));
+  })) return true;
+  var j = x.replace(/[^a-z]/g, "");
+  LAT_OK.forEach(function (w) {
     j = j.split(w).join("");
   });
-  const jc = j.replace(/(.)\1+/g, "$1");
-  return LAT_SUB.some((w) => j.includes(w) || jc.includes(w.replace(/(.)\1+/g, "$1")));
+  var jc = j.replace(/(.)\1+/g, "$1");
+  return LAT_SUB.some(function (w) {
+    return j.includes(w) || jc.includes(w.replace(/(.)\1+/g, "$1"));
+  });
 }
-function isBad(...t) {
-  const raw = t.join(" ");
+function isBad() {
+  for (var _len = arguments.length, t = new Array(_len), _key = 0; _key < _len; _key++) {
+    t[_key] = arguments[_key];
+  }
+  var raw = t.join(" ");
   if (latBad(raw)) return true;
-  let s = normTxt(t.join(""));
-  NOK.forEach((w) => {
+  var s = normTxt(t.join(""));
+  NOK.forEach(function (w) {
     s = s.split(w).join("");
   });
-  return NBAD.some((w) => s.includes(w));
+  return NBAD.some(function (w) {
+    return s.includes(w);
+  });
 }
-let sel = { img: "k02", base: "banana", flower: "marigold", candle: "gold", deco: "star" }, data = [], mine = JSON.parse(localStorage.getItem("kt_mine") || "[]");
-const $ = (id) => document.getElementById(id);
+var sel = {
+    img: "k02",
+    base: "banana",
+    flower: "marigold",
+    candle: "gold",
+    deco: "star"
+  },
+  data = [],
+  mine = JSON.parse(localStorage.getItem("kt_mine") || "[]");
+var $ = function $(id) {
+  return document.getElementById(id);
+};
 function chedi(x, h, s) {
-  const w = 60 * s;
-  return `<g filter="url(#gl)">
- <rect x="${x - w}" y="${400 - 30 * s}" width="${w * 2}" height="${30 * s}" fill="url(#gd)"/>
- <rect x="${x - w * 0.8}" y="${400 - 48 * s}" width="${w * 1.6}" height="${18 * s}" fill="url(#gd)"/>
- <rect x="${x - w * 0.62}" y="${400 - 62 * s}" width="${w * 1.24}" height="${14 * s}" fill="url(#gd)"/>
- <path d="M${x - w * 0.6} ${400 - 62 * s} Q${x - w * 0.62} ${400 - 130 * s} ${x} ${400 - 140 * s} Q${x + w * 0.62} ${400 - 130 * s} ${x + w * 0.6} ${400 - 62 * s}Z" fill="url(#gd)"/>
- <rect x="${x - w * 0.2}" y="${400 - 158 * s}" width="${w * 0.4}" height="${18 * s}" fill="url(#gd)"/>
- <path d="M${x - w * 0.17} ${400 - 158 * s} L${x} ${400 - h * s} L${x + w * 0.17} ${400 - 158 * s}Z" fill="url(#gd)"/>
- ${[1, 2, 3, 4, 5, 6].map((i) => `<ellipse cx="${x}" cy="${400 - 158 * s - i * (h - 158) * s / 7}" rx="${w * 0.17 * (1 - i / 7) + 1}" ry="${2 * s}" fill="#fff2b0" opacity=".7"/>`).join("")}
- <circle cx="${x}" cy="${400 - h * s}" r="${3 * s}" fill="#fff8d0"/></g>`;
+  var w = 60 * s;
+  return "<g filter=\"url(#gl)\">\n <rect x=\"".concat(x - w, "\" y=\"").concat(400 - 30 * s, "\" width=\"").concat(w * 2, "\" height=\"").concat(30 * s, "\" fill=\"url(#gd)\"/>\n <rect x=\"").concat(x - w * 0.8, "\" y=\"").concat(400 - 48 * s, "\" width=\"").concat(w * 1.6, "\" height=\"").concat(18 * s, "\" fill=\"url(#gd)\"/>\n <rect x=\"").concat(x - w * 0.62, "\" y=\"").concat(400 - 62 * s, "\" width=\"").concat(w * 1.24, "\" height=\"").concat(14 * s, "\" fill=\"url(#gd)\"/>\n <path d=\"M").concat(x - w * 0.6, " ").concat(400 - 62 * s, " Q").concat(x - w * 0.62, " ").concat(400 - 130 * s, " ").concat(x, " ").concat(400 - 140 * s, " Q").concat(x + w * 0.62, " ").concat(400 - 130 * s, " ").concat(x + w * 0.6, " ").concat(400 - 62 * s, "Z\" fill=\"url(#gd)\"/>\n <rect x=\"").concat(x - w * 0.2, "\" y=\"").concat(400 - 158 * s, "\" width=\"").concat(w * 0.4, "\" height=\"").concat(18 * s, "\" fill=\"url(#gd)\"/>\n <path d=\"M").concat(x - w * 0.17, " ").concat(400 - 158 * s, " L").concat(x, " ").concat(400 - h * s, " L").concat(x + w * 0.17, " ").concat(400 - 158 * s, "Z\" fill=\"url(#gd)\"/>\n ").concat([1, 2, 3, 4, 5, 6].map(function (i) {
+    return "<ellipse cx=\"".concat(x, "\" cy=\"").concat(400 - 158 * s - i * (h - 158) * s / 7, "\" rx=\"").concat(w * 0.17 * (1 - i / 7) + 1, "\" ry=\"").concat(2 * s, "\" fill=\"#fff2b0\" opacity=\".7\"/>");
+  }).join(""), "\n <circle cx=\"").concat(x, "\" cy=\"").concat(400 - h * s, "\" r=\"").concat(3 * s, "\" fill=\"#fff8d0\"/></g>");
 }
 function roof(cx2, y, w, h, c) {
-  return `<path d="M${cx2 - w} ${y} L${cx2} ${y - h} L${cx2 + w} ${y}Z" fill="${c}"/>
- <path d="M${cx2 - w - 6} ${y + 2} L${cx2} ${y - h - 4} L${cx2 + w + 6} ${y + 2}" fill="none" stroke="#ffcc4d" stroke-width="5"/>
- ${[...Array(7)].map((_, i) => {
-    const t = (i + 1) / 8;
-    return `<path d="M${cx2 - w * (1 - t) - 4} ${y - h * t} l-7 -9 M${cx2 + w * (1 - t) + 4} ${y - h * t} l7 -9" stroke="#ffcc4d" stroke-width="3"/>`;
-  }).join("")}
- <path d="M${cx2} ${y - h - 4} q4 -22 18 -26 q-6 6 -6 14" fill="none" stroke="#ffcc4d" stroke-width="5" stroke-linecap="round"/>
- <path d="M${cx2 - w - 6} ${y + 2} q-12 -4 -14 -18 M${cx2 + w + 6} ${y + 2} q12 -4 14 -18" stroke="#ffcc4d" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  return "<path d=\"M".concat(cx2 - w, " ").concat(y, " L").concat(cx2, " ").concat(y - h, " L").concat(cx2 + w, " ").concat(y, "Z\" fill=\"").concat(c, "\"/>\n <path d=\"M").concat(cx2 - w - 6, " ").concat(y + 2, " L").concat(cx2, " ").concat(y - h - 4, " L").concat(cx2 + w + 6, " ").concat(y + 2, "\" fill=\"none\" stroke=\"#ffcc4d\" stroke-width=\"5\"/>\n ").concat(_toConsumableArray(Array(7)).map(function (_, i) {
+    var t = (i + 1) / 8;
+    return "<path d=\"M".concat(cx2 - w * (1 - t) - 4, " ").concat(y - h * t, " l-7 -9 M").concat(cx2 + w * (1 - t) + 4, " ").concat(y - h * t, " l7 -9\" stroke=\"#ffcc4d\" stroke-width=\"3\"/>");
+  }).join(""), "\n <path d=\"M").concat(cx2, " ").concat(y - h - 4, " q4 -22 18 -26 q-6 6 -6 14\" fill=\"none\" stroke=\"#ffcc4d\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n <path d=\"M").concat(cx2 - w - 6, " ").concat(y + 2, " q-12 -4 -14 -18 M").concat(cx2 + w + 6, " ").concat(y + 2, " q12 -4 14 -18\" stroke=\"#ffcc4d\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\"/>");
 }
 function mill(x, s, d) {
-  const hy = 400 - 150 * s, L = 70 * s;
-  let b = "";
-  for (let i = 0; i < 6; i++) {
-    const a = i * 60;
-    b += `<g transform="rotate(${a} ${x} ${hy})"><line x1="${x}" y1="${hy}" x2="${x}" y2="${hy - L}" stroke="#4a3520" stroke-width="${3 * s}"/><path d="M${x + 2 * s} ${hy - 12 * s} L${x + 16 * s} ${hy - 16 * s} L${x + 15 * s} ${hy - L + 2 * s} L${x + 2 * s} ${hy - L}Z" fill="#efe6d2" opacity=".92" stroke="#8a7656" stroke-width="1"/></g>`;
+  var hy = 400 - 150 * s,
+    L = 70 * s;
+  var b = "";
+  for (var i = 0; i < 6; i++) {
+    var a = i * 60;
+    b += "<g transform=\"rotate(".concat(a, " ").concat(x, " ").concat(hy, ")\"><line x1=\"").concat(x, "\" y1=\"").concat(hy, "\" x2=\"").concat(x, "\" y2=\"").concat(hy - L, "\" stroke=\"#4a3520\" stroke-width=\"").concat(3 * s, "\"/><path d=\"M").concat(x + 2 * s, " ").concat(hy - 12 * s, " L").concat(x + 16 * s, " ").concat(hy - 16 * s, " L").concat(x + 15 * s, " ").concat(hy - L + 2 * s, " L").concat(x + 2 * s, " ").concat(hy - L, "Z\" fill=\"#efe6d2\" opacity=\".92\" stroke=\"#8a7656\" stroke-width=\"1\"/></g>");
   }
-  return `<g><path d="M${x - 26 * s} 400 L${x - 5 * s} ${hy} M${x + 26 * s} 400 L${x + 5 * s} ${hy} M${x - 20 * s} ${400 - 40 * s} L${x + 20 * s} ${400 - 40 * s} M${x - 14 * s} ${400 - 90 * s} L${x + 14 * s} ${400 - 90 * s} M${x - 22 * s} 400 L${x + 14 * s} ${400 - 90 * s} M${x + 22 * s} 400 L${x - 14 * s} ${400 - 90 * s}" stroke="#2e2416" stroke-width="${4 * s}" fill="none"/>
- <rect x="${x - 4 * s}" y="${hy - 3 * s}" width="${30 * s}" height="${6 * s}" fill="#3a2a18"/><path d="M${x + 26 * s} ${hy - 3 * s} l${16 * s} -${10 * s} v${26 * s}z" fill="#d8ccb2"/>
- <g>${b}<circle cx="${x}" cy="${hy}" r="${5 * s}" fill="#6b4a26"/><animateTransform attributeName="transform" type="rotate" from="0 ${x} ${hy}" to="360 ${x} ${hy}" dur="${d}s" repeatCount="indefinite"/></g></g>`;
+  return "<g><path d=\"M".concat(x - 26 * s, " 400 L").concat(x - 5 * s, " ").concat(hy, " M").concat(x + 26 * s, " 400 L").concat(x + 5 * s, " ").concat(hy, " M").concat(x - 20 * s, " ").concat(400 - 40 * s, " L").concat(x + 20 * s, " ").concat(400 - 40 * s, " M").concat(x - 14 * s, " ").concat(400 - 90 * s, " L").concat(x + 14 * s, " ").concat(400 - 90 * s, " M").concat(x - 22 * s, " 400 L").concat(x + 14 * s, " ").concat(400 - 90 * s, " M").concat(x + 22 * s, " 400 L").concat(x - 14 * s, " ").concat(400 - 90 * s, "\" stroke=\"#2e2416\" stroke-width=\"").concat(4 * s, "\" fill=\"none\"/>\n <rect x=\"").concat(x - 4 * s, "\" y=\"").concat(hy - 3 * s, "\" width=\"").concat(30 * s, "\" height=\"").concat(6 * s, "\" fill=\"#3a2a18\"/><path d=\"M").concat(x + 26 * s, " ").concat(hy - 3 * s, " l").concat(16 * s, " -").concat(10 * s, " v").concat(26 * s, "z\" fill=\"#d8ccb2\"/>\n <g>").concat(b, "<circle cx=\"").concat(x, "\" cy=\"").concat(hy, "\" r=\"").concat(5 * s, "\" fill=\"#6b4a26\"/><animateTransform attributeName=\"transform\" type=\"rotate\" from=\"0 ").concat(x, " ").concat(hy, "\" to=\"360 ").concat(x, " ").concat(hy, "\" dur=\"").concat(d, "s\" repeatCount=\"indefinite\"/></g></g>");
 }
 function salt(a, b) {
-  let g = `<rect x="${a}" y="386" width="${b - a}" height="12" fill="#6f7fb0" opacity=".55"/>`;
-  for (let x = a; x < b; x += 46) g += `<rect x="${x + 2}" y="387" width="42" height="9" fill="#c9d4f0" opacity=".5"/><rect x="${x}" y="386" width="3" height="12" fill="#3d4466"/>`;
-  [[0.12, 22], [0.3, 30], [0.45, 18], [0.62, 26], [0.8, 20]].forEach(([t, h]) => {
-    const x = a + (b - a) * t;
-    g += `<path d="M${x - h * 1.3} 392 Q${x} ${392 - h * 1.4} ${x + h * 1.3} 392Z" fill="url(#sl)"/>`;
+  var g = "<rect x=\"".concat(a, "\" y=\"386\" width=\"").concat(b - a, "\" height=\"12\" fill=\"#6f7fb0\" opacity=\".55\"/>");
+  for (var x = a; x < b; x += 46) g += "<rect x=\"".concat(x + 2, "\" y=\"387\" width=\"42\" height=\"9\" fill=\"#c9d4f0\" opacity=\".5\"/><rect x=\"").concat(x, "\" y=\"386\" width=\"3\" height=\"12\" fill=\"#3d4466\"/>");
+  [[0.12, 22], [0.3, 30], [0.45, 18], [0.62, 26], [0.8, 20]].forEach(function (_ref) {
+    var _ref2 = _slicedToArray(_ref, 2),
+      t = _ref2[0],
+      h = _ref2[1];
+    var x = a + (b - a) * t;
+    g += "<path d=\"M".concat(x - h * 1.3, " 392 Q").concat(x, " ").concat(392 - h * 1.4, " ").concat(x + h * 1.3, " 392Z\" fill=\"url(#sl)\"/>");
   });
-  const hx = a + (b - a) * 0.5;
-  g += `<rect x="${hx - 28}" y="362" width="56" height="28" fill="#4b3a26"/><path d="M${hx - 38} 364 L${hx} 336 L${hx + 38} 364Z" fill="#7a6a4a"/><rect x="${hx - 6}" y="372" width="12" height="18" fill="#ffb24a" opacity=".85"/>`;
+  var hx = a + (b - a) * 0.5;
+  g += "<rect x=\"".concat(hx - 28, "\" y=\"362\" width=\"56\" height=\"28\" fill=\"#4b3a26\"/><path d=\"M").concat(hx - 38, " 364 L").concat(hx, " 336 L").concat(hx + 38, " 364Z\" fill=\"#7a6a4a\"/><rect x=\"").concat(hx - 6, "\" y=\"372\" width=\"12\" height=\"18\" fill=\"#ffb24a\" opacity=\".85\"/>");
   return g;
 }
 function templeSVG() {
-  const tree = (x, r, c) => `<g fill="${c}">${[0, 1, 2, 3, 4].map((i) => `<circle cx="${x + Math.cos(i * 1.3) * r * 0.7}" cy="${400 - r * 1.6 - Math.sin(i * 1.9) * r * 0.5}" r="${r * (0.7 + i % 3 * 0.15)}"/>`).join("")}<rect x="${x - 4}" y="${400 - r * 1.2}" width="8" height="${r * 1.2}"/></g>`;
-  let bulbs = "";
-  [[180, 1420]].forEach(([a, b]) => {
-    for (let i = 0; i <= 46; i++) {
-      const t = i / 46, x = a + (b - a) * t, y = 150 + Math.sin(t * Math.PI * 4) ** 2 * 0 + Math.abs(Math.sin(t * Math.PI * 3)) * -30 + 40;
-      bulbs += `<circle class="bulb" style="animation-delay:${i % 5 * 0.3}s" cx="${x}" cy="${y + 90}" r="3.5" fill="hsl(${i * 37 % 360},100%,70%)"/>`;
+  var tree = function tree(x, r, c) {
+    return "<g fill=\"".concat(c, "\">").concat([0, 1, 2, 3, 4].map(function (i) {
+      return "<circle cx=\"".concat(x + Math.cos(i * 1.3) * r * 0.7, "\" cy=\"").concat(400 - r * 1.6 - Math.sin(i * 1.9) * r * 0.5, "\" r=\"").concat(r * (0.7 + i % 3 * 0.15), "\"/>");
+    }).join(""), "<rect x=\"").concat(x - 4, "\" y=\"").concat(400 - r * 1.2, "\" width=\"8\" height=\"").concat(r * 1.2, "\"/></g>");
+  };
+  var bulbs = "";
+  [[180, 1420]].forEach(function (_ref3) {
+    var _ref4 = _slicedToArray(_ref3, 2),
+      a = _ref4[0],
+      b = _ref4[1];
+    for (var i = 0; i <= 46; i++) {
+      var t = i / 46,
+        x = a + (b - a) * t,
+        y = 150 + Math.pow(Math.sin(t * Math.PI * 4), 2) * 0 + Math.abs(Math.sin(t * Math.PI * 3)) * -30 + 40;
+      bulbs += "<circle class=\"bulb\" style=\"animation-delay:".concat(i % 5 * 0.3, "s\" cx=\"").concat(x, "\" cy=\"").concat(y + 90, "\" r=\"3.5\" fill=\"hsl(").concat(i * 37 % 360, ",100%,70%)\"/>");
     }
   });
-  return `<svg viewBox="0 0 1600 400" preserveAspectRatio="xMidYMax slice">
- <defs><linearGradient id="gd" x1="0" x2="1"><stop offset="0" stop-color="#9c6a14"/><stop offset=".45" stop-color="#ffe08a"/><stop offset="1" stop-color="#a8721a"/></linearGradient>
- <linearGradient id="rf" x1="0" y1="0" y2="1"><stop offset="0" stop-color="#b8322a"/><stop offset="1" stop-color="#6e1712"/></linearGradient>
- <linearGradient id="rf2" x1="0" y1="0" y2="1"><stop offset="0" stop-color="#2d7a52"/><stop offset="1" stop-color="#174630"/></linearGradient>
- <linearGradient id="wl" y2="1"><stop offset="0" stop-color="#f5ecd6"/><stop offset="1" stop-color="#bfae8a"/></linearGradient>
- <filter id="gl"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
- <linearGradient id="sl" x1="0" x2="1"><stop offset="0" stop-color="#b9c4e6"/><stop offset=".5" stop-color="#f4f7ff"/><stop offset="1" stop-color="#9aa6cc"/></linearGradient><radialGradient id="wd"><stop offset="0" stop-color="#ffe9a3"/><stop offset="1" stop-color="#ff9d2e"/></radialGradient></defs>
- ${salt(0, 250)}${salt(1350, 1600)}${mill(70, 1, 7)}${mill(200, 0.7, 5)}${mill(1440, 0.75, 6)}${mill(1560, 1, 8)}${mill(640, 0.45, 4.5)}${mill(1e3, 0.45, 5.5)}${tree(560, 40, "#0a1430")}${tree(1050, 38, "#0a1430")}
- ${chedi(280, 250, 1.05)}${chedi(1320, 250, 1.05)}${chedi(460, 200, 0.7)}${chedi(1140, 200, 0.7)}
- <!-- ubosot -->
- <rect x="560" y="370" width="480" height="30" fill="#e8dcc0"/><rect x="580" y="350" width="440" height="22" fill="#d9caa5"/>
- ${[...Array(11)].map((_, i) => `<rect x="${590 + i * 42}" y="352" width="6" height="18" fill="#a8946a"/>`).join("")}
- <rect x="620" y="230" width="360" height="122" fill="url(#wl)"/>
- ${[650, 720, 860, 930].map((x) => `<path d="M${x} 340 v-52 q12 -18 24 0 v52z" fill="url(#wd)" filter="url(#gl)"/>`).join("")}
- <path d="M770 350 v-80 q30 -34 60 0 v80z" fill="url(#wd)" filter="url(#gl)"/>
- ${[630, 700, 770, 830, 900, 970].map((x) => `<rect x="${x - 6}" y="230" width="12" height="120" fill="#efe4c8" stroke="#c9b68a"/>`).join("")}
- <path d="M590 240 L640 205 L960 205 L1010 240Z" fill="url(#rf2)"/><path d="M586 242 L1014 242" stroke="#ffcc4d" stroke-width="4"/>
- ${roof(800, 210, 190, 120, "url(#rf)")}
- <path d="M800 196 L700 205 L800 112 L900 205Z" fill="#c99a2e" opacity=".9"/>
- <circle cx="800" cy="170" r="16" fill="#ffe08a" filter="url(#gl)"/>
- ${roof(800, 128, 110, 76, "url(#rf2)")}
- ${bulbs}
- ${[300, 420, 540, 1060, 1180, 1300].map((x) => `<rect x="${x - 1.5}" y="352" width="3" height="46" fill="#3a4660"/><rect x="${x - 1.5}" y="350" width="14" height="3" fill="#3a4660"/><rect x="${x + 6}" y="352" width="8" height="3" fill="#e9fbff"/><ellipse class="lamp" cx="${x + 10}" cy="360" rx="12" ry="10" fill="rgba(62,230,255,.28)"/><rect x="${x - 3}" y="372" width="6" height="8" rx="1" fill="#1d2a44" stroke="#3ee6ff" stroke-width=".8"/>`).join("")}
- <path d="M0 400 L0 392 Q800 380 1600 392 L1600 400Z" fill="#0a0f22"/>
- </svg>`;
+  return "<svg viewBox=\"0 0 1600 400\" preserveAspectRatio=\"xMidYMax slice\">\n <defs><linearGradient id=\"gd\" x1=\"0\" x2=\"1\"><stop offset=\"0\" stop-color=\"#9c6a14\"/><stop offset=\".45\" stop-color=\"#ffe08a\"/><stop offset=\"1\" stop-color=\"#a8721a\"/></linearGradient>\n <linearGradient id=\"rf\" x1=\"0\" y1=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#b8322a\"/><stop offset=\"1\" stop-color=\"#6e1712\"/></linearGradient>\n <linearGradient id=\"rf2\" x1=\"0\" y1=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#2d7a52\"/><stop offset=\"1\" stop-color=\"#174630\"/></linearGradient>\n <linearGradient id=\"wl\" y2=\"1\"><stop offset=\"0\" stop-color=\"#f5ecd6\"/><stop offset=\"1\" stop-color=\"#bfae8a\"/></linearGradient>\n <filter id=\"gl\"><feGaussianBlur stdDeviation=\"3\" result=\"b\"/><feMerge><feMergeNode in=\"b\"/><feMergeNode in=\"SourceGraphic\"/></feMerge></filter>\n <linearGradient id=\"sl\" x1=\"0\" x2=\"1\"><stop offset=\"0\" stop-color=\"#b9c4e6\"/><stop offset=\".5\" stop-color=\"#f4f7ff\"/><stop offset=\"1\" stop-color=\"#9aa6cc\"/></linearGradient><radialGradient id=\"wd\"><stop offset=\"0\" stop-color=\"#ffe9a3\"/><stop offset=\"1\" stop-color=\"#ff9d2e\"/></radialGradient></defs>\n ".concat(salt(0, 250)).concat(salt(1350, 1600)).concat(mill(70, 1, 7)).concat(mill(200, 0.7, 5)).concat(mill(1440, 0.75, 6)).concat(mill(1560, 1, 8)).concat(mill(640, 0.45, 4.5)).concat(mill(1e3, 0.45, 5.5)).concat(tree(560, 40, "#0a1430")).concat(tree(1050, 38, "#0a1430"), "\n ").concat(chedi(280, 250, 1.05)).concat(chedi(1320, 250, 1.05)).concat(chedi(460, 200, 0.7)).concat(chedi(1140, 200, 0.7), "\n <!-- ubosot -->\n <rect x=\"560\" y=\"370\" width=\"480\" height=\"30\" fill=\"#e8dcc0\"/><rect x=\"580\" y=\"350\" width=\"440\" height=\"22\" fill=\"#d9caa5\"/>\n ").concat(_toConsumableArray(Array(11)).map(function (_, i) {
+    return "<rect x=\"".concat(590 + i * 42, "\" y=\"352\" width=\"6\" height=\"18\" fill=\"#a8946a\"/>");
+  }).join(""), "\n <rect x=\"620\" y=\"230\" width=\"360\" height=\"122\" fill=\"url(#wl)\"/>\n ").concat([650, 720, 860, 930].map(function (x) {
+    return "<path d=\"M".concat(x, " 340 v-52 q12 -18 24 0 v52z\" fill=\"url(#wd)\" filter=\"url(#gl)\"/>");
+  }).join(""), "\n <path d=\"M770 350 v-80 q30 -34 60 0 v80z\" fill=\"url(#wd)\" filter=\"url(#gl)\"/>\n ").concat([630, 700, 770, 830, 900, 970].map(function (x) {
+    return "<rect x=\"".concat(x - 6, "\" y=\"230\" width=\"12\" height=\"120\" fill=\"#efe4c8\" stroke=\"#c9b68a\"/>");
+  }).join(""), "\n <path d=\"M590 240 L640 205 L960 205 L1010 240Z\" fill=\"url(#rf2)\"/><path d=\"M586 242 L1014 242\" stroke=\"#ffcc4d\" stroke-width=\"4\"/>\n ").concat(roof(800, 210, 190, 120, "url(#rf)"), "\n <path d=\"M800 196 L700 205 L800 112 L900 205Z\" fill=\"#c99a2e\" opacity=\".9\"/>\n <circle cx=\"800\" cy=\"170\" r=\"16\" fill=\"#ffe08a\" filter=\"url(#gl)\"/>\n ").concat(roof(800, 128, 110, 76, "url(#rf2)"), "\n ").concat(bulbs, "\n ").concat([300, 420, 540, 1060, 1180, 1300].map(function (x) {
+    return "<rect x=\"".concat(x - 1.5, "\" y=\"352\" width=\"3\" height=\"46\" fill=\"#3a4660\"/><rect x=\"").concat(x - 1.5, "\" y=\"350\" width=\"14\" height=\"3\" fill=\"#3a4660\"/><rect x=\"").concat(x + 6, "\" y=\"352\" width=\"8\" height=\"3\" fill=\"#e9fbff\"/><ellipse class=\"lamp\" cx=\"").concat(x + 10, "\" cy=\"360\" rx=\"12\" ry=\"10\" fill=\"rgba(62,230,255,.28)\"/><rect x=\"").concat(x - 3, "\" y=\"372\" width=\"6\" height=\"8\" rx=\"1\" fill=\"#1d2a44\" stroke=\"#3ee6ff\" stroke-width=\".8\"/>");
+  }).join(""), "\n <path d=\"M0 400 L0 392 Q800 380 1600 392 L1600 400Z\" fill=\"#0a0f22\"/>\n </svg>");
 }
-const R = (i) => {
-  const x = Math.sin(i * 127.1) * 43758.5;
+var R = function R(i) {
+  var x = Math.sin(i * 127.1) * 43758.5;
   return x - Math.floor(x);
 };
-const arc = (n, from, to, cy, rx, ry) => [...Array(n)].map((_, i) => {
-  const t = from + (to - from) * (i / (n - 1));
-  return [60 + rx * Math.cos(t), cy + ry * Math.sin(t)];
-});
+var arc = function arc(n, from, to, cy, rx, ry) {
+  return _toConsumableArray(Array(n)).map(function (_, i) {
+    var t = from + (to - from) * (i / (n - 1));
+    return [60 + rx * Math.cos(t), cy + ry * Math.sin(t)];
+  });
+};
 function pleats(pts, h, c1, c2) {
-  return pts.map(([x, y]) => `<path d="M${x - 6.5} ${y} L${x} ${y - h} L${x} ${y}Z" fill="${c1}"/><path d="M${x} ${y} L${x} ${y - h} L${x + 6.5} ${y}Z" fill="${c2}"/><path d="M${x} ${y} L${x} ${y - h}" stroke="rgba(255,255,255,.25)" stroke-width=".6"/>`).join("");
+  return pts.map(function (_ref5) {
+    var _ref6 = _slicedToArray(_ref5, 2),
+      x = _ref6[0],
+      y = _ref6[1];
+    return "<path d=\"M".concat(x - 6.5, " ").concat(y, " L").concat(x, " ").concat(y - h, " L").concat(x, " ").concat(y, "Z\" fill=\"").concat(c1, "\"/><path d=\"M").concat(x, " ").concat(y, " L").concat(x, " ").concat(y - h, " L").concat(x + 6.5, " ").concat(y, "Z\" fill=\"").concat(c2, "\"/><path d=\"M").concat(x, " ").concat(y, " L").concat(x, " ").concat(y - h, "\" stroke=\"rgba(255,255,255,.25)\" stroke-width=\".6\"/>");
+  }).join("");
 }
 function petals(pts, h, w) {
-  return pts.map(([x, y]) => `<path d="M${x - w} ${y} Q${x - w - 1} ${y - h * 0.55} ${x} ${y - h} Q${x + w + 1} ${y - h * 0.55} ${x + w} ${y}Z" fill="url(#gPetal)" stroke="#c94a80" stroke-width=".6"/><path d="M${x} ${y - 1} Q${x - 1} ${y - h * 0.5} ${x} ${y - h + 3}" stroke="rgba(200,60,120,.45)" stroke-width=".7" fill="none"/>`).join("");
+  return pts.map(function (_ref7) {
+    var _ref8 = _slicedToArray(_ref7, 2),
+      x = _ref8[0],
+      y = _ref8[1];
+    return "<path d=\"M".concat(x - w, " ").concat(y, " Q").concat(x - w - 1, " ").concat(y - h * 0.55, " ").concat(x, " ").concat(y - h, " Q").concat(x + w + 1, " ").concat(y - h * 0.55, " ").concat(x + w, " ").concat(y, "Z\" fill=\"url(#gPetal)\" stroke=\"#c94a80\" stroke-width=\".6\"/><path d=\"M").concat(x, " ").concat(y - 1, " Q").concat(x - 1, " ").concat(y - h * 0.5, " ").concat(x, " ").concat(y - h + 3, "\" stroke=\"rgba(200,60,120,.45)\" stroke-width=\".7\" fill=\"none\"/>");
+  }).join("");
 }
 function baseBack(b) {
-  if (b === "banana") return `<path d="M10 78 Q12 101 60 103 Q108 101 110 78Z" fill="url(#gLeaf)"/>${[...Array(7)].map((_, i) => `<path d="M60 102 Q${30 + i * 10} 92 ${14 + i * 15.3} 80" stroke="rgba(190,240,160,.28)" stroke-width=".8" fill="none"/>`).join("")}<ellipse cx="60" cy="78" rx="50" ry="11" fill="#1a4a1d"/>${pleats(arc(11, Math.PI, 2 * Math.PI, 78, 50, 11), 15, "#4f9a40", "#2b6b2c")}`;
-  if (b === "bread") return `<path d="M9 78 Q10 102 60 104 Q110 102 111 78Z" fill="url(#gBread)"/>${[...Array(26)].map((_, i) => `<circle cx="${16 + R(i) * 88}" cy="${83 + R(i + 50) * 16}" r="${0.6 + R(i + 9) * 0.8}" fill="rgba(110,55,15,.4)"/>`).join("")}<ellipse cx="60" cy="78" rx="51" ry="12" fill="url(#gBreadTop)"/>${arc(12, Math.PI, 2 * Math.PI, 78, 49, 11).map(([x, y]) => `<circle cx="${x}" cy="${y}" r="6.5" fill="url(#gCrust)"/>`).join("")}`;
-  if (b === "trunk") return `<path d="M10 74 L10 92 A50 12 0 0 0 110 92 L110 74Z" fill="url(#gTrunk)"/>${[...Array(16)].map((_, i) => {
-    const x = 14 + i * 6.1, u = (x - 60) / 50, d = 12 * Math.sqrt(1 - u * u);
-    return `<path d="M${x} ${74 + d} L${x} ${92 + d}" stroke="rgba(80,95,40,.35)" stroke-width=".8"/>`;
-  }).join("")}<ellipse cx="60" cy="74" rx="50" ry="12" fill="#f3eed4" stroke="#9cad5c" stroke-width="3"/>${[40, 30, 20, 10].map((r) => `<ellipse cx="60" cy="74" rx="${r}" ry="${r * 0.24}" fill="none" stroke="#d6cb98" stroke-width=".9"/>`).join("")}${[...Array(14)].map((_, i) => {
-    const t = i / 14 * 6.28;
-    return `<line x1="60" y1="74" x2="${60 + 46 * Math.cos(t)}" y2="${74 + 11 * Math.sin(t)}" stroke="rgba(200,190,140,.35)" stroke-width=".5"/>`;
-  }).join("")}`;
-  if (b === "coco") return `<path d="M8 76 Q9 107 60 107 Q111 107 112 76Z" fill="url(#gCoco)"/>${[...Array(40)].map((_, i) => {
-    const x = 12 + R(i) * 96, y = 80 + R(i + 70) * 22;
-    return `<path d="M${x} ${y} q${R(i + 3) * 4 - 2} 3 ${R(i + 5) * 6 - 3} 6" stroke="rgba(45,22,6,.55)" stroke-width=".7" fill="none"/>`;
-  }).join("")}<ellipse cx="60" cy="76" rx="52" ry="12" fill="#f8f3e6" stroke="#3b220c" stroke-width="1.5"/><ellipse cx="60" cy="76.5" rx="47" ry="9.5" fill="#4a2a10"/>`;
-  return `<ellipse cx="60" cy="94" rx="57" ry="11" fill="#2f6e2b"/><path d="M60 94 L118 92" stroke="#1d4a1b" stroke-width="1.5"/>${[...Array(9)].map((_, i) => `<path d="M60 94 L${60 + 56 * Math.cos(i * 0.7)} ${94 + 10 * Math.sin(i * 0.7)}" stroke="rgba(150,210,120,.3)" stroke-width=".6"/>`).join("")}<ellipse cx="60" cy="80" rx="46" ry="11" fill="#f7b9d3"/>${petals(arc(9, Math.PI, 2 * Math.PI, 80, 46, 11), 24, 7)}`;
+  if (b === "banana") return "<path d=\"M10 78 Q12 101 60 103 Q108 101 110 78Z\" fill=\"url(#gLeaf)\"/>".concat(_toConsumableArray(Array(7)).map(function (_, i) {
+    return "<path d=\"M60 102 Q".concat(30 + i * 10, " 92 ").concat(14 + i * 15.3, " 80\" stroke=\"rgba(190,240,160,.28)\" stroke-width=\".8\" fill=\"none\"/>");
+  }).join(""), "<ellipse cx=\"60\" cy=\"78\" rx=\"50\" ry=\"11\" fill=\"#1a4a1d\"/>").concat(pleats(arc(11, Math.PI, 2 * Math.PI, 78, 50, 11), 15, "#4f9a40", "#2b6b2c"));
+  if (b === "bread") return "<path d=\"M9 78 Q10 102 60 104 Q110 102 111 78Z\" fill=\"url(#gBread)\"/>".concat(_toConsumableArray(Array(26)).map(function (_, i) {
+    return "<circle cx=\"".concat(16 + R(i) * 88, "\" cy=\"").concat(83 + R(i + 50) * 16, "\" r=\"").concat(0.6 + R(i + 9) * 0.8, "\" fill=\"rgba(110,55,15,.4)\"/>");
+  }).join(""), "<ellipse cx=\"60\" cy=\"78\" rx=\"51\" ry=\"12\" fill=\"url(#gBreadTop)\"/>").concat(arc(12, Math.PI, 2 * Math.PI, 78, 49, 11).map(function (_ref9) {
+    var _ref0 = _slicedToArray(_ref9, 2),
+      x = _ref0[0],
+      y = _ref0[1];
+    return "<circle cx=\"".concat(x, "\" cy=\"").concat(y, "\" r=\"6.5\" fill=\"url(#gCrust)\"/>");
+  }).join(""));
+  if (b === "trunk") return "<path d=\"M10 74 L10 92 A50 12 0 0 0 110 92 L110 74Z\" fill=\"url(#gTrunk)\"/>".concat(_toConsumableArray(Array(16)).map(function (_, i) {
+    var x = 14 + i * 6.1,
+      u = (x - 60) / 50,
+      d = 12 * Math.sqrt(1 - u * u);
+    return "<path d=\"M".concat(x, " ").concat(74 + d, " L").concat(x, " ").concat(92 + d, "\" stroke=\"rgba(80,95,40,.35)\" stroke-width=\".8\"/>");
+  }).join(""), "<ellipse cx=\"60\" cy=\"74\" rx=\"50\" ry=\"12\" fill=\"#f3eed4\" stroke=\"#9cad5c\" stroke-width=\"3\"/>").concat([40, 30, 20, 10].map(function (r) {
+    return "<ellipse cx=\"60\" cy=\"74\" rx=\"".concat(r, "\" ry=\"").concat(r * 0.24, "\" fill=\"none\" stroke=\"#d6cb98\" stroke-width=\".9\"/>");
+  }).join("")).concat(_toConsumableArray(Array(14)).map(function (_, i) {
+    var t = i / 14 * 6.28;
+    return "<line x1=\"60\" y1=\"74\" x2=\"".concat(60 + 46 * Math.cos(t), "\" y2=\"").concat(74 + 11 * Math.sin(t), "\" stroke=\"rgba(200,190,140,.35)\" stroke-width=\".5\"/>");
+  }).join(""));
+  if (b === "coco") return "<path d=\"M8 76 Q9 107 60 107 Q111 107 112 76Z\" fill=\"url(#gCoco)\"/>".concat(_toConsumableArray(Array(40)).map(function (_, i) {
+    var x = 12 + R(i) * 96,
+      y = 80 + R(i + 70) * 22;
+    return "<path d=\"M".concat(x, " ").concat(y, " q").concat(R(i + 3) * 4 - 2, " 3 ").concat(R(i + 5) * 6 - 3, " 6\" stroke=\"rgba(45,22,6,.55)\" stroke-width=\".7\" fill=\"none\"/>");
+  }).join(""), "<ellipse cx=\"60\" cy=\"76\" rx=\"52\" ry=\"12\" fill=\"#f8f3e6\" stroke=\"#3b220c\" stroke-width=\"1.5\"/><ellipse cx=\"60\" cy=\"76.5\" rx=\"47\" ry=\"9.5\" fill=\"#4a2a10\"/>");
+  return "<ellipse cx=\"60\" cy=\"94\" rx=\"57\" ry=\"11\" fill=\"#2f6e2b\"/><path d=\"M60 94 L118 92\" stroke=\"#1d4a1b\" stroke-width=\"1.5\"/>".concat(_toConsumableArray(Array(9)).map(function (_, i) {
+    return "<path d=\"M60 94 L".concat(60 + 56 * Math.cos(i * 0.7), " ").concat(94 + 10 * Math.sin(i * 0.7), "\" stroke=\"rgba(150,210,120,.3)\" stroke-width=\".6\"/>");
+  }).join(""), "<ellipse cx=\"60\" cy=\"80\" rx=\"46\" ry=\"11\" fill=\"#f7b9d3\"/>").concat(petals(arc(9, Math.PI, 2 * Math.PI, 80, 46, 11), 24, 7));
 }
 function baseFront(b) {
   if (b === "banana") return pleats(arc(11, Math.PI, 0, 79, 51, 12), 18, "#6cb85a", "#357d34");
-  if (b === "bread") return arc(12, Math.PI, 0, 80, 50, 12).map(([x, y]) => `<circle cx="${x}" cy="${y}" r="7" fill="url(#gCrust)"/><ellipse cx="${x - 2}" cy="${y - 3}" rx="2.5" ry="1.5" fill="rgba(255,240,200,.5)"/>`).join("");
+  if (b === "bread") return arc(12, Math.PI, 0, 80, 50, 12).map(function (_ref1) {
+    var _ref10 = _slicedToArray(_ref1, 2),
+      x = _ref10[0],
+      y = _ref10[1];
+    return "<circle cx=\"".concat(x, "\" cy=\"").concat(y, "\" r=\"7\" fill=\"url(#gCrust)\"/><ellipse cx=\"").concat(x - 2, "\" cy=\"").concat(y - 3, "\" rx=\"2.5\" ry=\"1.5\" fill=\"rgba(255,240,200,.5)\"/>");
+  }).join("");
   if (b === "lotus") return petals(arc(10, Math.PI * 0.97, Math.PI * 0.03, 88, 50, 9), 19, 7.5);
   return "";
 }
 function svg(k) {
-  const f = COL[k.flower] || "#ffb21f";
-  let s = `<svg viewBox="0 0 120 112">`;
-  s += `<ellipse cx="60" cy="102" rx="58" ry="8" fill="rgba(0,0,0,.35)"/>` + baseBack(k.base);
-  for (let i = 0; i < 7; i++) {
-    const x = 24 + i * 12, y = 69 - Math.sin(i / 6 * Math.PI) * 6;
-    s += `<g transform="translate(${x} ${y})">${[0, 72, 144, 216, 288].map((a) => `<ellipse rx="4" ry="7" fill="${f}" transform="rotate(${a}) translate(0 -4)"/>`).join("")}<circle r="3" fill="#ffe36b"/></g>`;
+  var f = COL[k.flower] || "#ffb21f";
+  var s = "<svg viewBox=\"0 0 120 112\">";
+  s += "<ellipse cx=\"60\" cy=\"102\" rx=\"58\" ry=\"8\" fill=\"rgba(0,0,0,.35)\"/>" + baseBack(k.base);
+  for (var i = 0; i < 7; i++) {
+    var x = 24 + i * 12,
+      y = 69 - Math.sin(i / 6 * Math.PI) * 6;
+    s += "<g transform=\"translate(".concat(x, " ").concat(y, ")\">").concat([0, 72, 144, 216, 288].map(function (a) {
+      return "<ellipse rx=\"4\" ry=\"7\" fill=\"".concat(f, "\" transform=\"rotate(").concat(a, ") translate(0 -4)\"/>");
+    }).join(""), "<circle r=\"3\" fill=\"#ffe36b\"/></g>");
   }
-  s += `<g transform="translate(60 57)">${[0, 45, 90, 135, 180, 225, 270, 315].map((a) => `<ellipse rx="6" ry="13" fill="${f}" opacity=".95" transform="rotate(${a}) translate(0 -8)"/>`).join("")}<circle r="6" fill="#ffd34d"/></g>`;
-  const cc = k.candle === "white" ? "#f4f1e6" : "#f2b630";
-  s += `<circle cx="60" cy="22" r="12" fill="rgba(255,190,60,.35)"/><rect x="56" y="28" width="8" height="26" rx="2" fill="${cc}"/><path class="flame" d="M60 16 Q65 24 60 28 Q55 24 60 16Z" fill="#ffcf3f"/><path class="flame" d="M60 20 Q62 25 60 27 Q58 25 60 20Z" fill="#fff"/>`;
-  if (k.candle === "triple") [44, 76, 68].forEach((x, i) => s += `<line x1="${x}" y1="56" x2="${x + (i - 1) * 3}" y2="${24 + i * 3}" stroke="#a5332b" stroke-width="2"/><circle cx="${x + (i - 1) * 3}" cy="${24 + i * 3}" r="1.8" fill="#ff5a2a"/>`);
+  s += "<g transform=\"translate(60 57)\">".concat([0, 45, 90, 135, 180, 225, 270, 315].map(function (a) {
+    return "<ellipse rx=\"6\" ry=\"13\" fill=\"".concat(f, "\" opacity=\".95\" transform=\"rotate(").concat(a, ") translate(0 -8)\"/>");
+  }).join(""), "<circle r=\"6\" fill=\"#ffd34d\"/></g>");
+  var cc = k.candle === "white" ? "#f4f1e6" : "#f2b630";
+  s += "<circle cx=\"60\" cy=\"22\" r=\"12\" fill=\"rgba(255,190,60,.35)\"/><rect x=\"56\" y=\"28\" width=\"8\" height=\"26\" rx=\"2\" fill=\"".concat(cc, "\"/><path class=\"flame\" d=\"M60 16 Q65 24 60 28 Q55 24 60 16Z\" fill=\"#ffcf3f\"/><path class=\"flame\" d=\"M60 20 Q62 25 60 27 Q58 25 60 20Z\" fill=\"#fff\"/>");
+  if (k.candle === "triple") [44, 76, 68].forEach(function (x, i) {
+    return s += "<line x1=\"".concat(x, "\" y1=\"56\" x2=\"").concat(x + (i - 1) * 3, "\" y2=\"").concat(24 + i * 3, "\" stroke=\"#a5332b\" stroke-width=\"2\"/><circle cx=\"").concat(x + (i - 1) * 3, "\" cy=\"").concat(24 + i * 3, "\" r=\"1.8\" fill=\"#ff5a2a\"/>");
+  });
   s += baseFront(k.base);
-  if (DECO[k.deco]) s += `<text x="84" y="70" font-size="17">${DECO[k.deco]}</text>`;
+  if (DECO[k.deco]) s += "<text x=\"84\" y=\"70\" font-size=\"17\">".concat(DECO[k.deco], "</text>");
   return s + "</svg>";
 }
-document.querySelectorAll(".opts").forEach((box) => {
-  const k = box.dataset.k;
-  box.innerHTML = OPT[k].map(([v, ic, t, eco]) => `<button class="opt${sel[k] == v ? " on" : ""}" data-v="${v}"><i>${ic}</i>${t}${eco ? '<span class="eco">eco</span>' : ""}</button>`).join("");
-  box.onclick = (e) => {
-    const b = e.target.closest(".opt");
+document.querySelectorAll(".opts").forEach(function (box) {
+  var k = box.dataset.k;
+  box.innerHTML = OPT[k].map(function (_ref11) {
+    var _ref12 = _slicedToArray(_ref11, 4),
+      v = _ref12[0],
+      ic = _ref12[1],
+      t = _ref12[2],
+      eco = _ref12[3];
+    return "<button class=\"opt".concat(sel[k] == v ? " on" : "", "\" data-v=\"").concat(v, "\"><i>").concat(ic, "</i>").concat(t).concat(eco ? '<span class="eco">eco</span>' : "", "</button>");
+  }).join("");
+  box.onclick = function (e) {
+    var b = e.target.closest(".opt");
     if (!b) return;
     sel[k] = b.dataset.v;
     sel.img = null;
-    box.querySelectorAll(".opt").forEach((x) => x.classList.toggle("on", x === b));
+    box.querySelectorAll(".opt").forEach(function (x) {
+      return x.classList.toggle("on", x === b);
+    });
     preview(true);
   };
 });
-const PRESETS = ["\u0E2B\u0E31\u0E27\u0E43\u0E08\u0E01\u0E38\u0E2B\u0E25\u0E32\u0E1A", "\u0E1A\u0E31\u0E27\u0E0A\u0E21\u0E1E\u0E39\u0E21\u0E07\u0E04\u0E25", "\u0E2B\u0E07\u0E2A\u0E4C\u0E02\u0E32\u0E27\u0E21\u0E32\u0E25\u0E31\u0E22", "\u0E1A\u0E31\u0E27\u0E02\u0E32\u0E27\u0E44\u0E02\u0E48\u0E21\u0E38\u0E01", "\u0E01\u0E30\u0E25\u0E32\u0E01\u0E25\u0E49\u0E27\u0E22\u0E44\u0E21\u0E49", "\u0E1A\u0E31\u0E27\u0E19\u0E49\u0E33\u0E40\u0E07\u0E34\u0E19\u0E25\u0E32\u0E22\u0E40\u0E07\u0E34\u0E19", "\u0E1A\u0E31\u0E27\u0E0A\u0E21\u0E1E\u0E39 3 \u0E0A\u0E31\u0E49\u0E19", "\u0E15\u0E30\u0E01\u0E23\u0E49\u0E32\u0E14\u0E32\u0E27\u0E40\u0E23\u0E37\u0E2D\u0E07", "\u0E1A\u0E31\u0E27\u0E41\u0E01\u0E49\u0E27\u0E04\u0E23\u0E34\u0E2A\u0E15\u0E31\u0E25", "\u0E19\u0E01\u0E22\u0E39\u0E07\u0E43\u0E1A\u0E15\u0E2D\u0E07", "\u0E1A\u0E31\u0E27\u0E41\u0E14\u0E07\u0E25\u0E32\u0E22\u0E17\u0E2D\u0E07", "\u0E1E\u0E0D\u0E32\u0E19\u0E32\u0E04\u0E17\u0E2D\u0E07", "\u0E1A\u0E31\u0E27\u0E02\u0E32\u0E27\u0E15\u0E30\u0E01\u0E23\u0E49\u0E32\u0E44\u0E1C\u0E48", "\u0E14\u0E32\u0E27\u0E40\u0E23\u0E37\u0E2D\u0E07\u0E01\u0E25\u0E49\u0E27\u0E22\u0E44\u0E21\u0E49", "\u0E14\u0E32\u0E27\u0E40\u0E23\u0E37\u0E2D\u0E07\u0E1A\u0E31\u0E27\u0E15\u0E39\u0E21", "\u0E01\u0E23\u0E30\u0E17\u0E07\u0E14\u0E32\u0E27", "\u0E1A\u0E31\u0E27\u0E2A\u0E35\u0E23\u0E38\u0E49\u0E07", "\u0E01\u0E25\u0E49\u0E27\u0E22\u0E44\u0E21\u0E49\u0E21\u0E48\u0E27\u0E07\u0E17\u0E2D\u0E07", "\u0E08\u0E31\u0E19\u0E17\u0E23\u0E4C\u0E40\u0E2A\u0E35\u0E49\u0E22\u0E27\u0E1A\u0E31\u0E27\u0E04\u0E23\u0E32\u0E21", "\u0E1C\u0E35\u0E40\u0E2A\u0E37\u0E49\u0E2D\u0E01\u0E25\u0E49\u0E27\u0E22\u0E44\u0E21\u0E49"].map((t, i) => ["k" + String(i + 1).padStart(2, "0"), t]);
-const IMGDIR = "krathong/";
+var PRESETS = ["\u0E2B\u0E31\u0E27\u0E43\u0E08\u0E01\u0E38\u0E2B\u0E25\u0E32\u0E1A", "\u0E1A\u0E31\u0E27\u0E0A\u0E21\u0E1E\u0E39\u0E21\u0E07\u0E04\u0E25", "\u0E2B\u0E07\u0E2A\u0E4C\u0E02\u0E32\u0E27\u0E21\u0E32\u0E25\u0E31\u0E22", "\u0E1A\u0E31\u0E27\u0E02\u0E32\u0E27\u0E44\u0E02\u0E48\u0E21\u0E38\u0E01", "\u0E01\u0E30\u0E25\u0E32\u0E01\u0E25\u0E49\u0E27\u0E22\u0E44\u0E21\u0E49", "\u0E1A\u0E31\u0E27\u0E19\u0E49\u0E33\u0E40\u0E07\u0E34\u0E19\u0E25\u0E32\u0E22\u0E40\u0E07\u0E34\u0E19", "\u0E1A\u0E31\u0E27\u0E0A\u0E21\u0E1E\u0E39 3 \u0E0A\u0E31\u0E49\u0E19", "\u0E15\u0E30\u0E01\u0E23\u0E49\u0E32\u0E14\u0E32\u0E27\u0E40\u0E23\u0E37\u0E2D\u0E07", "\u0E1A\u0E31\u0E27\u0E41\u0E01\u0E49\u0E27\u0E04\u0E23\u0E34\u0E2A\u0E15\u0E31\u0E25", "\u0E19\u0E01\u0E22\u0E39\u0E07\u0E43\u0E1A\u0E15\u0E2D\u0E07", "\u0E1A\u0E31\u0E27\u0E41\u0E14\u0E07\u0E25\u0E32\u0E22\u0E17\u0E2D\u0E07", "\u0E1E\u0E0D\u0E32\u0E19\u0E32\u0E04\u0E17\u0E2D\u0E07", "\u0E1A\u0E31\u0E27\u0E02\u0E32\u0E27\u0E15\u0E30\u0E01\u0E23\u0E49\u0E32\u0E44\u0E1C\u0E48", "\u0E14\u0E32\u0E27\u0E40\u0E23\u0E37\u0E2D\u0E07\u0E01\u0E25\u0E49\u0E27\u0E22\u0E44\u0E21\u0E49", "\u0E14\u0E32\u0E27\u0E40\u0E23\u0E37\u0E2D\u0E07\u0E1A\u0E31\u0E27\u0E15\u0E39\u0E21", "\u0E01\u0E23\u0E30\u0E17\u0E07\u0E14\u0E32\u0E27", "\u0E1A\u0E31\u0E27\u0E2A\u0E35\u0E23\u0E38\u0E49\u0E07", "\u0E01\u0E25\u0E49\u0E27\u0E22\u0E44\u0E21\u0E49\u0E21\u0E48\u0E27\u0E07\u0E17\u0E2D\u0E07", "\u0E08\u0E31\u0E19\u0E17\u0E23\u0E4C\u0E40\u0E2A\u0E35\u0E49\u0E22\u0E27\u0E1A\u0E31\u0E27\u0E04\u0E23\u0E32\u0E21", "\u0E1C\u0E35\u0E40\u0E2A\u0E37\u0E49\u0E2D\u0E01\u0E25\u0E49\u0E27\u0E22\u0E44\u0E21\u0E49"].map(function (t, i) {
+  return ["k" + String(i + 1).padStart(2, "0"), t];
+});
+var IMGDIR = "krathong/";
 function art(k) {
-  return k.img && /^k\d\d$/.test(k.img) ? `<img src="${IMGDIR}${k.img}.webp" alt="" draggable="false">` : svg(k);
+  return k.img && /^k\d\d$/.test(k.img) ? "<img src=\"".concat(IMGDIR).concat(k.img, ".webp\" alt=\"\" draggable=\"false\">") : svg(k);
 }
-$("presets").innerHTML = PRESETS.map(([id, t]) => `<button class="pre" data-id="${id}"><img src="${IMGDIR}${id}.webp" loading="lazy" alt="">${t}</button>`).join("");
+$("presets").innerHTML = PRESETS.map(function (_ref13) {
+  var _ref14 = _slicedToArray(_ref13, 2),
+    id = _ref14[0],
+    t = _ref14[1];
+  return "<button class=\"pre\" data-id=\"".concat(id, "\"><img src=\"").concat(IMGDIR).concat(id, ".webp\" loading=\"lazy\" alt=\"\">").concat(t, "</button>");
+}).join("");
 function markPre() {
-  document.querySelectorAll(".pre").forEach((b) => b.classList.toggle("on", b.dataset.id === sel.img));
+  document.querySelectorAll(".pre").forEach(function (b) {
+    return b.classList.toggle("on", b.dataset.id === sel.img);
+  });
 }
-$("presets").onclick = (e) => {
-  const b = e.target.closest(".pre");
+$("presets").onclick = function (e) {
+  var b = e.target.closest(".pre");
   if (!b) return;
   sel.img = b.dataset.id;
   preview(true);
 };
-document.querySelector(".tabs").onclick = (e) => {
-  const t = e.target.closest(".tab");
+document.querySelector(".tabs").onclick = function (e) {
+  var t = e.target.closest(".tab");
   if (!t) return;
-  document.querySelectorAll(".tab").forEach((x) => x.classList.toggle("on", x === t));
-  document.querySelectorAll(".pane").forEach((p) => p.hidden = p.id !== t.dataset.t);
+  document.querySelectorAll(".tab").forEach(function (x) {
+    return x.classList.toggle("on", x === t);
+  });
+  document.querySelectorAll(".pane").forEach(function (p) {
+    return p.hidden = p.id !== t.dataset.t;
+  });
   if (t.dataset.t === "pDiy") {
     sel.img = null;
     preview(true);
   }
 };
 function preview(fx) {
-  const pv = $("pv"), pr = $("preview");
+  var pv = $("pv"),
+    pr = $("preview");
   pv.innerHTML = art(sel);
   markPre();
   if (!fx) return;
@@ -2032,17 +2092,27 @@ function preview(fx) {
   void pv.offsetWidth;
   pv.classList.add("spin");
   pr.classList.add("burst");
-  setTimeout(() => {
+  setTimeout(function () {
     pv.classList.remove("spin");
     pr.classList.remove("burst");
   }, 2650);
-  const r = pr.getBoundingClientRect();
-  for (let i = 0; i < 34; i++) {
-    const a = Math.random() * 6.28, v = 1.5 + Math.random() * 3.5;
-    P.push({ x: r.left + r.width / 2, y: r.top + r.height / 2, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 1, l: 45 + Math.random() * 25, c: i % 3 ? "#ffe08a" : "#3ee6ff" });
+  var r = pr.getBoundingClientRect();
+  for (var i = 0; i < 34; i++) {
+    var a = Math.random() * 6.28,
+      v = 1.5 + Math.random() * 3.5;
+    P.push({
+      x: r.left + r.width / 2,
+      y: r.top + r.height / 2,
+      vx: Math.cos(a) * v,
+      vy: Math.sin(a) * v - 1,
+      l: 45 + Math.random() * 25,
+      c: i % 3 ? "#ffe08a" : "#3ee6ff"
+    });
   }
 }
-$("wish").oninput = (e) => $("wc").textContent = e.target.value.length + "/200";
+$("wish").oninput = function (e) {
+  return $("wc").textContent = e.target.value.length + "/200";
+};
 function open_(m) {
   m.classList.add("show");
 }
@@ -2051,334 +2121,847 @@ function close_(m) {
 }
 function openMake() {
   open_(mMake);
-  setTimeout(() => preview(true), 350);
+  setTimeout(function () {
+    return preview(true);
+  }, 350);
 }
 function openList() {
   renderList();
   open_(mList);
 }
-const useDB = !!CONFIG.API_URL;
-const okPhoto = (u) => typeof u === "string" && (/^https:\/\/lh3\.googleusercontent\.com\/[\w\-\/=]+$/.test(u) || /^data:image\/jpeg;base64,[\w+\/=]+$/.test(u));
-const av = (k) => okPhoto(k.photo) ? `<img class="av" src="${k.photo}" alt="">` : `<span class="av avt">\u{1F64F}</span>`;
-async function api() {
-  const r = await fetch(CONFIG.API_URL + "?t=" + Date.now());
-  return r.json();
+var useDB = !!CONFIG.API_URL;
+var okPhoto = function okPhoto(u) {
+  return typeof u === "string" && (/^https:\/\/lh3\.googleusercontent\.com\/[\w\-\/=]+$/.test(u) || /^data:image\/jpeg;base64,[\w+\/=]+$/.test(u));
+};
+var av = function av(k) {
+  return okPhoto(k.photo) ? "<img class=\"av\" src=\"".concat(k.photo, "\" alt=\"\">") : "<span class=\"av avt\">\uD83D\uDE4F</span>";
+};
+function api() {
+  return _api.apply(this, arguments);
 }
-let total = 0;
-const useFB = !!(CONFIG.FIREBASE && CONFIG.FIREBASE.databaseURL);
-let FB = null;
-const pendingIds = /* @__PURE__ */ new Set();
+function _api() {
+  _api = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+    var r;
+    return _regenerator().w(function (_context2) {
+      while (1) switch (_context2.n) {
+        case 0:
+          _context2.n = 1;
+          return fetch(CONFIG.API_URL + "?t=" + Date.now());
+        case 1:
+          r = _context2.v;
+          return _context2.a(2, r.json());
+      }
+    }, _callee2);
+  }));
+  return _api.apply(this, arguments);
+}
+var total = 0;
+var useFB = !!(CONFIG.FIREBASE && CONFIG.FIREBASE.databaseURL);
+var FB = null;
+var pendingIds = /* @__PURE__ */new Set();
 function loadJS(src) {
-  return new Promise((ok, no) => {
-    const s = document.createElement("script");
+  return new Promise(function (ok, no) {
+    var s = document.createElement("script");
     s.src = src;
     s.onload = ok;
     s.onerror = no;
     document.head.appendChild(s);
   });
 }
-const fbRow = (id, v) => ({
-  id,
-  name: v.name,
-  wish: v.wish || "",
-  img: v.img || null,
-  base: v.base,
-  flower: v.flower,
-  candle: v.candle,
-  deco: v.deco,
-  photo: v.photo || null,
-  created_at: new Date(typeof v.created_at === "number" ? v.created_at : Date.now()).toISOString()
-});
-async function fbInit() {
-  const V = "10.12.2";
-  await loadJS(`https://www.gstatic.com/firebasejs/${V}/firebase-app-compat.js`);
-  await loadJS(`https://www.gstatic.com/firebasejs/${V}/firebase-database-compat.js`);
-  firebase.initializeApp(CONFIG.FIREBASE);
-  const db = firebase.database();
-  FB = { db, ref: db.ref("krathong"), total: db.ref("stats/total") };
-  FB.total.on("value", (s) => {
-    total = s.val() || 0;
-    $("count").textContent = total;
-  });
-  const q = FB.ref.orderByChild("created_at").limitToLast(CONFIG.SHOW);
-  const snap = await q.once("value");
-  const rows = [];
-  snap.forEach((c) => {
-    const v = c.val();
-    if (v && v.approved !== false && !isBad(v.name) && !isBad(v.wish)) rows.push(fbRow(c.key, v));
-  });
-  return rows;
+var fbRow = function fbRow(id, v) {
+  return {
+    id: id,
+    name: v.name,
+    wish: v.wish || "",
+    img: v.img || null,
+    base: v.base,
+    flower: v.flower,
+    candle: v.candle,
+    deco: v.deco,
+    photo: v.photo || null,
+    created_at: new Date(typeof v.created_at === "number" ? v.created_at : Date.now()).toISOString()
+  };
+};
+var REST = false;
+var fbURL = function fbURL(p, q) {
+  return CONFIG.FIREBASE.databaseURL + "/" + p + ".json" + (q || "");
+};
+function restRows() {
+  return _restRows.apply(this, arguments);
+}
+function _restRows() {
+  _restRows = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+    var r, o, rows, _t2, _t3, _t4;
+    return _regenerator().w(function (_context3) {
+      while (1) switch (_context3.p = _context3.n) {
+        case 0:
+          _context3.n = 1;
+          return fetch(fbURL("krathong", '?orderBy="created_at"&limitToLast=' + CONFIG.SHOW));
+        case 1:
+          r = _context3.v;
+          _context3.n = 2;
+          return r.json();
+        case 2:
+          _t2 = _context3.v;
+          if (_t2) {
+            _context3.n = 3;
+            break;
+          }
+          _t2 = {};
+        case 3:
+          o = _t2;
+          rows = [];
+          Object.keys(o).forEach(function (id) {
+            var v = o[id];
+            if (v && v.approved !== false && !isBad(v.name) && !isBad(v.wish)) rows.push(fbRow(id, v));
+          });
+          _context3.p = 4;
+          _context3.n = 5;
+          return fetch(fbURL("stats/total"));
+        case 5:
+          _context3.n = 6;
+          return _context3.v.json();
+        case 6:
+          _t3 = _context3.v;
+          if (_t3) {
+            _context3.n = 7;
+            break;
+          }
+          _t3 = 0;
+        case 7:
+          total = _t3;
+          $("count").textContent = total;
+          _context3.n = 9;
+          break;
+        case 8:
+          _context3.p = 8;
+          _t4 = _context3.v;
+        case 9:
+          return _context3.a(2, rows.sort(function (a, b) {
+            return String(b.created_at).localeCompare(String(a.created_at));
+          }));
+      }
+    }, _callee3, null, [[4, 8]]);
+  }));
+  return _restRows.apply(this, arguments);
+}
+function restPoll() {
+  setInterval(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
+    var rows, ids, _t;
+    return _regenerator().w(function (_context) {
+      while (1) switch (_context.p = _context.n) {
+        case 0:
+          _context.p = 0;
+          _context.n = 1;
+          return restRows();
+        case 1:
+          rows = _context.v;
+          ids = {};
+          rows.forEach(function (k) {
+            return ids[k.id] = 1;
+          });
+          data.filter(function (d) {
+            return !ids[d.id] && !isMine(d);
+          }).forEach(function (d) {
+            return fbHide(d.id);
+          });
+          rows.slice().reverse().forEach(function (k) {
+            if (data.some(function (d) {
+              return String(d.id) === String(k.id);
+            })) return;
+            data.unshift(k);
+            addToRiver(k, false);
+          });
+          data.length = Math.min(data.length, CONFIG.SHOW);
+          ticker();
+          today();
+          _context.n = 3;
+          break;
+        case 2:
+          _context.p = 2;
+          _t = _context.v;
+        case 3:
+          return _context.a(2);
+      }
+    }, _callee, null, [[0, 2]]);
+  })), Math.max(8, CONFIG.POLL_SEC) * 1e3);
+}
+function restSave(_x) {
+  return _restSave.apply(this, arguments);
+}
+function _restSave() {
+  _restSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4(k) {
+    var rec, r, j;
+    return _regenerator().w(function (_context4) {
+      while (1) switch (_context4.n) {
+        case 0:
+          rec = {
+            name: k.name,
+            wish: k.wish || "",
+            img: k.img || null,
+            base: k.base,
+            flower: k.flower,
+            candle: k.candle,
+            deco: k.deco,
+            photo: k.photo || null,
+            approved: true,
+            created_at: {
+              ".sv": "timestamp"
+            }
+          };
+          Object.keys(rec).forEach(function (x) {
+            return rec[x] === null && delete rec[x];
+          });
+          _context4.n = 1;
+          return fetch(fbURL("krathong"), {
+            method: "POST",
+            body: JSON.stringify(rec)
+          });
+        case 1:
+          r = _context4.v;
+          _context4.n = 2;
+          return r.json();
+        case 2:
+          j = _context4.v;
+          if (!(!r.ok || !j.name)) {
+            _context4.n = 3;
+            break;
+          }
+          throw new Error(j.error || "fail");
+        case 3:
+          fetch(fbURL("stats/total"), {
+            method: "PUT",
+            body: JSON.stringify({
+              ".sv": {
+                increment: 1
+              }
+            })
+          }).then(function () {
+            return $("count").textContent = ++total;
+          }).catch(function () {});
+          if (CONFIG.API_URL) fetch(CONFIG.API_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(k)
+          }).catch(function () {});
+          return _context4.a(2, __spreadProps(__spreadValues({}, k), {
+            id: j.name,
+            created_at: (/* @__PURE__ */new Date()).toISOString()
+          }));
+      }
+    }, _callee4);
+  }));
+  return _restSave.apply(this, arguments);
+}
+var tmo = function tmo(p, ms) {
+  return Promise.race([p, new Promise(function (_, no) {
+    return setTimeout(function () {
+      return no(new Error("timeout"));
+    }, ms);
+  })]);
+};
+function fbInit() {
+  return _fbInit.apply(this, arguments);
+}
+function _fbInit() {
+  _fbInit = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
+    var V, db, q, snap, rows;
+    return _regenerator().w(function (_context5) {
+      while (1) switch (_context5.n) {
+        case 0:
+          V = "10.12.2";
+          _context5.n = 1;
+          return loadJS("https://www.gstatic.com/firebasejs/".concat(V, "/firebase-app-compat.js"));
+        case 1:
+          _context5.n = 2;
+          return loadJS("https://www.gstatic.com/firebasejs/".concat(V, "/firebase-database-compat.js"));
+        case 2:
+          firebase.initializeApp(CONFIG.FIREBASE);
+          db = firebase.database();
+          FB = {
+            db: db,
+            ref: db.ref("krathong"),
+            total: db.ref("stats/total")
+          };
+          FB.total.on("value", function (s) {
+            total = s.val() || 0;
+            $("count").textContent = total;
+          });
+          q = FB.ref.orderByChild("created_at").limitToLast(CONFIG.SHOW);
+          _context5.n = 3;
+          return q.once("value");
+        case 3:
+          snap = _context5.v;
+          rows = [];
+          snap.forEach(function (c) {
+            var v = c.val();
+            if (v && v.approved !== false && !isBad(v.name) && !isBad(v.wish)) rows.push(fbRow(c.key, v));
+          });
+          return _context5.a(2, rows);
+      }
+    }, _callee5);
+  }));
+  return _fbInit.apply(this, arguments);
 }
 function fbListen() {
-  const q = FB.ref.orderByChild("created_at").limitToLast(CONFIG.SHOW);
-  q.on("child_added", (c) => {
-    const v = c.val(), id = c.key;
-    if (!v || v.approved === false || pendingIds.has(id) || data.some((d) => String(d.id) === id) || isBad(v.name) || isBad(v.wish)) return;
-    const k = fbRow(id, v);
+  var q = FB.ref.orderByChild("created_at").limitToLast(CONFIG.SHOW);
+  q.on("child_added", function (c) {
+    var v = c.val(),
+      id = c.key;
+    if (!v || v.approved === false || pendingIds.has(id) || data.some(function (d) {
+      return String(d.id) === id;
+    }) || isBad(v.name) || isBad(v.wish)) return;
+    var k = fbRow(id, v);
     data.unshift(k);
     data.length = Math.min(data.length, CONFIG.SHOW);
     addToRiver(k, false);
     ticker();
     today();
-    toast("\u{1FAB7} " + k.name + " \u0E40\u0E1E\u0E34\u0E48\u0E07\u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07");
+    toast("\uD83E\uDEB7 " + k.name + " \u0E40\u0E1E\u0E34\u0E48\u0E07\u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07");
   });
-  q.on("child_changed", (c) => {
+  q.on("child_changed", function (c) {
     if (c.val() && c.val().approved === false) fbHide(c.key);
   });
-  FB.ref.on("child_removed", (c) => fbHide(c.key));
+  FB.ref.on("child_removed", function (c) {
+    return fbHide(c.key);
+  });
 }
 function fbHide(id) {
-  const i = data.findIndex((d) => String(d.id) === id);
+  var i = data.findIndex(function (d) {
+    return String(d.id) === id;
+  });
   if (i > -1) data.splice(i, 1);
-  const el = river.querySelector(`.kt[data-id="${CSS.escape(id)}"]`);
+  var el = river.querySelector(".kt[data-id=\"".concat(CSS.escape(id), "\"]"));
   if (el) {
-    const j = RV.indexOf(el);
+    var j = RV.indexOf(el);
     if (j > -1) RV.splice(j, 1);
     el.style.opacity = 0;
-    setTimeout(() => el.remove(), 1500);
+    setTimeout(function () {
+      return el.remove();
+    }, 1500);
     layout();
   }
   ticker();
   today();
 }
-async function fbSave(k) {
-  const r = FB.ref.push();
-  pendingIds.add(r.key);
-  const rec = { name: k.name, wish: k.wish || "", img: k.img || null, base: k.base, flower: k.flower, candle: k.candle, deco: k.deco, photo: k.photo || null, approved: true, created_at: firebase.database.ServerValue.TIMESTAMP };
-  Object.keys(rec).forEach((x) => rec[x] === null && delete rec[x]);
-  await r.set(rec);
-  FB.total.transaction((n) => (n || 0) + 1);
-  if (CONFIG.API_URL) fetch(CONFIG.API_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(k) }).catch(() => {
-  });
-  return __spreadProps(__spreadValues({}, k), { id: r.key, created_at: (/* @__PURE__ */ new Date()).toISOString() });
+function fbSave(_x2) {
+  return _fbSave.apply(this, arguments);
 }
-async function load() {
-  if (useFB) {
-    try {
-      data = await fbInit();
-    } catch (e) {
-      console.warn(e);
-      toast("\u0E40\u0E0A\u0E37\u0E48\u0E2D\u0E21\u0E15\u0E48\u0E2D\u0E10\u0E32\u0E19\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25\u0E44\u0E21\u0E48\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08");
-    }
-  } else if (useDB) {
-    try {
-      const j = await api();
-      data = j.rows || [];
-      total = j.total || data.length;
-    } catch (e) {
-      console.warn(e);
-      toast("\u0E42\u0E2B\u0E25\u0E14\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25\u0E44\u0E21\u0E48\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08");
-    }
-  } else {
-    data = JSON.parse(localStorage.getItem("kt_demo") || "null") || demoSeed();
-    total = data.length;
-  }
-  data = data.sort((a, b) => String(b.created_at).localeCompare(String(a.created_at))).slice(0, CONFIG.SHOW);
-  $("count").textContent = total;
-  mine.forEach((m) => {
-    if (!data.find((d) => d.id === m.id)) data.push(m);
-  });
-  const list = [...data.filter((d) => isMine(d)), ...data.filter((d) => !isMine(d))].slice(0, CONFIG.RIVER_MAX);
-  list.sort((a, b) => String(b.created_at).localeCompare(String(a.created_at))).forEach((k) => addToRiver(k, true));
-  ticker();
-  if (useFB && FB) fbListen();
+function _fbSave() {
+  _fbSave = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6(k) {
+    var r, rec;
+    return _regenerator().w(function (_context6) {
+      while (1) switch (_context6.n) {
+        case 0:
+          if (!REST) {
+            _context6.n = 1;
+            break;
+          }
+          return _context6.a(2, restSave(k));
+        case 1:
+          r = FB.ref.push();
+          pendingIds.add(r.key);
+          rec = {
+            name: k.name,
+            wish: k.wish || "",
+            img: k.img || null,
+            base: k.base,
+            flower: k.flower,
+            candle: k.candle,
+            deco: k.deco,
+            photo: k.photo || null,
+            approved: true,
+            created_at: firebase.database.ServerValue.TIMESTAMP
+          };
+          Object.keys(rec).forEach(function (x) {
+            return rec[x] === null && delete rec[x];
+          });
+          _context6.n = 2;
+          return r.set(rec);
+        case 2:
+          FB.total.transaction(function (n) {
+            return (n || 0) + 1;
+          });
+          if (CONFIG.API_URL) fetch(CONFIG.API_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(k)
+          }).catch(function () {});
+          return _context6.a(2, __spreadProps(__spreadValues({}, k), {
+            id: r.key,
+            created_at: (/* @__PURE__ */new Date()).toISOString()
+          }));
+      }
+    }, _callee6);
+  }));
+  return _fbSave.apply(this, arguments);
 }
-async function save(k) {
-  if (useFB) return fbSave(k);
-  if (useDB) {
-    const r = await fetch(CONFIG.API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(k) });
-    const j = await r.json();
-    if (!j.ok) throw new Error(j.error || "fail");
-    return j.row;
-  }
-  k.id = crypto.randomUUID();
-  k.created_at = (/* @__PURE__ */ new Date()).toISOString();
-  data.unshift(k);
-  localStorage.setItem("kt_demo", JSON.stringify(data.slice(0, 60)));
-  return k;
+function load() {
+  return _load.apply(this, arguments);
+}
+function _load() {
+  _load = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
+    var _j, list, _t5, _t6, _t7;
+    return _regenerator().w(function (_context7) {
+      while (1) switch (_context7.p = _context7.n) {
+        case 0:
+          if (!useFB) {
+            _context7.n = 8;
+            break;
+          }
+          _context7.p = 1;
+          _context7.n = 2;
+          return tmo(fbInit(), 12e3);
+        case 2:
+          data = _context7.v;
+          _context7.n = 7;
+          break;
+        case 3:
+          _context7.p = 3;
+          _t5 = _context7.v;
+          console.warn(_t5);
+          _context7.p = 4;
+          REST = true;
+          _context7.n = 5;
+          return restRows();
+        case 5:
+          data = _context7.v;
+          _context7.n = 7;
+          break;
+        case 6:
+          _context7.p = 6;
+          _t6 = _context7.v;
+          toast("\u0E40\u0E0A\u0E37\u0E48\u0E2D\u0E21\u0E15\u0E48\u0E2D\u0E10\u0E32\u0E19\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25\u0E44\u0E21\u0E48\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08");
+        case 7:
+          _context7.n = 14;
+          break;
+        case 8:
+          if (!useDB) {
+            _context7.n = 13;
+            break;
+          }
+          _context7.p = 9;
+          _context7.n = 10;
+          return api();
+        case 10:
+          _j = _context7.v;
+          data = _j.rows || [];
+          total = _j.total || data.length;
+          _context7.n = 12;
+          break;
+        case 11:
+          _context7.p = 11;
+          _t7 = _context7.v;
+          console.warn(_t7);
+          toast("\u0E42\u0E2B\u0E25\u0E14\u0E02\u0E49\u0E2D\u0E21\u0E39\u0E25\u0E44\u0E21\u0E48\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08");
+        case 12:
+          _context7.n = 14;
+          break;
+        case 13:
+          data = JSON.parse(localStorage.getItem("kt_demo") || "null") || demoSeed();
+          total = data.length;
+        case 14:
+          data = data.sort(function (a, b) {
+            return String(b.created_at).localeCompare(String(a.created_at));
+          }).slice(0, CONFIG.SHOW);
+          $("count").textContent = total;
+          mine.forEach(function (m) {
+            if (!data.find(function (d) {
+              return d.id === m.id;
+            })) data.push(m);
+          });
+          list = [].concat(_toConsumableArray(data.filter(function (d) {
+            return isMine(d);
+          })), _toConsumableArray(data.filter(function (d) {
+            return !isMine(d);
+          }))).slice(0, CONFIG.RIVER_MAX);
+          list.sort(function (a, b) {
+            return String(b.created_at).localeCompare(String(a.created_at));
+          }).forEach(function (k) {
+            return addToRiver(k, true);
+          });
+          ticker();
+          if (useFB && FB && !REST) fbListen();else if (REST) restPoll();
+        case 15:
+          return _context7.a(2);
+      }
+    }, _callee7, null, [[9, 11], [4, 6], [1, 3]]);
+  }));
+  return _load.apply(this, arguments);
+}
+function save(_x3) {
+  return _save.apply(this, arguments);
+}
+function _save() {
+  _save = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8(k) {
+    var r, _j2;
+    return _regenerator().w(function (_context8) {
+      while (1) switch (_context8.n) {
+        case 0:
+          if (!useFB) {
+            _context8.n = 1;
+            break;
+          }
+          return _context8.a(2, fbSave(k));
+        case 1:
+          if (!useDB) {
+            _context8.n = 5;
+            break;
+          }
+          _context8.n = 2;
+          return fetch(CONFIG.API_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(k)
+          });
+        case 2:
+          r = _context8.v;
+          _context8.n = 3;
+          return r.json();
+        case 3:
+          _j2 = _context8.v;
+          if (_j2.ok) {
+            _context8.n = 4;
+            break;
+          }
+          throw new Error(_j2.error || "fail");
+        case 4:
+          return _context8.a(2, _j2.row);
+        case 5:
+          k.id = crypto.randomUUID();
+          k.created_at = (/* @__PURE__ */new Date()).toISOString();
+          data.unshift(k);
+          localStorage.setItem("kt_demo", JSON.stringify(data.slice(0, 60)));
+          return _context8.a(2, k);
+      }
+    }, _callee8);
+  }));
+  return _save.apply(this, arguments);
 }
 function ticker() {
-  const items = data.filter((d) => d.wish && !isBad(d.name, d.wish) && !isBad(d.name) && !isBad(d.wish)).slice(0, CONFIG.SHOW);
+  var items = data.filter(function (d) {
+    return d.wish && !isBad(d.name, d.wish) && !isBad(d.name) && !isBad(d.wish);
+  }).slice(0, CONFIG.SHOW);
   if (!items.length) return;
-  $("tk").innerHTML = items.map((d) => `<span class="tki" data-id="${esc(d.id)}">${av(d)}<b>${esc(d.name)}</b><span>\u201C${esc(d.wish)}\u201D</span></span>`).join("");
-  $("tk").style.animationDuration = Math.max(30, items.reduce((a, d) => a + String(d.wish).length + String(d.name).length, 0) * 0.22) + "s";
+  $("tk").innerHTML = items.map(function (d) {
+    return "<span class=\"tki\" data-id=\"".concat(esc(d.id), "\">").concat(av(d), "<b>").concat(esc(d.name), "</b><span>\u201C").concat(esc(d.wish), "\u201D</span></span>");
+  }).join("");
+  $("tk").style.animationDuration = Math.max(30, items.reduce(function (a, d) {
+    return a + String(d.wish).length + String(d.name).length;
+  }, 0) * 0.22) + "s";
 }
-$("tk").onclick = (e) => {
-  const t = e.target.closest(".tki");
+$("tk").onclick = function (e) {
+  var t = e.target.closest(".tki");
   if (t) {
-    const k = data.find((d) => String(d.id) === t.dataset.id);
+    var k = data.find(function (d) {
+      return String(d.id) === t.dataset.id;
+    });
     if (k) view(k);
   }
 };
-let photo = null;
-$("photo").onchange = (e) => {
-  const f = e.target.files[0];
+var photo = null;
+$("photo").onchange = function (e) {
+  var f = e.target.files[0];
   if (!f) return;
   if (!/^image\//.test(f.type)) return toast("\u0E01\u0E23\u0E38\u0E13\u0E32\u0E40\u0E25\u0E37\u0E2D\u0E01\u0E44\u0E1F\u0E25\u0E4C\u0E23\u0E39\u0E1B\u0E20\u0E32\u0E1E");
-  const img = new Image();
-  img.onload = () => {
-    const S = 240, c = document.createElement("canvas"), r = Math.max(S / img.width, S / img.height), w = img.width * r, h = img.height * r;
+  var img = new Image();
+  img.onload = function () {
+    var S = 240,
+      c = document.createElement("canvas"),
+      r = Math.max(S / img.width, S / img.height),
+      w = img.width * r,
+      h = img.height * r;
     c.width = c.height = S;
     c.getContext("2d").drawImage(img, (S - w) / 2, (S - h) / 2, w, h);
     photo = c.toDataURL("image/jpeg", 0.78);
-    $("phImg").innerHTML = `<img src="${photo}" alt="">`;
+    $("phImg").innerHTML = "<img src=\"".concat(photo, "\" alt=\"\">");
     URL.revokeObjectURL(img.src);
     sparkle($("phBox"));
   };
-  img.onerror = () => toast("\u0E2D\u0E48\u0E32\u0E19\u0E23\u0E39\u0E1B\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49");
+  img.onerror = function () {
+    return toast("\u0E2D\u0E48\u0E32\u0E19\u0E23\u0E39\u0E1B\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49");
+  };
   img.src = URL.createObjectURL(f);
 };
 function demoSeed() {
-  const n = ["\u0E2A\u0E21\u0E0A\u0E32\u0E22", "\u0E21\u0E32\u0E25\u0E35", "\u0E19\u0E49\u0E2D\u0E07\u0E40\u0E21\u0E22\u0E4C", "\u0E04\u0E23\u0E2D\u0E1A\u0E04\u0E23\u0E31\u0E27\u0E2A\u0E38\u0E02\u0E43\u0E08", "\u0E1B\u0E49\u0E32\u0E41\u0E14\u0E07", "\u0E17\u0E35\u0E21\u0E01\u0E2D\u0E07\u0E22\u0E38\u0E17\u0E18\u0E2F", "\u0E25\u0E38\u0E07\u0E2A\u0E21\u0E1E\u0E07\u0E29\u0E4C", "\u0E19\u0E49\u0E2D\u0E07\u0E1F\u0E49\u0E32"], w = ["\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E04\u0E23\u0E2D\u0E1A\u0E04\u0E23\u0E31\u0E27\u0E21\u0E35\u0E2A\u0E38\u0E02\u0E20\u0E32\u0E1E\u0E41\u0E02\u0E47\u0E07\u0E41\u0E23\u0E07", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E2A\u0E2D\u0E1A\u0E15\u0E34\u0E14", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E04\u0E25\u0E2D\u0E07\u0E15\u0E33\u0E2B\u0E23\u0E38\u0E19\u0E48\u0E32\u0E2D\u0E22\u0E39\u0E48\u0E22\u0E34\u0E48\u0E07\u0E02\u0E36\u0E49\u0E19", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E04\u0E49\u0E32\u0E02\u0E32\u0E22\u0E14\u0E35", "\u0E02\u0E2D\u0E02\u0E21\u0E32\u0E1E\u0E23\u0E30\u0E41\u0E21\u0E48\u0E04\u0E07\u0E04\u0E32", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E17\u0E38\u0E01\u0E04\u0E19\u0E21\u0E35\u0E04\u0E27\u0E32\u0E21\u0E2A\u0E38\u0E02", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E25\u0E39\u0E01\u0E2B\u0E25\u0E32\u0E19\u0E40\u0E1B\u0E47\u0E19\u0E04\u0E19\u0E14\u0E35", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E40\u0E08\u0E2D\u0E41\u0E15\u0E48\u0E2A\u0E34\u0E48\u0E07\u0E14\u0E35\u0E46"];
-  return n.map((x, i) => ({ id: "d" + i, img: i % 3 ? PRESETS[i * 5 % 18][0] : null, name: x, wish: w[i], base: OPT.base[i % 5][0], flower: OPT.flower[(i + 2) % 5][0], candle: OPT.candle[i % 3][0], deco: OPT.deco[i % 6][0], created_at: (/* @__PURE__ */ new Date()).toISOString() }));
+  var n = ["\u0E2A\u0E21\u0E0A\u0E32\u0E22", "\u0E21\u0E32\u0E25\u0E35", "\u0E19\u0E49\u0E2D\u0E07\u0E40\u0E21\u0E22\u0E4C", "\u0E04\u0E23\u0E2D\u0E1A\u0E04\u0E23\u0E31\u0E27\u0E2A\u0E38\u0E02\u0E43\u0E08", "\u0E1B\u0E49\u0E32\u0E41\u0E14\u0E07", "\u0E17\u0E35\u0E21\u0E01\u0E2D\u0E07\u0E22\u0E38\u0E17\u0E18\u0E2F", "\u0E25\u0E38\u0E07\u0E2A\u0E21\u0E1E\u0E07\u0E29\u0E4C", "\u0E19\u0E49\u0E2D\u0E07\u0E1F\u0E49\u0E32"],
+    w = ["\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E04\u0E23\u0E2D\u0E1A\u0E04\u0E23\u0E31\u0E27\u0E21\u0E35\u0E2A\u0E38\u0E02\u0E20\u0E32\u0E1E\u0E41\u0E02\u0E47\u0E07\u0E41\u0E23\u0E07", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E2A\u0E2D\u0E1A\u0E15\u0E34\u0E14", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E04\u0E25\u0E2D\u0E07\u0E15\u0E33\u0E2B\u0E23\u0E38\u0E19\u0E48\u0E32\u0E2D\u0E22\u0E39\u0E48\u0E22\u0E34\u0E48\u0E07\u0E02\u0E36\u0E49\u0E19", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E04\u0E49\u0E32\u0E02\u0E32\u0E22\u0E14\u0E35", "\u0E02\u0E2D\u0E02\u0E21\u0E32\u0E1E\u0E23\u0E30\u0E41\u0E21\u0E48\u0E04\u0E07\u0E04\u0E32", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E17\u0E38\u0E01\u0E04\u0E19\u0E21\u0E35\u0E04\u0E27\u0E32\u0E21\u0E2A\u0E38\u0E02", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E25\u0E39\u0E01\u0E2B\u0E25\u0E32\u0E19\u0E40\u0E1B\u0E47\u0E19\u0E04\u0E19\u0E14\u0E35", "\u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E40\u0E08\u0E2D\u0E41\u0E15\u0E48\u0E2A\u0E34\u0E48\u0E07\u0E14\u0E35\u0E46"];
+  return n.map(function (x, i) {
+    return {
+      id: "d" + i,
+      img: i % 3 ? PRESETS[i * 5 % 18][0] : null,
+      name: x,
+      wish: w[i],
+      base: OPT.base[i % 5][0],
+      flower: OPT.flower[(i + 2) % 5][0],
+      candle: OPT.candle[i % 3][0],
+      deco: OPT.deco[i % 6][0],
+      created_at: (/* @__PURE__ */new Date()).toISOString()
+    };
+  });
 }
-const isMine = (k) => mine.some((m) => m.id === k.id);
-const BGS = [{ src: "bg-phone.webp", moon: 180, stage: { berm: [150, 882, 900, 859], h: 215 }, ov: "piles-phone.webp", w: 941, h: 1672, water: 0.55, piles: [[270, 804, 225, 315, 847], [325, 807, 297, 355, 839], [67, 797, -10, 185, 875]] }, { src: "bg-tablet.webp", moon: 192, stage: { berm: [350, 678, 1150, 654], h: 185 }, ov: "piles-tablet.webp", w: 1448, h: 1086, water: 0.66, piles: [[405, 580, 325, 485, 640], [505, 586, 460, 555, 627], [95, 567, -20, 250, 683]] }, { src: "bg.webp", moon: 39, stage: { berm: [500, 542, 1200, 519], h: 165 }, ov: "piles.webp", w: 1672, h: 941, water: 0.62, piles: [[465, 427, 380, 560, 495], [580, 434, 530, 640, 480], [110, 412, -30, 300, 545]] }];
-const BW = [
-  "\u0E21\u0E35\u0E2A\u0E38\u0E02\u0E20\u0E32\u0E1E\u0E41\u0E02\u0E47\u0E07\u0E41\u0E23\u0E07",
-  "\u0E23\u0E48\u0E33\u0E23\u0E27\u0E22\u0E40\u0E07\u0E34\u0E19\u0E17\u0E2D\u0E07",
-  "\u0E04\u0E23\u0E2D\u0E1A\u0E04\u0E23\u0E31\u0E27\u0E2D\u0E1A\u0E2D\u0E38\u0E48\u0E19",
-  "\u0E01\u0E32\u0E23\u0E07\u0E32\u0E19\u0E01\u0E49\u0E32\u0E27\u0E2B\u0E19\u0E49\u0E32",
-  "\u0E42\u0E0A\u0E04\u0E14\u0E35\u0E21\u0E35\u0E0A\u0E31\u0E22",
-  "\u0E1B\u0E23\u0E32\u0E28\u0E08\u0E32\u0E01\u0E42\u0E23\u0E04\u0E20\u0E31\u0E22",
-  "\u0E2A\u0E21\u0E2B\u0E27\u0E31\u0E07\u0E17\u0E38\u0E01\u0E1B\u0E23\u0E30\u0E01\u0E32\u0E23",
-  "\u0E04\u0E49\u0E32\u0E02\u0E32\u0E22\u0E40\u0E08\u0E23\u0E34\u0E0D\u0E23\u0E38\u0E48\u0E07\u0E40\u0E23\u0E37\u0E2D\u0E07",
-  "\u0E21\u0E35\u0E04\u0E27\u0E32\u0E21\u0E2A\u0E38\u0E02\u0E17\u0E38\u0E01\u0E27\u0E31\u0E19",
-  "\u0E41\u0E04\u0E25\u0E49\u0E27\u0E04\u0E25\u0E32\u0E14\u0E1B\u0E25\u0E2D\u0E14\u0E20\u0E31\u0E22",
-  "\u0E08\u0E34\u0E15\u0E43\u0E08\u0E1C\u0E48\u0E2D\u0E07\u0E43\u0E2A",
-  "\u0E21\u0E35\u0E41\u0E15\u0E48\u0E2A\u0E34\u0E48\u0E07\u0E14\u0E35\u0E46 \u0E40\u0E02\u0E49\u0E32\u0E21\u0E32",
-  "\u0E1B\u0E23\u0E30\u0E2A\u0E1A\u0E04\u0E27\u0E32\u0E21\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08",
-  "\u0E2D\u0E32\u0E22\u0E38\u0E21\u0E31\u0E48\u0E19\u0E02\u0E27\u0E31\u0E0D\u0E22\u0E37\u0E19",
-  "\u0E40\u0E07\u0E34\u0E19\u0E17\u0E2D\u0E07\u0E44\u0E2B\u0E25\u0E21\u0E32\u0E40\u0E17\u0E21\u0E32",
-  "\u0E04\u0E27\u0E32\u0E21\u0E23\u0E31\u0E01\u0E2A\u0E14\u0E43\u0E2A",
-  "\u0E2B\u0E19\u0E49\u0E32\u0E17\u0E35\u0E48\u0E01\u0E32\u0E23\u0E07\u0E32\u0E19\u0E21\u0E31\u0E48\u0E19\u0E04\u0E07",
-  "\u0E25\u0E39\u0E01\u0E2B\u0E25\u0E32\u0E19\u0E40\u0E1B\u0E47\u0E19\u0E04\u0E19\u0E14\u0E35",
-  "\u0E21\u0E35\u0E01\u0E34\u0E19\u0E21\u0E35\u0E43\u0E0A\u0E49\u0E44\u0E21\u0E48\u0E02\u0E32\u0E14\u0E21\u0E37\u0E2D",
-  "\u0E40\u0E08\u0E23\u0E34\u0E0D\u0E14\u0E49\u0E27\u0E22\u0E2D\u0E32\u0E22\u0E38 \u0E27\u0E23\u0E23\u0E13\u0E30 \u0E2A\u0E38\u0E02\u0E30 \u0E1E\u0E25\u0E30",
-  "\u0E17\u0E38\u0E01\u0E02\u0E4C\u0E42\u0E28\u0E01\u0E42\u0E23\u0E04\u0E20\u0E31\u0E22\u0E2B\u0E32\u0E22\u0E44\u0E1B\u0E01\u0E31\u0E1A\u0E2A\u0E32\u0E22\u0E19\u0E49\u0E33",
-  "\u0E04\u0E34\u0E14\u0E2A\u0E34\u0E48\u0E07\u0E43\u0E14\u0E2A\u0E21\u0E1B\u0E23\u0E32\u0E23\u0E16\u0E19\u0E32",
-  "\u0E40\u0E23\u0E35\u0E22\u0E19\u0E40\u0E01\u0E48\u0E07\u0E2A\u0E2D\u0E1A\u0E44\u0E14\u0E49\u0E04\u0E30\u0E41\u0E19\u0E19\u0E14\u0E35",
-  "\u0E21\u0E35\u0E42\u0E0A\u0E04\u0E25\u0E32\u0E20\u0E44\u0E21\u0E48\u0E02\u0E32\u0E14\u0E2A\u0E32\u0E22",
-  "\u0E21\u0E35\u0E40\u0E1E\u0E37\u0E48\u0E2D\u0E19\u0E14\u0E35\u0E21\u0E34\u0E15\u0E23\u0E41\u0E17\u0E49"
-];
-const BP = ["\u0E02\u0E2D\u0E43\u0E2B\u0E49", "\u0E02\u0E2D\u0E2D\u0E33\u0E19\u0E32\u0E08\u0E41\u0E21\u0E48\u0E1E\u0E23\u0E30\u0E04\u0E07\u0E04\u0E32\u0E2D\u0E33\u0E19\u0E27\u0E22\u0E1E\u0E23\u0E43\u0E2B\u0E49", "\u0E02\u0E2D\u0E1E\u0E23\u0E27\u0E31\u0E19\u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07\u0E43\u0E2B\u0E49\u0E17\u0E48\u0E32\u0E19", "\u0E02\u0E2D\u0E41\u0E2A\u0E07\u0E08\u0E31\u0E19\u0E17\u0E23\u0E4C\u0E27\u0E31\u0E19\u0E40\u0E1E\u0E47\u0E0D\u0E2A\u0E48\u0E2D\u0E07\u0E19\u0E33\u0E43\u0E2B\u0E49\u0E17\u0E48\u0E32\u0E19", "\u0E0A\u0E32\u0E27\u0E04\u0E25\u0E2D\u0E07\u0E15\u0E33\u0E2B\u0E23\u0E38\u0E02\u0E2D\u0E2D\u0E27\u0E22\u0E1E\u0E23\u0E43\u0E2B\u0E49\u0E17\u0E48\u0E32\u0E19"];
-const BLESS = [];
-for (let i = 0; i < BW.length; i++) for (let j = i + 1; j < BW.length && BLESS.length < 300; j++) BLESS.push(`${BP[BLESS.length % BP.length]}${BW[i]} \u0E41\u0E25\u0E30${BW[j]}`);
-let lastBless = -1;
+var isMine = function isMine(k) {
+  return mine.some(function (m) {
+    return m.id === k.id;
+  });
+};
+var BGS = [{
+  src: "bg-phone.webp",
+  moon: 180,
+  stage: {
+    berm: [150, 882, 900, 859],
+    h: 215
+  },
+  ov: "piles-phone.webp",
+  w: 941,
+  h: 1672,
+  water: 0.55,
+  piles: [[270, 804, 225, 315, 847], [325, 807, 297, 355, 839], [67, 797, -10, 185, 875]]
+}, {
+  src: "bg-tablet.webp",
+  moon: 192,
+  stage: {
+    berm: [350, 678, 1150, 654],
+    h: 185
+  },
+  ov: "piles-tablet.webp",
+  w: 1448,
+  h: 1086,
+  water: 0.66,
+  piles: [[405, 580, 325, 485, 640], [505, 586, 460, 555, 627], [95, 567, -20, 250, 683]]
+}, {
+  src: "bg.webp",
+  moon: 39,
+  stage: {
+    berm: [500, 542, 1200, 519],
+    h: 165
+  },
+  ov: "piles.webp",
+  w: 1672,
+  h: 941,
+  water: 0.62,
+  piles: [[465, 427, 380, 560, 495], [580, 434, 530, 640, 480], [110, 412, -30, 300, 545]]
+}];
+var BW = ["\u0E21\u0E35\u0E2A\u0E38\u0E02\u0E20\u0E32\u0E1E\u0E41\u0E02\u0E47\u0E07\u0E41\u0E23\u0E07", "\u0E23\u0E48\u0E33\u0E23\u0E27\u0E22\u0E40\u0E07\u0E34\u0E19\u0E17\u0E2D\u0E07", "\u0E04\u0E23\u0E2D\u0E1A\u0E04\u0E23\u0E31\u0E27\u0E2D\u0E1A\u0E2D\u0E38\u0E48\u0E19", "\u0E01\u0E32\u0E23\u0E07\u0E32\u0E19\u0E01\u0E49\u0E32\u0E27\u0E2B\u0E19\u0E49\u0E32", "\u0E42\u0E0A\u0E04\u0E14\u0E35\u0E21\u0E35\u0E0A\u0E31\u0E22", "\u0E1B\u0E23\u0E32\u0E28\u0E08\u0E32\u0E01\u0E42\u0E23\u0E04\u0E20\u0E31\u0E22", "\u0E2A\u0E21\u0E2B\u0E27\u0E31\u0E07\u0E17\u0E38\u0E01\u0E1B\u0E23\u0E30\u0E01\u0E32\u0E23", "\u0E04\u0E49\u0E32\u0E02\u0E32\u0E22\u0E40\u0E08\u0E23\u0E34\u0E0D\u0E23\u0E38\u0E48\u0E07\u0E40\u0E23\u0E37\u0E2D\u0E07", "\u0E21\u0E35\u0E04\u0E27\u0E32\u0E21\u0E2A\u0E38\u0E02\u0E17\u0E38\u0E01\u0E27\u0E31\u0E19", "\u0E41\u0E04\u0E25\u0E49\u0E27\u0E04\u0E25\u0E32\u0E14\u0E1B\u0E25\u0E2D\u0E14\u0E20\u0E31\u0E22", "\u0E08\u0E34\u0E15\u0E43\u0E08\u0E1C\u0E48\u0E2D\u0E07\u0E43\u0E2A", "\u0E21\u0E35\u0E41\u0E15\u0E48\u0E2A\u0E34\u0E48\u0E07\u0E14\u0E35\u0E46 \u0E40\u0E02\u0E49\u0E32\u0E21\u0E32", "\u0E1B\u0E23\u0E30\u0E2A\u0E1A\u0E04\u0E27\u0E32\u0E21\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08", "\u0E2D\u0E32\u0E22\u0E38\u0E21\u0E31\u0E48\u0E19\u0E02\u0E27\u0E31\u0E0D\u0E22\u0E37\u0E19", "\u0E40\u0E07\u0E34\u0E19\u0E17\u0E2D\u0E07\u0E44\u0E2B\u0E25\u0E21\u0E32\u0E40\u0E17\u0E21\u0E32", "\u0E04\u0E27\u0E32\u0E21\u0E23\u0E31\u0E01\u0E2A\u0E14\u0E43\u0E2A", "\u0E2B\u0E19\u0E49\u0E32\u0E17\u0E35\u0E48\u0E01\u0E32\u0E23\u0E07\u0E32\u0E19\u0E21\u0E31\u0E48\u0E19\u0E04\u0E07", "\u0E25\u0E39\u0E01\u0E2B\u0E25\u0E32\u0E19\u0E40\u0E1B\u0E47\u0E19\u0E04\u0E19\u0E14\u0E35", "\u0E21\u0E35\u0E01\u0E34\u0E19\u0E21\u0E35\u0E43\u0E0A\u0E49\u0E44\u0E21\u0E48\u0E02\u0E32\u0E14\u0E21\u0E37\u0E2D", "\u0E40\u0E08\u0E23\u0E34\u0E0D\u0E14\u0E49\u0E27\u0E22\u0E2D\u0E32\u0E22\u0E38 \u0E27\u0E23\u0E23\u0E13\u0E30 \u0E2A\u0E38\u0E02\u0E30 \u0E1E\u0E25\u0E30", "\u0E17\u0E38\u0E01\u0E02\u0E4C\u0E42\u0E28\u0E01\u0E42\u0E23\u0E04\u0E20\u0E31\u0E22\u0E2B\u0E32\u0E22\u0E44\u0E1B\u0E01\u0E31\u0E1A\u0E2A\u0E32\u0E22\u0E19\u0E49\u0E33", "\u0E04\u0E34\u0E14\u0E2A\u0E34\u0E48\u0E07\u0E43\u0E14\u0E2A\u0E21\u0E1B\u0E23\u0E32\u0E23\u0E16\u0E19\u0E32", "\u0E40\u0E23\u0E35\u0E22\u0E19\u0E40\u0E01\u0E48\u0E07\u0E2A\u0E2D\u0E1A\u0E44\u0E14\u0E49\u0E04\u0E30\u0E41\u0E19\u0E19\u0E14\u0E35", "\u0E21\u0E35\u0E42\u0E0A\u0E04\u0E25\u0E32\u0E20\u0E44\u0E21\u0E48\u0E02\u0E32\u0E14\u0E2A\u0E32\u0E22", "\u0E21\u0E35\u0E40\u0E1E\u0E37\u0E48\u0E2D\u0E19\u0E14\u0E35\u0E21\u0E34\u0E15\u0E23\u0E41\u0E17\u0E49"];
+var BP = ["\u0E02\u0E2D\u0E43\u0E2B\u0E49", "\u0E02\u0E2D\u0E2D\u0E33\u0E19\u0E32\u0E08\u0E41\u0E21\u0E48\u0E1E\u0E23\u0E30\u0E04\u0E07\u0E04\u0E32\u0E2D\u0E33\u0E19\u0E27\u0E22\u0E1E\u0E23\u0E43\u0E2B\u0E49", "\u0E02\u0E2D\u0E1E\u0E23\u0E27\u0E31\u0E19\u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07\u0E43\u0E2B\u0E49\u0E17\u0E48\u0E32\u0E19", "\u0E02\u0E2D\u0E41\u0E2A\u0E07\u0E08\u0E31\u0E19\u0E17\u0E23\u0E4C\u0E27\u0E31\u0E19\u0E40\u0E1E\u0E47\u0E0D\u0E2A\u0E48\u0E2D\u0E07\u0E19\u0E33\u0E43\u0E2B\u0E49\u0E17\u0E48\u0E32\u0E19", "\u0E0A\u0E32\u0E27\u0E04\u0E25\u0E2D\u0E07\u0E15\u0E33\u0E2B\u0E23\u0E38\u0E02\u0E2D\u0E2D\u0E27\u0E22\u0E1E\u0E23\u0E43\u0E2B\u0E49\u0E17\u0E48\u0E32\u0E19"];
+var BLESS = [];
+for (var i = 0; i < BW.length; i++) for (var j = i + 1; j < BW.length && BLESS.length < 300; j++) BLESS.push("".concat(BP[BLESS.length % BP.length]).concat(BW[i], " \u0E41\u0E25\u0E30").concat(BW[j]));
+var lastBless = -1;
 function blessFrom(img) {
   if ($("bless")) return;
-  const r = img.getBoundingClientRect(), ov = document.createElement("div");
+  var r = img.getBoundingClientRect(),
+    ov = document.createElement("div");
   ov.id = "bless";
-  let i;
+  var i;
   do {
     i = Math.floor(Math.random() * BLESS.length);
   } while (i === lastBless && BLESS.length > 1);
   lastBless = i;
-  const H = Math.min(innerHeight * 0.62, 560), W = H * (r.width / r.height);
-  ov.innerHTML = `<img class="bfig" src="${img.src}" alt=""><div class="bcard"><div class="bt">\u{1FAB7} \u0E04\u0E33\u0E2D\u0E27\u0E22\u0E1E\u0E23 \u{1FAB7}</div><div class="bm">${BLESS[i]}</div><button class="btn bgo">\u{1FAB7} \u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07</button></div>`;
+  var H = Math.min(innerHeight * 0.62, 560),
+    W = H * (r.width / r.height);
+  ov.innerHTML = "<img class=\"bfig\" src=\"".concat(img.src, "\" alt=\"\"><div class=\"bcard\"><div class=\"bt\">\uD83E\uDEB7 \u0E04\u0E33\u0E2D\u0E27\u0E22\u0E1E\u0E23 \uD83E\uDEB7</div><div class=\"bm\">").concat(BLESS[i], "</div><button class=\"btn bgo\">\uD83E\uDEB7 \u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07</button></div>");
   document.body.appendChild(ov);
-  const f = ov.querySelector(".bfig");
+  var f = ov.querySelector(".bfig");
   img.style.visibility = "hidden";
-  Object.assign(f.style, { left: r.left + "px", top: r.top + "px", width: r.width + "px", height: r.height + "px" });
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    ov.classList.add("on");
-    Object.assign(f.style, { left: (innerWidth - W) / 2 + "px", top: Math.max(10, innerHeight * 0.06) + "px", width: W + "px", height: H + "px" });
-  }));
-  setTimeout(() => {
-    const c = f.getBoundingClientRect();
-    for (let k = 0; k < 60; k++) {
-      const a = Math.random() * 6.28, v = 1.5 + Math.random() * 3.5;
-      P.push({ x: c.left + c.width / 2, y: c.top + c.height * 0.45, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 1, l: 50 + Math.random() * 30, c: k % 3 ? "#ffe08a" : "#3ee6ff" });
+  Object.assign(f.style, {
+    left: r.left + "px",
+    top: r.top + "px",
+    width: r.width + "px",
+    height: r.height + "px"
+  });
+  requestAnimationFrame(function () {
+    return requestAnimationFrame(function () {
+      ov.classList.add("on");
+      Object.assign(f.style, {
+        left: (innerWidth - W) / 2 + "px",
+        top: Math.max(10, innerHeight * 0.06) + "px",
+        width: W + "px",
+        height: H + "px"
+      });
+    });
+  });
+  setTimeout(function () {
+    var c = f.getBoundingClientRect();
+    for (var k = 0; k < 60; k++) {
+      var a = Math.random() * 6.28,
+        v = 1.5 + Math.random() * 3.5;
+      P.push({
+        x: c.left + c.width / 2,
+        y: c.top + c.height * 0.45,
+        vx: Math.cos(a) * v,
+        vy: Math.sin(a) * v - 1,
+        l: 50 + Math.random() * 30,
+        c: k % 3 ? "#ffe08a" : "#3ee6ff"
+      });
     }
   }, 700);
-  const close = (go) => {
+  var close = function close(go) {
     ov.classList.remove("on");
-    Object.assign(f.style, { left: r.left + "px", top: r.top + "px", width: r.width + "px", height: r.height + "px" });
-    setTimeout(() => {
+    Object.assign(f.style, {
+      left: r.left + "px",
+      top: r.top + "px",
+      width: r.width + "px",
+      height: r.height + "px"
+    });
+    setTimeout(function () {
       ov.remove();
       img.style.visibility = "";
       if (go) openMake();
     }, 650);
   };
-  ov.onclick = (e) => close(!!e.target.closest(".bgo"));
+  ov.onclick = function (e) {
+    return close(!!e.target.closest(".bgo"));
+  };
 }
-const GROUPS = [
-  [{ img: "man2.webp?v=3", slot: 0, AR: 228 / 620 }, { img: "man.webp", slot: 1, AR: 219 / 620 }, { img: "lady.webp", slot: -1, AR: 241 / 620 }]
-  // กรุ๊ป 1: กลาง → ขวา → ซ้าย
-  // เซ็ทใหม่ 5 คน (ปิดไว้): [ {img:"g2c.webp",slot:0,AR:201/620,S:1.12}, {img:"g2r.webp",slot:1,AR:201/620,S:1.1}, {img:"g2l.webp",slot:-1,AR:224/620,S:1.06}, {img:"g2rr.webp",slot:2,AR:218/620,S:1.1}, {img:"g2ll.webp",slot:-2,AR:214/620,S:1.06} ],
+var GROUPS = [[{
+  img: "man2.webp?v=3",
+  slot: 0,
+  AR: 228 / 620
+}, {
+  img: "man.webp",
+  slot: 1,
+  AR: 219 / 620
+}, {
+  img: "lady.webp",
+  slot: -1,
+  AR: 241 / 620
+}]
+// กรุ๊ป 1: กลาง → ขวา → ซ้าย
+// เซ็ทใหม่ 5 คน (ปิดไว้): [ {img:"g2c.webp",slot:0,AR:201/620,S:1.12}, {img:"g2r.webp",slot:1,AR:201/620,S:1.1}, {img:"g2l.webp",slot:-1,AR:224/620,S:1.06}, {img:"g2rr.webp",slot:2,AR:218/620,S:1.1}, {img:"g2ll.webp",slot:-2,AR:214/620,S:1.06} ],
 ];
-const GROUP_SEC = 20, DROP_GAP = 1600;
-let CHARS = [], gi = 0;
+var GROUP_SEC = 20,
+  DROP_GAP = 1600;
+var CHARS = [],
+  gi = 0;
 function showGroup(n) {
-  const box = $("chars");
+  var box = $("chars");
   box.innerHTML = "";
-  CHARS = GROUPS[n].map((c, i) => __spreadProps(__spreadValues({}, c), { id: "chr" + i, delay: 600 + i * DROP_GAP }));
-  CHARS.forEach((c) => {
-    const d = document.createElement("div");
+  CHARS = GROUPS[n].map(function (c, i) {
+    return __spreadProps(__spreadValues({}, c), {
+      id: "chr" + i,
+      delay: 600 + i * DROP_GAP
+    });
+  });
+  CHARS.forEach(function (c) {
+    var d = document.createElement("div");
     d.className = "chr";
     d.id = c.id;
     d.style.zIndex = c.slot ? 1 : 2;
     if (c.star) d.classList.add("hero");
-    d.innerHTML = `<img src="${c.img}" alt="" onclick="blessFrom(this)">`;
+    d.innerHTML = "<img src=\"".concat(c.img, "\" alt=\"\" onclick=\"blessFrom(this)\">");
     box.appendChild(d);
   });
   fitBg();
-  CHARS.forEach((c) => setTimeout(() => {
-    const el = $(c.id);
-    if (!el) return;
-    el.classList.add("up");
-    setTimeout(() => {
-      const r = el.getBoundingClientRect();
-      for (let i = 0; i < 26; i++) {
-        const a = Math.random() * 6.28, v = 1 + Math.random() * 2.5;
-        P.push({ x: r.left + r.width / 2, y: r.bottom - 6, vx: Math.cos(a) * v, vy: -Math.abs(Math.sin(a) * v), l: 40 + Math.random() * 20, c: i % 2 ? "#ffe08a" : "#3ee6ff" });
-      }
-    }, 2100);
-  }, c.delay));
-  if (GROUPS.length > 1) setTimeout(() => {
-    CHARS.forEach((c, i) => setTimeout(() => {
-      const el = $(c.id);
-      if (el) el.classList.remove("up");
-    }, i * 400));
-    setTimeout(() => showGroup(gi = (gi + 1) % GROUPS.length), CHARS.length * 400 + 2800);
+  CHARS.forEach(function (c) {
+    return setTimeout(function () {
+      var el = $(c.id);
+      if (!el) return;
+      el.classList.add("up");
+      setTimeout(function () {
+        var r = el.getBoundingClientRect();
+        for (var _i = 0; _i < 26; _i++) {
+          var a = Math.random() * 6.28,
+            v = 1 + Math.random() * 2.5;
+          P.push({
+            x: r.left + r.width / 2,
+            y: r.bottom - 6,
+            vx: Math.cos(a) * v,
+            vy: -Math.abs(Math.sin(a) * v),
+            l: 40 + Math.random() * 20,
+            c: _i % 2 ? "#ffe08a" : "#3ee6ff"
+          });
+        }
+      }, 2100);
+    }, c.delay);
+  });
+  if (GROUPS.length > 1) setTimeout(function () {
+    CHARS.forEach(function (c, i) {
+      return setTimeout(function () {
+        var el = $(c.id);
+        if (el) el.classList.remove("up");
+      }, i * 400);
+    });
+    setTimeout(function () {
+      return showGroup(gi = (gi + 1) % GROUPS.length);
+    }, CHARS.length * 400 + 2800);
   }, GROUP_SEC * 1e3);
 }
-let curBg = "";
+var curBg = "";
 function fitBg() {
-  const sc = $("scene"), W = sc.clientWidth || innerWidth, H = sc.clientHeight || innerHeight, ar = W / H, b = ar < 0.8 ? BGS[0] : ar < 1.55 ? BGS[1] : BGS[2];
+  var sc = $("scene"),
+    W = sc.clientWidth || innerWidth,
+    H = sc.clientHeight || innerHeight,
+    ar = W / H,
+    b = ar < 0.8 ? BGS[0] : ar < 1.55 ? BGS[1] : BGS[2];
   if (b.src !== curBg) {
     curBg = b.src;
-    $("bg").style.backgroundImage = `url(${b.src})`;
-    $("piles").style.backgroundImage = `url(${b.ov})`;
+    $("bg").style.backgroundImage = "url(".concat(b.src, ")");
+    $("piles").style.backgroundImage = "url(".concat(b.ov, ")");
   }
-  const k = Math.max(W / b.w, H / b.h), ih = b.h * k, tk = ($("ticker") || {}).offsetHeight || 34, oy = Math.min(0, Math.max(H - ih, tk + 30 - b.moon * k)), wy = b.water * ih + oy;
-  let ox = (W - b.w * k) / 2;
-  const lx = b.piles[2][0] * k + ox;
+  var k = Math.max(W / b.w, H / b.h),
+    ih = b.h * k,
+    tk = ($("ticker") || {}).offsetHeight || 34,
+    oy = Math.min(0, Math.max(H - ih, tk + 30 - b.moon * k)),
+    wy = b.water * ih + oy;
+  var ox = (W - b.w * k) / 2;
+  var lx = b.piles[2][0] * k + ox;
   if (lx < 45) ox = Math.max(W - b.w * k, Math.min(0, ox + 45 - lx));
-  $("bg").style.backgroundPosition = $("piles").style.backgroundPosition = `${ox}px ${oy}px`;
-  $("bg").style.backgroundSize = $("piles").style.backgroundSize = `${b.w * k}px ${b.h * k}px`;
-  CHARS.forEach((c) => placeChar(c, b, k, ox, oy, W));
+  $("bg").style.backgroundPosition = $("piles").style.backgroundPosition = "".concat(ox, "px ").concat(oy, "px");
+  $("bg").style.backgroundSize = $("piles").style.backgroundSize = "".concat(b.w * k, "px ").concat(b.h * k, "px");
+  CHARS.forEach(function (c) {
+    return placeChar(c, b, k, ox, oy, W);
+  });
   document.documentElement.style.setProperty("--hz", Math.min(80, Math.max(35, wy / H * 100 + 1)) + "%");
 }
 function placeChar(c, b, k, ox, oy, W) {
-  const L = b.stage.h * k * (c.S || 1), w = L * c.AR, gap = L * 0.42, cx2 = W / 2 + c.slot * gap, [x1, y1, x2, y2] = b.stage.berm, ix = (cx2 - ox) / k, foot = (y1 + (y2 - y1) * (ix - x1) / (x2 - x1)) * k + oy, el = $(c.id);
-  Object.assign(el.style, { left: cx2 - w / 2 + "px", top: foot - L + "px", width: w + "px", height: L + "px", zIndex: c.slot ? 2 : 3 });
+  var L = b.stage.h * k * (c.S || 1),
+    w = L * c.AR,
+    gap = L * 0.42,
+    cx2 = W / 2 + c.slot * gap,
+    _b$stage$berm = _slicedToArray(b.stage.berm, 4),
+    x1 = _b$stage$berm[0],
+    y1 = _b$stage$berm[1],
+    x2 = _b$stage$berm[2],
+    y2 = _b$stage$berm[3],
+    ix = (cx2 - ox) / k,
+    foot = (y1 + (y2 - y1) * (ix - x1) / (x2 - x1)) * k + oy,
+    el = $(c.id);
+  Object.assign(el.style, {
+    left: cx2 - w / 2 + "px",
+    top: foot - L + "px",
+    width: w + "px",
+    height: L + "px",
+    zIndex: c.slot ? 2 : 3
+  });
 }
 addEventListener("resize", fitBg);
-addEventListener("orientationchange", () => setTimeout(fitBg, 300));
+addEventListener("orientationchange", function () {
+  return setTimeout(fitBg, 300);
+});
 addEventListener("load", fitBg);
 addEventListener("pageshow", fitBg);
 if (window.visualViewport) visualViewport.addEventListener("resize", fitBg);
 if (window.ResizeObserver) new ResizeObserver(fitBg).observe($("scene"));
-[500, 1500, 3000].forEach((t) => setTimeout(fitBg, t));
+[500, 1500, 3000].forEach(function (t) {
+  return setTimeout(fitBg, t);
+});
 showGroup(0);
-const river = $("river");
-(function() {
-  const N = 80, st = document.createElement("style");
-  let k = "@keyframes float{";
-  for (let i = 0; i <= N; i++) {
-    const t = i / N;
-    k += `${(t * 100).toFixed(2)}%{transform:translate3d(calc(-160px + (100vw + 220px) * ${t.toFixed(4)}),${i % 2 ? -4 : 0}px,0) rotate(${i % 2 ? 1.5 : 0}deg)}`;
+var river = $("river");
+(function () {
+  var N = 80,
+    st = document.createElement("style");
+  var k = "@keyframes float{";
+  for (var _i2 = 0; _i2 <= N; _i2++) {
+    var t = _i2 / N;
+    k += "".concat((t * 100).toFixed(2), "%{transform:translate3d(calc(-160px + (100vw + 220px) * ").concat(t.toFixed(4), "),").concat(_i2 % 2 ? -4 : 0, "px,0) rotate(").concat(_i2 % 2 ? 1.5 : 0, "deg)}");
   }
   st.textContent = k + "}";
   document.head.appendChild(st);
@@ -2389,33 +2972,42 @@ function LS(sc) {
 function VK() {
   return Math.min(1.3, Math.max(0.5, Math.min(innerHeight / 800, innerWidth / 520)));
 }
-let rz;
-addEventListener("resize", () => {
+var rz;
+addEventListener("resize", function () {
   clearTimeout(rz);
   rz = setTimeout(layout, 150);
 });
-const RV = [];
+var RV = [];
 function layout() {
-  const n = RV.length, k = VK();
-  RV.forEach((el, i) => {
-    const t = n > 1 ? i / (n - 1) : 0, y = Math.max(1, Math.min(84, 4 + 76 * Math.pow(1 - t, 1.05) + +el.dataset.j)), sc = (0.2 + Math.pow(y / 83, 1.25) * 0.95) * k;
+  var n = RV.length,
+    k = VK();
+  RV.forEach(function (el, i) {
+    var t = n > 1 ? i / (n - 1) : 0,
+      y = Math.max(1, Math.min(84, 4 + 76 * Math.pow(1 - t, 1.05) + +el.dataset.j)),
+      sc = (0.2 + Math.pow(y / 83, 1.25) * 0.95) * k;
     el.style.top = y + "%";
     el.style.zIndex = Math.round(y) + (el.classList.contains("mine") ? 100 : 0);
-    const s = el.firstElementChild;
-    s.style.transform = `translateY(-85%) scale(${sc})`;
+    var s = el.firstElementChild;
+    s.style.transform = "translateY(-85%) scale(".concat(sc, ")");
     s.style.setProperty("--ls", LS(sc));
   });
 }
 function addToRiver(k, first) {
   if (isBad(k.name) || isBad(k.wish)) return null;
-  const el = document.createElement("div"), m = isMine(k), dur = CONFIG.FLOAT_SEC;
+  var el = document.createElement("div"),
+    m = isMine(k),
+    dur = CONFIG.FLOAT_SEC;
   el.className = "kt" + (m ? " mine" : "");
   el.dataset.id = k.id;
   el.dataset.j = (Math.random() * 1.6 - 0.8).toFixed(2);
-  const nb = first ? RV[RV.length - 1] : RV[0], now = performance.now(), pr = (e) => (e._q + (now - e._t) / 1e3 / dur) % 1;
-  let q = nb ? first ? pr(nb) - 0.382 : pr(nb) + 0.382 : 0.12;
+  var nb = first ? RV[RV.length - 1] : RV[0],
+    now = performance.now(),
+    pr = function pr(e) {
+      return (e._q + (now - e._t) / 1e3 / dur) % 1;
+    };
+  var q = nb ? first ? pr(nb) - 0.382 : pr(nb) + 0.382 : 0.12;
   if (!first && RV[1]) {
-    const d = ((q - pr(RV[1])) % 1 + 1) % 1;
+    var d = ((q - pr(RV[1])) % 1 + 1) % 1;
     if (d < 0.12 || d > 0.88) q += 0.19;
   }
   q = (q % 1 + 1) % 1;
@@ -2423,53 +3015,71 @@ function addToRiver(k, first) {
   el._t = now;
   el.style.animationDuration = dur + "s";
   el.style.animationDelay = -q * dur + "s";
-  el.innerHTML = `<div class="sc"><div class="streak"></div><div class="halo"></div><div class="bob" style="animation-delay:${-Math.random() * 3}s">${art(k)}</div><div class="lbl">${okPhoto(k.photo) ? `<img class="avb" src="${k.photo}" alt="">` : ""}<span class="nm">${m ? "\u2B50 " : ""}${esc(k.name)}</span>${k.wish ? `<span class="lw">${esc(k.wish)}</span>` : ""}</div></div>`;
-  el.querySelector(".sc").onclick = () => view(k);
+  el.innerHTML = "<div class=\"sc\"><div class=\"streak\"></div><div class=\"halo\"></div><div class=\"bob\" style=\"animation-delay:".concat(-Math.random() * 3, "s\">").concat(art(k), "</div><div class=\"lbl\">").concat(okPhoto(k.photo) ? "<img class=\"avb\" src=\"".concat(k.photo, "\" alt=\"\">") : "", "<span class=\"nm\">").concat(m ? "\u2B50 " : "").concat(esc(k.name), "</span>").concat(k.wish ? "<span class=\"lw\">".concat(esc(k.wish), "</span>") : "", "</div></div>");
+  el.querySelector(".sc").onclick = function () {
+    return view(k);
+  };
   river.appendChild(el);
-  if (first) RV.push(el);
-  else {
+  if (first) RV.push(el);else {
     RV.unshift(el);
-    while (RV.length > CONFIG.RIVER_MAX) {
-      const o = RV.pop();
+    var _loop = function _loop() {
+      var o = RV.pop();
       o.style.opacity = 0;
-      setTimeout(() => o.remove(), 2e3);
+      setTimeout(function () {
+        return o.remove();
+      }, 2e3);
+    };
+    while (RV.length > CONFIG.RIVER_MAX) {
+      _loop();
     }
   }
   layout();
   return el;
 }
 function renderList() {
-  const q = $("q").value.trim();
-  $("list").innerHTML = data.filter((d) => (!q || d.name.includes(q)) && !isBad(d.name) && !isBad(d.wish)).slice(0, CONFIG.SHOW).map((d, i) => `<div class="wish" data-i="${data.indexOf(d)}"><b>${isMine(d) ? "\u2B50 " : ""}${esc(d.name)}</b><br>${esc(d.wish || "-")}</div>`).join("") || '<p class="small c">\u0E44\u0E21\u0E48\u0E1E\u0E1A</p>';
+  var q = $("q").value.trim();
+  $("list").innerHTML = data.filter(function (d) {
+    return (!q || d.name.includes(q)) && !isBad(d.name) && !isBad(d.wish);
+  }).slice(0, CONFIG.SHOW).map(function (d, i) {
+    return "<div class=\"wish\" data-i=\"".concat(data.indexOf(d), "\"><b>").concat(isMine(d) ? "\u2B50 " : "").concat(esc(d.name), "</b><br>").concat(esc(d.wish || "-"), "</div>");
+  }).join("") || "<p class=\"small c\">\u0E44\u0E21\u0E48\u0E1E\u0E1A</p>";
 }
-$("list").onclick = (e) => {
-  const w = e.target.closest(".wish");
+$("list").onclick = function (e) {
+  var w = e.target.closest(".wish");
   if (w) view(data[w.dataset.i]);
 };
 function view(k) {
   $("mSvg").innerHTML = art(k);
-  const vp = $("vPh");
+  var vp = $("vPh");
   vp.hidden = !okPhoto(k.photo);
   if (okPhoto(k.photo)) vp.src = k.photo;
   $("vName").textContent = (isMine(k) ? "\u2B50 " : "") + k.name;
   $("vWish").textContent = k.wish || "";
-  $("vTime").textContent = k.created_at ? new Date(k.created_at).toLocaleString("th-TH", { dateStyle: "medium", timeStyle: "short" }) : "";
+  $("vTime").textContent = k.created_at ? new Date(k.created_at).toLocaleString("th-TH", {
+    dateStyle: "medium",
+    timeStyle: "short"
+  }) : "";
   open_(mView);
-  setTimeout(() => sparkle(mView.querySelector(".box")), 200);
+  setTimeout(function () {
+    return sparkle(mView.querySelector(".box"));
+  }, 200);
 }
-let fmI = 0;
+var fmI = 0;
 function findMine() {
   if (!mine.length) {
-    toast("\u0E22\u0E31\u0E07\u0E44\u0E21\u0E48\u0E21\u0E35\u0E01\u0E23\u0E30\u0E17\u0E07\u0E02\u0E2D\u0E07\u0E04\u0E38\u0E13 \u0E25\u0E2D\u0E22\u0E01\u0E48\u0E2D\u0E19\u0E19\u0E30 \u{1FAB7}");
+    toast("\u0E22\u0E31\u0E07\u0E44\u0E21\u0E48\u0E21\u0E35\u0E01\u0E23\u0E30\u0E17\u0E07\u0E02\u0E2D\u0E07\u0E04\u0E38\u0E13 \u0E25\u0E2D\u0E22\u0E01\u0E48\u0E2D\u0E19\u0E19\u0E30 \uD83E\uDEB7");
     return openMake();
   }
-  const k = mine[fmI++ % mine.length];
-  let el = RV.find((e) => e.dataset.id === String(k.id));
+  var k = mine[fmI++ % mine.length];
+  var el = RV.find(function (e) {
+    return e.dataset.id === String(k.id);
+  });
   if (!el) el = addToRiver(k, false);
   if (!el) return toast("\u0E44\u0E21\u0E48\u0E1E\u0E1A\u0E01\u0E23\u0E30\u0E17\u0E07");
   RV.splice(RV.indexOf(el), 1);
   RV.splice(Math.min(2, RV.length), 0, el);
-  const dur = CONFIG.FLOAT_SEC, q = (160 + innerWidth * 0.42) / (innerWidth + 220);
+  var dur = CONFIG.FLOAT_SEC,
+    q = (160 + innerWidth * 0.42) / (innerWidth + 220);
   el.style.animation = "none";
   void el.offsetWidth;
   el.style.animation = "";
@@ -2478,52 +3088,113 @@ function findMine() {
   el._q = q;
   el._t = performance.now();
   layout();
-  setTimeout(() => {
-    const r = el.querySelector("svg").getBoundingClientRect();
-    el.querySelector(".sc").animate([{ filter: "brightness(1)" }, { filter: "brightness(2.2)" }, { filter: "brightness(1)" }], { duration: 1500, iterations: 2 });
+  setTimeout(function () {
+    var r = el.querySelector("svg").getBoundingClientRect();
+    el.querySelector(".sc").animate([{
+      filter: "brightness(1)"
+    }, {
+      filter: "brightness(2.2)"
+    }, {
+      filter: "brightness(1)"
+    }], {
+      duration: 1500,
+      iterations: 2
+    });
     firework(r.left + r.width / 2, r.top - 60);
-    toast("\u2B50 \u0E19\u0E35\u0E48\u0E04\u0E37\u0E2D\u0E01\u0E23\u0E30\u0E17\u0E07\u0E02\u0E2D\u0E07\u0E04\u0E38\u0E13" + (mine.length > 1 ? ` (${(fmI - 1) % mine.length + 1}/${mine.length})` : ""));
+    toast("\u2B50 \u0E19\u0E35\u0E48\u0E04\u0E37\u0E2D\u0E01\u0E23\u0E30\u0E17\u0E07\u0E02\u0E2D\u0E07\u0E04\u0E38\u0E13" + (mine.length > 1 ? " (".concat((fmI - 1) % mine.length + 1, "/").concat(mine.length, ")") : ""));
   }, 2600);
 }
-let busy = false;
-async function launch() {
-  const name = $("name").value.trim(), wish = $("wish").value.trim();
-  if (!name) return toast("\u0E01\u0E23\u0E38\u0E13\u0E32\u0E43\u0E2A\u0E48\u0E0A\u0E37\u0E48\u0E2D");
-  if (!$("agree").checked) return toast("\u0E01\u0E23\u0E38\u0E13\u0E32\u0E15\u0E34\u0E4A\u0E01\u0E22\u0E34\u0E19\u0E22\u0E2D\u0E21 PDPA");
-  if (isBad(name) || isBad(wish)) return toast("\u26A0\uFE0F \u0E01\u0E23\u0E38\u0E13\u0E32\u0E43\u0E0A\u0E49\u0E16\u0E49\u0E2D\u0E22\u0E04\u0E33\u0E17\u0E35\u0E48\u0E2A\u0E38\u0E20\u0E32\u0E1E");
-  if (busy) return;
-  busy = true;
-  $("go").disabled = true;
-  try {
-    const k = await save(__spreadProps(__spreadValues({ name, wish }, sel), { photo }));
-    mine.unshift(k);
-    localStorage.setItem("kt_mine", JSON.stringify(mine.slice(0, 20)));
-    if (useDB || useFB) data.unshift(k);
-    data.length = Math.min(data.length, CONFIG.SHOW);
-    if (!useFB) $("count").textContent = ++total;
-    ticker();
-    today();
-    close_(mMake);
-    const el = addToRiver(k, false);
-    if (!el) return;
-    burst(6);
-    for (let i = 0; i < 10; i++) setTimeout(lantern, i * 220);
-    toast("\u{1F389} \u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08! \u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E2A\u0E21\u0E04\u0E27\u0E32\u0E21\u0E1B\u0E23\u0E32\u0E23\u0E16\u0E19\u0E32 \u2B50");
-    $("wish").value = "";
-    $("wc").textContent = "0/200";
-    photo = null;
-    $("photo").value = "";
-    $("phImg").innerHTML = "\u{1F4F7}<small>\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14</small>";
-  } catch (e) {
-    toast("\u0E2A\u0E48\u0E07\u0E44\u0E21\u0E48\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08: " + (e.message || "\u0E25\u0E2D\u0E07\u0E43\u0E2B\u0E21\u0E48\u0E2D\u0E35\u0E01\u0E04\u0E23\u0E31\u0E49\u0E07"));
-  }
-  setTimeout(() => {
-    busy = false;
-    $("go").disabled = false;
-  }, 5e3);
+var busy = false;
+function launch() {
+  return _launch.apply(this, arguments);
 }
-const cv = $("fx"), cx = cv.getContext("2d");
-let P = [];
+function _launch() {
+  _launch = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee9() {
+    var name, wish, k, el, _i8, _t8;
+    return _regenerator().w(function (_context9) {
+      while (1) switch (_context9.p = _context9.n) {
+        case 0:
+          name = $("name").value.trim(), wish = $("wish").value.trim();
+          if (name) {
+            _context9.n = 1;
+            break;
+          }
+          return _context9.a(2, toast("\u0E01\u0E23\u0E38\u0E13\u0E32\u0E43\u0E2A\u0E48\u0E0A\u0E37\u0E48\u0E2D"));
+        case 1:
+          if ($("agree").checked) {
+            _context9.n = 2;
+            break;
+          }
+          return _context9.a(2, toast("\u0E01\u0E23\u0E38\u0E13\u0E32\u0E15\u0E34\u0E4A\u0E01\u0E22\u0E34\u0E19\u0E22\u0E2D\u0E21 PDPA"));
+        case 2:
+          if (!(isBad(name) || isBad(wish))) {
+            _context9.n = 3;
+            break;
+          }
+          return _context9.a(2, toast("\u26A0\uFE0F \u0E01\u0E23\u0E38\u0E13\u0E32\u0E43\u0E0A\u0E49\u0E16\u0E49\u0E2D\u0E22\u0E04\u0E33\u0E17\u0E35\u0E48\u0E2A\u0E38\u0E20\u0E32\u0E1E"));
+        case 3:
+          if (!busy) {
+            _context9.n = 4;
+            break;
+          }
+          return _context9.a(2);
+        case 4:
+          busy = true;
+          $("go").disabled = true;
+          _context9.p = 5;
+          _context9.n = 6;
+          return save(__spreadProps(__spreadValues({
+            name: name,
+            wish: wish
+          }, sel), {
+            photo: photo
+          }));
+        case 6:
+          k = _context9.v;
+          mine.unshift(k);
+          localStorage.setItem("kt_mine", JSON.stringify(mine.slice(0, 20)));
+          if (useDB || useFB) data.unshift(k);
+          data.length = Math.min(data.length, CONFIG.SHOW);
+          if (!useFB) $("count").textContent = ++total;
+          ticker();
+          today();
+          close_(mMake);
+          el = addToRiver(k, false);
+          if (el) {
+            _context9.n = 7;
+            break;
+          }
+          return _context9.a(2);
+        case 7:
+          burst(6);
+          for (_i8 = 0; _i8 < 10; _i8++) setTimeout(lantern, _i8 * 220);
+          toast("\uD83C\uDF89 \u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08! \u0E02\u0E2D\u0E43\u0E2B\u0E49\u0E2A\u0E21\u0E04\u0E27\u0E32\u0E21\u0E1B\u0E23\u0E32\u0E23\u0E16\u0E19\u0E32 \u2B50");
+          $("wish").value = "";
+          $("wc").textContent = "0/200";
+          photo = null;
+          $("photo").value = "";
+          $("phImg").innerHTML = "\uD83D\uDCF7<small>\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14</small>";
+          _context9.n = 9;
+          break;
+        case 8:
+          _context9.p = 8;
+          _t8 = _context9.v;
+          toast("\u0E2A\u0E48\u0E07\u0E44\u0E21\u0E48\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08: " + (_t8.message || "\u0E25\u0E2D\u0E07\u0E43\u0E2B\u0E21\u0E48\u0E2D\u0E35\u0E01\u0E04\u0E23\u0E31\u0E49\u0E07"));
+        case 9:
+          setTimeout(function () {
+            busy = false;
+            $("go").disabled = false;
+          }, 5e3);
+        case 10:
+          return _context9.a(2);
+      }
+    }, _callee9, null, [[5, 8]]);
+  }));
+  return _launch.apply(this, arguments);
+}
+var cv = $("fx"),
+  cx = cv.getContext("2d");
+var P = [];
 function rs() {
   cv.width = innerWidth;
   cv.height = innerHeight;
@@ -2531,16 +3202,27 @@ function rs() {
 addEventListener("resize", rs);
 rs();
 function firework(x, y) {
-  const h = Math.random() * 360;
-  for (let i = 0; i < 80; i++) {
-    const a = Math.random() * 6.28, v = 1 + Math.random() * 4.2;
-    P.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, l: 60 + Math.random() * 35, c: `hsl(${h + Math.random() * 40},100%,${60 + Math.random() * 20}%)` });
+  var h = Math.random() * 360;
+  for (var _i3 = 0; _i3 < 80; _i3++) {
+    var a = Math.random() * 6.28,
+      v = 1 + Math.random() * 4.2;
+    P.push({
+      x: x,
+      y: y,
+      vx: Math.cos(a) * v,
+      vy: Math.sin(a) * v,
+      l: 60 + Math.random() * 35,
+      c: "hsl(".concat(h + Math.random() * 40, ",100%,").concat(60 + Math.random() * 20, "%)")
+    });
   }
 }
-function burst(n = 1) {
-  for (let i = 0; i < n; i++) setTimeout(() => firework(innerWidth * (0.12 + Math.random() * 0.76), innerHeight * (0.08 + Math.random() * 0.25)), i * 380);
+function burst() {
+  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+  for (var _i4 = 0; _i4 < n; _i4++) setTimeout(function () {
+    return firework(innerWidth * (0.12 + Math.random() * 0.76), innerHeight * (0.08 + Math.random() * 0.25));
+  }, _i4 * 380);
 }
-let looping = false;
+var looping = false;
 function loop() {
   if (!P.length) {
     cx.clearRect(0, 0, cv.width, cv.height);
@@ -2551,23 +3233,37 @@ function loop() {
   cx.fillStyle = "rgba(0,0,0,.22)";
   cx.fillRect(0, 0, cv.width, cv.height);
   cx.globalCompositeOperation = "lighter";
-  P.splice(0, P.length, ...P.filter((p) => p.l-- > 0));
-  for (const p of P) {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.vy += 0.045;
-    p.vx *= 0.985;
-    cx.fillStyle = p.c;
-    cx.globalAlpha = Math.min(1, p.l / 40);
-    cx.fillRect(p.x - 1.5, p.y - 1.5, 3, 3);
+  _callSpread(P.splice, P, [0, P.length].concat(_toConsumableArray(P.filter(function (p) {
+    return p.l-- > 0;
+  }))));
+  var _iterator2 = _createForOfIteratorHelper(P),
+    _step2;
+  try {
+    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+      var p = _step2.value;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.045;
+      p.vx *= 0.985;
+      cx.fillStyle = p.c;
+      cx.globalAlpha = Math.min(1, p.l / 40);
+      cx.fillRect(p.x - 1.5, p.y - 1.5, 3, 3);
+    }
+  } catch (err) {
+    _iterator2.e(err);
+  } finally {
+    _iterator2.f();
   }
   cx.globalAlpha = 1;
   requestAnimationFrame(loop);
 }
-const _push = P.push;
-P.push = function(...a) {
+var _push = P.push;
+P.push = function () {
   if (P.length > 600) return P.length;
-  const r = _push.apply(P, a);
+  for (var _len2 = arguments.length, a = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+    a[_key2] = arguments[_key2];
+  }
+  var r = _push.apply(P, a);
   if (!looping) {
     looping = true;
     requestAnimationFrame(loop);
@@ -2575,25 +3271,35 @@ P.push = function(...a) {
   return r;
 };
 function sparkle(box) {
-  const r = box.getBoundingClientRect();
-  for (let i = 0; i < 16; i++) {
-    const a = Math.random() * 6.28, v = 1 + Math.random() * 2.2;
-    P.push({ x: r.left + r.width / 2, y: r.top + r.height / 2, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 1, l: 40, c: "#ffe08a" });
+  var r = box.getBoundingClientRect();
+  for (var _i5 = 0; _i5 < 16; _i5++) {
+    var a = Math.random() * 6.28,
+      v = 1 + Math.random() * 2.2;
+    P.push({
+      x: r.left + r.width / 2,
+      y: r.top + r.height / 2,
+      vx: Math.cos(a) * v,
+      vy: Math.sin(a) * v - 1,
+      l: 40,
+      c: "#ffe08a"
+    });
   }
 }
-const sky = $("sky");
+var sky = $("sky");
 function lantern() {
-  const l = document.createElement("div");
+  var l = document.createElement("div");
   l.className = "lantern";
   l.style.left = Math.random() * 100 + "%";
   l.style.bottom = "-10px";
   l.style.setProperty("--dx", Math.random() * 160 - 80 + "px");
   l.style.animationDuration = 16 + Math.random() * 10 + "s";
   sky.appendChild(l);
-  setTimeout(() => l.remove(), 27e3);
+  setTimeout(function () {
+    return l.remove();
+  }, 27e3);
 }
-for (let i = 0; i < 40; i++) {
-  const s = document.createElement("div");
+for (var _i6 = 0; _i6 < 40; _i6++) {
+  var s = document.createElement("div");
   s.className = "star";
   s.style.left = Math.random() * 100 + "%";
   s.style.top = Math.random() * 70 + "%";
@@ -2601,8 +3307,8 @@ for (let i = 0; i < 40; i++) {
   s.style.opacity = 0.3 + Math.random() * 0.7;
   sky.appendChild(s);
 }
-for (let i = 0; i < 8; i++) {
-  const f = document.createElement("div");
+for (var _i7 = 0; _i7 < 8; _i7++) {
+  var f = document.createElement("div");
   f.className = "firefly";
   f.style.left = Math.random() * 100 + "%";
   f.style.top = 40 + Math.random() * 25 + "%";
@@ -2612,89 +3318,183 @@ for (let i = 0; i < 8; i++) {
   f.style.animationDelay = -Math.random() * 8 + "s";
   $("scene").appendChild(f);
 }
-setInterval(() => {
+setInterval(function () {
   if (!document.hidden && document.querySelectorAll(".lantern").length < 8) lantern();
 }, 3200);
-setInterval(() => burst(1), 8e3);
+setInterval(function () {
+  return burst(1);
+}, 8e3);
 function toast(t) {
-  const e = $("toast");
+  var e = $("toast");
   e.textContent = t;
   e.classList.add("show");
   clearTimeout(e._t);
-  e._t = setTimeout(() => e.classList.remove("show"), 3500);
+  e._t = setTimeout(function () {
+    return e.classList.remove("show");
+  }, 3500);
 }
 function esc(s) {
-  return String(s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  return String(s || "").replace(/[&<>"]/g, function (c) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;"
+    }[c];
+  });
 }
 $("portal").href = CONFIG.PORTAL_URL;
 function today() {
-  const d = (/* @__PURE__ */ new Date()).toDateString();
-  $("today").textContent = data.filter((k) => k.created_at && new Date(k.created_at).toDateString() === d).length;
+  var d = (/* @__PURE__ */new Date()).toDateString();
+  $("today").textContent = data.filter(function (k) {
+    return k.created_at && new Date(k.created_at).toDateString() === d;
+  }).length;
 }
-async function share() {
-  const u = location.href, t = "\u0E21\u0E32\u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07\u0E2D\u0E2D\u0E19\u0E44\u0E25\u0E19\u0E4C\u0E01\u0E31\u0E1A\u0E40\u0E17\u0E28\u0E1A\u0E32\u0E25\u0E15\u0E33\u0E1A\u0E25\u0E04\u0E25\u0E2D\u0E07\u0E15\u0E33\u0E2B\u0E23\u0E38 \u{1FAB7}";
-  try {
-    if (navigator.share) await navigator.share({ title: t, text: t, url: u });
-    else {
-      await navigator.clipboard.writeText(u);
-      toast("\u{1F4CB} \u0E04\u0E31\u0E14\u0E25\u0E2D\u0E01\u0E25\u0E34\u0E07\u0E01\u0E4C\u0E41\u0E25\u0E49\u0E27");
-    }
-  } catch (e) {
-  }
+function share() {
+  return _share.apply(this, arguments);
+}
+function _share() {
+  _share = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee0() {
+    var u, t, _t9;
+    return _regenerator().w(function (_context0) {
+      while (1) switch (_context0.p = _context0.n) {
+        case 0:
+          u = location.href, t = "\u0E21\u0E32\u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07\u0E2D\u0E2D\u0E19\u0E44\u0E25\u0E19\u0E4C\u0E01\u0E31\u0E1A\u0E40\u0E17\u0E28\u0E1A\u0E32\u0E25\u0E15\u0E33\u0E1A\u0E25\u0E04\u0E25\u0E2D\u0E07\u0E15\u0E33\u0E2B\u0E23\u0E38 \uD83E\uDEB7";
+          _context0.p = 1;
+          if (!navigator.share) {
+            _context0.n = 3;
+            break;
+          }
+          _context0.n = 2;
+          return navigator.share({
+            title: t,
+            text: t,
+            url: u
+          });
+        case 2:
+          _context0.n = 5;
+          break;
+        case 3:
+          _context0.n = 4;
+          return navigator.clipboard.writeText(u);
+        case 4:
+          toast("\uD83D\uDCCB \u0E04\u0E31\u0E14\u0E25\u0E2D\u0E01\u0E25\u0E34\u0E07\u0E01\u0E4C\u0E41\u0E25\u0E49\u0E27");
+        case 5:
+          _context0.n = 7;
+          break;
+        case 6:
+          _context0.p = 6;
+          _t9 = _context0.v;
+        case 7:
+          return _context0.a(2);
+      }
+    }, _callee0, null, [[1, 6]]);
+  }));
+  return _share.apply(this, arguments);
 }
 preview();
 load().then(today);
-const POLL = CONFIG.POLL_SEC * 1e3;
-let since = "";
-async function poll() {
-  if (document.hidden) return;
-  try {
-    since = data.reduce((m, d) => d.created_at > m ? d.created_at : m, since);
-    const r = await fetch(CONFIG.API_URL + "?since=" + encodeURIComponent(since) + "&t=" + Date.now()), j = await r.json(), ids = new Set(data.map((d) => String(d.id)));
-    const fresh = (j.rows || []).filter((k) => !ids.has(String(k.id)) && !isBad(k.name) && !isBad(k.wish));
-    total = Math.max(total, j.total || 0);
-    $("count").textContent = total;
-    if (fresh.length) {
-      data.unshift(...fresh);
-      data.length = Math.min(data.length, CONFIG.SHOW);
-      fresh.slice().reverse().forEach((k) => addToRiver(k, false));
-      ticker();
-      today();
-      if (fresh.length < 4) toast("\u{1FAB7} " + fresh.map((k) => k.name).join(", ") + " \u0E40\u0E1E\u0E34\u0E48\u0E07\u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07");
-    }
-  } catch (e) {
-  }
+var POLL = CONFIG.POLL_SEC * 1e3;
+var since = "";
+function poll() {
+  return _poll.apply(this, arguments);
+}
+function _poll() {
+  _poll = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee1() {
+    var r, _j3, ids, fresh, _data, _t0;
+    return _regenerator().w(function (_context1) {
+      while (1) switch (_context1.p = _context1.n) {
+        case 0:
+          if (!document.hidden) {
+            _context1.n = 1;
+            break;
+          }
+          return _context1.a(2);
+        case 1:
+          _context1.p = 1;
+          since = data.reduce(function (m, d) {
+            return d.created_at > m ? d.created_at : m;
+          }, since);
+          _context1.n = 2;
+          return fetch(CONFIG.API_URL + "?since=" + encodeURIComponent(since) + "&t=" + Date.now());
+        case 2:
+          r = _context1.v;
+          _context1.n = 3;
+          return r.json();
+        case 3:
+          _j3 = _context1.v;
+          ids = new Set(data.map(function (d) {
+            return String(d.id);
+          }));
+          fresh = (_j3.rows || []).filter(function (k) {
+            return !ids.has(String(k.id)) && !isBad(k.name) && !isBad(k.wish);
+          });
+          total = Math.max(total, _j3.total || 0);
+          $("count").textContent = total;
+          if (fresh.length) {
+            (_data = data).unshift.apply(_data, _toConsumableArray(fresh));
+            data.length = Math.min(data.length, CONFIG.SHOW);
+            fresh.slice().reverse().forEach(function (k) {
+              return addToRiver(k, false);
+            });
+            ticker();
+            today();
+            if (fresh.length < 4) toast("\uD83E\uDEB7 " + fresh.map(function (k) {
+              return k.name;
+            }).join(", ") + " \u0E40\u0E1E\u0E34\u0E48\u0E07\u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07");
+          }
+          _context1.n = 5;
+          break;
+        case 4:
+          _context1.p = 4;
+          _t0 = _context1.v;
+        case 5:
+          return _context1.a(2);
+      }
+    }, _callee1, null, [[1, 4]]);
+  }));
+  return _poll.apply(this, arguments);
 }
 if (useDB && !useFB) {
   setInterval(poll, POLL);
-  document.addEventListener("visibilitychange", () => {
+  document.addEventListener("visibilitychange", function () {
     if (!document.hidden) poll();
   });
 }
-const MUSIC = { on: true, ctx: null, out: null, next: 0, step: 0, deg: 4, timer: null };
-const BGM = new Audio("music.mp3");
+var MUSIC = {
+  on: true,
+  ctx: null,
+  out: null,
+  next: 0,
+  step: 0,
+  deg: 4,
+  timer: null
+};
+var BGM = new Audio("music.mp3");
 BGM.loop = true;
 BGM.preload = "none";
 BGM.volume = 0;
 function mStart() {
   if (!BGM.paused) return;
-  const p = BGM.play();
-  if (p) p.then(() => {
-    MUSIC.ctx = { state: "running" };
-    let v = 0;
-    const t = setInterval(() => {
+  var p = BGM.play();
+  if (p) p.then(function () {
+    MUSIC.ctx = {
+      state: "running"
+    };
+    var v = 0;
+    var t = setInterval(function () {
       v = Math.min(0.55, v + 0.05);
       BGM.volume = v;
       if (v >= 0.55) clearInterval(t);
     }, 200);
-  }).catch(() => {
-  });
+  }).catch(function () {});
 }
-const SCALE = [261.63, 293.66, 329.63, 392, 440, 523.25, 587.33, 659.25, 783.99, 880];
+var SCALE = [261.63, 293.66, 329.63, 392, 440, 523.25, 587.33, 659.25, 783.99, 880];
 function pluck(f, t, v) {
-  const C = MUSIC.ctx;
-  [1, 2.01].forEach((m, i) => {
-    const o = C.createOscillator(), g = C.createGain();
+  var C = MUSIC.ctx;
+  [1, 2.01].forEach(function (m, i) {
+    var o = C.createOscillator(),
+      g = C.createGain();
     o.type = i ? "sine" : "triangle";
     o.frequency.value = f * m;
     g.gain.setValueAtTime(0, t);
@@ -2707,9 +3507,10 @@ function pluck(f, t, v) {
   });
 }
 function ching(t, open) {
-  const C = MUSIC.ctx;
-  [2793, 3520, 4186].forEach((f) => {
-    const o = C.createOscillator(), g = C.createGain();
+  var C = MUSIC.ctx;
+  [2793, 3520, 4186].forEach(function (f) {
+    var o = C.createOscillator(),
+      g = C.createGain();
     o.frequency.value = f;
     g.gain.setValueAtTime(0.018, t);
     g.gain.exponentialRampToValueAtTime(1e-4, t + (open ? 1.4 : 0.12));
@@ -2720,38 +3521,44 @@ function ching(t, open) {
   });
 }
 function mSched() {
-  const C = MUSIC.ctx, beat = 60 / 68 / 2;
+  var C = MUSIC.ctx,
+    beat = 60 / 68 / 2;
   while (MUSIC.next < C.currentTime + 0.4) {
-    const t = MUSIC.next, s = MUSIC.step % 16;
-    if (Math.random() < (s % 2 ? 0.55 : 0.9)) {
+    var t = MUSIC.next,
+      _s = MUSIC.step % 16;
+    if (Math.random() < (_s % 2 ? 0.55 : 0.9)) {
       MUSIC.deg = Math.max(0, Math.min(SCALE.length - 1, MUSIC.deg + [-2, -1, -1, 0, 1, 1, 2][Math.floor(Math.random() * 7)]));
       pluck(SCALE[MUSIC.deg], t, 0.09);
-      if (s % 4 === 0) pluck(SCALE[Math.max(0, MUSIC.deg - 3)] / 2, t, 0.06);
+      if (_s % 4 === 0) pluck(SCALE[Math.max(0, MUSIC.deg - 3)] / 2, t, 0.06);
     }
-    if (s % 4 === 0) ching(t, s % 8 === 0);
-    if (s === 0 && Math.random() < 0.5) MUSIC.deg = 4;
-    MUSIC.next += beat * (s % 2 ? 0.92 : 1.08);
+    if (_s % 4 === 0) ching(t, _s % 8 === 0);
+    if (_s === 0 && Math.random() < 0.5) MUSIC.deg = 4;
+    MUSIC.next += beat * (_s % 2 ? 0.92 : 1.08);
     MUSIC.step++;
   }
 }
 try {
   mStart();
-} catch (e) {
-}
-const kick = () => {
+} catch (e) {}
+var _kick = function kick() {
   try {
     mStart();
-    if (MUSIC.ctx && MUSIC.ctx.state === "running") KE.forEach((ev) => removeEventListener(ev, kick, true));
-  } catch (e) {
-  }
+    if (MUSIC.ctx && MUSIC.ctx.state === "running") KE.forEach(function (ev) {
+      return removeEventListener(ev, _kick, true);
+    });
+  } catch (e) {}
 };
-const KE = ["pointerdown", "touchstart", "touchend", "click", "keydown", "wheel", "scroll"];
-KE.forEach((ev) => addEventListener(ev, kick, { capture: true, passive: true }));
-document.addEventListener("visibilitychange", () => {
-  if (document.hidden) BGM.pause();
-  else if (MUSIC.ctx) BGM.play().catch(() => {
+var KE = ["pointerdown", "touchstart", "touchend", "click", "keydown", "wheel", "scroll"];
+KE.forEach(function (ev) {
+  return addEventListener(ev, _kick, {
+    capture: true,
+    passive: true
   });
 });
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden) BGM.pause();else if (MUSIC.ctx) BGM.play().catch(function () {});
+});
+
 </script>
 </body>
 </html>
