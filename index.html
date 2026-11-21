@@ -1680,7 +1680,7 @@ textarea {
 <script>
 /* ?debug : แสดงข้อมูลเบราว์เซอร์และข้อผิดพลาด สำหรับตรวจปัญหาบนจอ/อุปกรณ์ต่างๆ */
 (function(){if(location.search.indexOf("debug")<0)return;var E=[];window.onerror=function(m,u,l,c){E.push(m+" @"+l+":"+c);show()};
-function show(){var d=document.getElementById("dbg");if(!d){d=document.createElement("pre");d.id="dbg";d.style.cssText="position:fixed;left:0;top:0;z-index:99999;background:#fff;color:#000;font:14px monospace;padding:8px;max-width:100%;white-space:pre-wrap;opacity:.95";document.body.appendChild(d)}
+var X=0;setTimeout(function(){X=1;var d=document.getElementById("dbg");if(d)d.parentNode.removeChild(d)},20000);function show(){if(X)return;var d=document.getElementById("dbg");if(!d){d=document.createElement("pre");d.id="dbg";d.onclick=function(){X=1;d.parentNode.removeChild(d)};d.style.cssText="position:fixed;left:0;top:0;z-index:99999;background:#fff;color:#000;font:14px monospace;padding:8px;max-width:100%;white-space:pre-wrap;opacity:.95";document.body.appendChild(d)}
 var b=document.getElementById("bg"),bs=b?getComputedStyle(b):{};var n=window["navi"+"gator"];
 d.textContent="Browser: "+n["user"+"Agent"]+"\nwin: "+innerWidth+"x"+innerHeight+" dpr:"+devicePixelRatio+"\nbg: "+(b?b.offsetWidth+"x"+b.offsetHeight+" img:"+String(bs.backgroundImage).slice(0,40)+" pos:"+bs.backgroundPosition+" size:"+bs.backgroundSize:"none")+
 "\nmodalShown:"+document.querySelectorAll(".modal.show").length+" chars:"+document.querySelectorAll(".chr").length+" kt:"+document.querySelectorAll(".kt").length+"\nerrors:\n"+(E.join("\n")||"none")}
@@ -1738,6 +1738,37 @@ if (window.crypto && !crypto.randomUUID) crypto.randomUUID = function () {
     return (c == "x" ? r : r & 3 | 8).toString(16);
   });
 };
+
+/* CSS variables / min / max / clamp fallback for old browsers */
+var NOVAR = !(window.CSS && CSS.supports && CSS.supports("(--a:0)"));
+var LEG = null,
+  LEGSRC = "";
+function legacyCSS(vars) {
+  if (!NOVAR) return;
+  if (!LEG) {
+    LEGSRC = [].map.call(document.querySelectorAll("style"), function (x) {
+      return x.textContent;
+    }).join("\n");
+    var root = {};
+    LEGSRC.replace(/--([a-z0-9]+)\s*:\s*([^;}]+)/g, function (m, k, v) {
+      if (!(k in root)) root[k] = v.trim();
+    });
+    legacyCSS.root = root;
+    LEG = document.createElement("style");
+    document.head.appendChild(LEG);
+  }
+  var V = Object.assign({}, legacyCSS.root, vars || {});
+  var t = LEGSRC.replace(/var\(--([a-z0-9]+)\s*(?:,\s*([^)]+))?\)/g, function (m, k, f) {
+    return V[k] != null ? V[k] : f != null ? f : "0px";
+  });
+  for (var i = 0; i < 3; i++) t = t.replace(/\b(min|max)\(([^(),]+),\s*([^(),]+)\)/g, function (m, f, a) {
+    return a.trim();
+  }).replace(/clamp\(([^(),]+),\s*([^(),]+),\s*([^(),]+)\)/g, function (m, a, b, c) {
+    return c.trim();
+  });
+  if (!(window.CSS && CSS.supports && CSS.supports("display", "grid"))) t += ".presets{display:flex!important;flex-wrap:wrap}.presets>*{width:31.3%;margin:1%}#list{display:block!important}#list>*{margin-bottom:8px}.tabs>*,.dock>*{margin:0 3px}";
+  LEG.textContent = t;
+}
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -2919,7 +2950,14 @@ function fitBg() {
   CHARS.forEach(function (c) {
     return placeChar(c, b, k, ox, oy, W);
   });
-  document.documentElement.style.setProperty("--hz", Math.min(80, Math.max(35, wy / H * 100 + 1)) + "%");
+  var hz = Math.min(80, Math.max(35, wy / H * 100 + 1)) + "%";
+  document.documentElement.style.setProperty("--hz", hz);
+  if (NOVAR && legacyCSS.hz !== hz) {
+    legacyCSS.hz = hz;
+    legacyCSS({
+      hz: hz
+    });
+  }
 }
 function placeChar(c, b, k, ox, oy, W) {
   var L = b.stage.h * k * (c.S || 1),
