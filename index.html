@@ -1769,6 +1769,25 @@ function legacyCSS(vars) {
   if (!(window.CSS && CSS.supports && CSS.supports("display", "grid"))) t += ".presets{display:flex!important;flex-wrap:wrap}.presets>*{width:31.3%;margin:1%}#list{display:block!important}#list>*{margin-bottom:8px}.tabs>*,.dock>*{margin:0 3px}";
   LEG.textContent = t;
 }
+function ERR(e) {
+  try {
+    console.warn(e);
+    var d = document.getElementById("errbar");
+    if (!d) {
+      d = document.createElement("div");
+      d.id = "errbar";
+      d.style.cssText = "position:fixed;left:6px;bottom:6px;z-index:99999;background:rgba(160,0,0,.85);color:#fff;font:12px monospace;padding:4px 8px;border-radius:6px;max-width:60%;pointer-events:none";
+      document.body.appendChild(d);
+      setTimeout(function () {
+        return d.parentNode && d.parentNode.removeChild(d);
+      }, 6e4);
+    }
+    d.textContent += " [" + (e && (e.message || e)) + "]";
+  } catch (x) {}
+}
+window.addEventListener("error", function (ev) {
+  return ERR(ev.message + " @" + ev.lineno + ":" + ev.colno);
+});
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -2991,7 +3010,11 @@ if (window.ResizeObserver) new ResizeObserver(fitBg).observe($("scene"));
 [500, 1500, 3000].forEach(function (t) {
   return setTimeout(fitBg, t);
 });
-showGroup(0);
+try {
+  showGroup(0);
+} catch (e) {
+  ERR(e);
+}
 var river = $("river");
 (function () {
   var N = 80,
@@ -3238,7 +3261,11 @@ function rs() {
   cv.height = innerHeight;
 }
 addEventListener("resize", rs);
-rs();
+try {
+  rs();
+} catch (e) {
+  ERR(e);
+}
 function firework(x, y) {
   var h = Math.random() * 360;
   for (var _i3 = 0; _i3 < 80; _i3++) {
@@ -3430,7 +3457,11 @@ function _share() {
   }));
   return _share.apply(this, arguments);
 }
-preview();
+try {
+  preview();
+} catch (e) {
+  ERR(e);
+}
 load().then(today);
 var POLL = CONFIG.POLL_SEC * 1e3;
 var since = "";
