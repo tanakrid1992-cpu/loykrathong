@@ -1690,6 +1690,7 @@ addEventListener("load",function(){setTimeout(show,3000)});setInterval(function(
 /* ES5 polyfills สำหรับจออัจฉริยะ/สมาร์ททีวีรุ่นเก่า */
 (function(){var A=Array.prototype,S=String.prototype,O=Object;
 if(!O.assign)O.assign=function(t){for(var i=1;i<arguments.length;i++){var s=arguments[i];if(s)for(var k in s)if(O.prototype.hasOwnProperty.call(s,k))t[k]=s[k]}return t};
+if(!O.getOwnPropertyDescriptors)O.getOwnPropertyDescriptors=function(o){var r={};O.getOwnPropertyNames(o).concat(O.getOwnPropertySymbols?O.getOwnPropertySymbols(o):[]).forEach(function(k){r[k]=O.getOwnPropertyDescriptor(o,k)});return r};
 if(!O.entries)O.entries=function(o){return O.keys(o).map(function(k){return[k,o[k]]})};
 if(!O.values)O.values=function(o){return O.keys(o).map(function(k){return o[k]})};
 if(!A.find)A.find=function(f,t){for(var i=0;i<this.length;i++)if(f.call(t,this[i],i,this))return this[i]};
@@ -1786,7 +1787,7 @@ function ERR(e) {
   } catch (x) {}
 }
 window.addEventListener("error", function (ev) {
-  return ERR(ev.message + " @" + ev.lineno + ":" + ev.colno);
+  return !/^Script error/.test(ev.message) && ERR(ev.message + " @" + ev.lineno + ":" + ev.colno);
 });
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
