@@ -3532,8 +3532,7 @@ BGM.preload = "none";
 BGM.volume = 0;
 function mStart() {
   if (!BGM.paused) return;
-  var p = BGM.play();
-  if (p) p.then(function () {
+  var ok = function ok() {
     MUSIC.ctx = {
       state: "running"
     };
@@ -3543,7 +3542,11 @@ function mStart() {
       BGM.volume = v;
       if (v >= 0.55) clearInterval(t);
     }, 200);
-  }).catch(function () {});
+  };
+  var p = BGM.play();
+  if (p && p.then) p.then(ok).catch(function () {});else setTimeout(function () {
+    if (!BGM.paused) ok();
+  }, 300);
 }
 var SCALE = [261.63, 293.66, 329.63, 392, 440, 523.25, 587.33, 659.25, 783.99, 880];
 function pluck(f, t, v) {
@@ -3612,7 +3615,10 @@ KE.forEach(function (ev) {
   });
 });
 document.addEventListener("visibilitychange", function () {
-  if (document.hidden) BGM.pause();else if (MUSIC.ctx) BGM.play().catch(function () {});
+  if (document.hidden) BGM.pause();else if (MUSIC.ctx) {
+    var p = BGM.play();
+    if (p && p.catch) p.catch(function () {});
+  }
 });
 
 </script>
