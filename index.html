@@ -1773,22 +1773,8 @@ function legacyCSS(vars) {
 function ERR(e) {
   try {
     console.warn(e);
-    var d = document.getElementById("errbar");
-    if (!d) {
-      d = document.createElement("div");
-      d.id = "errbar";
-      d.style.cssText = "position:fixed;left:6px;bottom:6px;z-index:99999;background:rgba(160,0,0,.85);color:#fff;font:12px monospace;padding:4px 8px;border-radius:6px;max-width:60%;pointer-events:none";
-      document.body.appendChild(d);
-      setTimeout(function () {
-        return d.parentNode && d.parentNode.removeChild(d);
-      }, 6e4);
-    }
-    d.textContent += " [" + (e && (e.message || e)) + "]";
   } catch (x) {}
 }
-window.addEventListener("error", function (ev) {
-  return !/^Script error/.test(ev.message) && ERR(ev.message + " @" + ev.lineno + ":" + ev.colno);
-});
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -3151,8 +3137,8 @@ function findMine() {
   el._t = performance.now();
   layout();
   setTimeout(function () {
-    var r = el.querySelector("svg").getBoundingClientRect();
-    el.querySelector(".sc").animate([{
+    var r = (el.querySelector(".sc") || el).getBoundingClientRect();
+    (el.querySelector(".sc") || el).animate([{
       filter: "brightness(1)"
     }, {
       filter: "brightness(2.2)"
