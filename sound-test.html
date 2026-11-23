@@ -1,0 +1,14 @@
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>ทดสอบเสียง</title>
+<style>body{font:24px sans-serif;background:#123;color:#fff;text-align:center;padding:40px}button{font-size:32px;padding:20px 40px;margin:20px;border-radius:16px}audio{width:80%;margin:20px}#s{font-size:20px;color:#ff0}</style></head><body>
+<h2>ทดสอบเสียงจอ</h2>
+<p>1) กดปุ่ม ▶ ในแถบเล่นเพลง</p><audio id="a" controls src="music.mp3"></audio>
+<p>2) หรือกดปุ่มด้านล่าง</p><button onclick="go()">🔊 เล่นเพลง</button><button onclick="beep()">🔔 เสียงบี๊บ</button>
+<div id="s"></div>
+<script>
+var s=document.getElementById('s'),a=document.getElementById('a'),N=window.navigator;
+function log(t){s.innerHTML+=t+'<br>'}
+log('Browser: '+N['user'+'Agent']);log('mp3: '+(a.canPlayType('audio/mpeg')||'ไม่รองรับ'));
+a.onplaying=function(){log('กำลังเล่นเพลง ✓')};a.onerror=function(){log('error code '+(a.error&&a.error.code))};
+function go(){a.volume=1;var p=a.play();if(p&&p.catch)p.catch(function(e){log('play ถูกบล็อก: '+e.message)})}
+function beep(){try{var C=new(window.AudioContext||window.webkitAudioContext)(),o=C.createOscillator();o.connect(C.destination);o.start(0);setTimeout(function(){o.stop(0)},500);log('beep ✓')}catch(e){log('beep error '+e.message)}}
+</script></body></html>

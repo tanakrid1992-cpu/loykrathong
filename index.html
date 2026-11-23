@@ -3528,20 +3528,16 @@ var MUSIC = {
 };
 var BGM = new Audio("music.mp3");
 BGM.loop = true;
-BGM.preload = "none";
-BGM.volume = 0;
+BGM.preload = "auto";
+BGM.volume = 0.55;
 function mStart() {
   if (!BGM.paused) return;
   var ok = function ok() {
     MUSIC.ctx = {
       state: "running"
     };
-    var v = 0;
-    var t = setInterval(function () {
-      v = Math.min(0.55, v + 0.05);
-      BGM.volume = v;
-      if (v >= 0.55) clearInterval(t);
-    }, 200);
+    BGM.muted = false;
+    BGM.volume = 0.55;
   };
   var p = BGM.play();
   if (p && p.then) p.then(ok).catch(function () {});else setTimeout(function () {
