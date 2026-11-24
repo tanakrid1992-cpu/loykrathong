@@ -3504,7 +3504,7 @@ function shDraw(_x4, _x5, _x6) {
 }
 function _shDraw() {
   _shDraw = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee0(k, fmt, withWish) {
-    var W, H, st, cv2, c, isImg, ksrc, _yield$Promise$all, _yield$Promise$all2, bg, logo, kr, ph, _s2, bw, bh, g, top, fs, ks, kcy, gl, r, kw, kh, y, _R, px, py, _s3, fy, _t9;
+    var W, H, st, cv2, c, isImg, ksrc, _yield$Promise$all, _yield$Promise$all2, bg, logo, kr, ph, _s2, bw, bh, g, ct, top, fs, hasPh, ks, kcy, gl, r, kw, kh, y, _R, px, py, _s3, fy, _t9;
     return _regenerator().w(function (_context0) {
       while (1) switch (_context0.p = _context0.n) {
         case 0:
@@ -3551,7 +3551,10 @@ function _shDraw() {
           g.addColorStop(1, "rgba(6,10,35,.92)");
           c.fillStyle = g;
           c.fillRect(0, 0, W, H);
-          c.textAlign = "center";
+          c.textAlign = "left";
+          ct = function ct(t, y) {
+            return c.fillText(t, Math.round((W - c.measureText(t).width) / 2), y);
+          };
           c.textBaseline = "alphabetic";
           top = st ? 230 : 70;
           if (logo) c.drawImage(logo, W / 2 - 60, top, 120, 120);
@@ -3562,11 +3565,11 @@ function _shDraw() {
           do {
             c.font = '700 ' + fs + 'px "Charm", serif';
           } while (c.measureText("ลอยกระทงออนไลน์ ๒๕๖๙").width > W - 100 && (fs -= 4) > 40);
-          c.fillText("ลอยกระทงออนไลน์ ๒๕๖๙", W / 2, top + 220);
+          ct("ลอยกระทงออนไลน์ ๒๕๖๙", top + 220);
           c.fillStyle = "#fff";
           c.font = '400 38px "Mitr", sans-serif';
-          c.fillText("เทศบาลตำบลคลองตำหรุ อ.เมืองชลบุรี จ.ชลบุรี", W / 2, top + 280);
-          ks = st ? 760 : 540, kcy = st ? 1010 : 690;
+          ct("เทศบาลตำบลคลองตำหรุ อ.เมืองชลบุรี จ.ชลบุรี", top + 280);
+          hasPh = okPhoto(k.photo), ks = st ? 680 : hasPh ? 400 : 540, kcy = st ? 960 : hasPh ? 620 : 690;
           c.shadowBlur = 0;
           gl = c.createRadialGradient(W / 2, kcy + ks * 0.18, 10, W / 2, kcy + ks * 0.18, ks * 0.62);
           gl.addColorStop(0, "rgba(255,214,110,.55)");
@@ -3579,7 +3582,7 @@ function _shDraw() {
           }
           y = kcy + ks / 2 + (st ? 40 : 10);
           if (ph) {
-            _R = 84, px = W / 2 - ks * 0.4, py = kcy - ks * 0.28;
+            _R = 84, px = W / 2, py = kcy + ks / 2 + _R - 40;
             c.save();
             c.beginPath();
             c.arc(px, py, _R, 0, 6.2832);
@@ -3593,6 +3596,7 @@ function _shDraw() {
             c.beginPath();
             c.arc(px, py, _R, 0, 6.2832);
             c.stroke();
+            y += _R * 2 - 40;
           }
           c.shadowColor = "rgba(0,0,0,.8)";
           c.shadowBlur = 16;
@@ -3600,27 +3604,27 @@ function _shDraw() {
           c.font = '600 62px "Mitr", sans-serif';
           wrapTxt(c, "กระทงของ " + k.name, W - 140, 2).forEach(function (l) {
             y += 72;
-            c.fillText(l, W / 2, y);
+            ct(l, y);
           });
           if (withWish && k.wish) {
             c.fillStyle = "#ffe6a6";
             c.font = '400 40px "Mitr", sans-serif';
             y += 16;
-            wrapTxt(c, "“" + k.wish + "”", W - 180, st ? 4 : 2).forEach(function (l) {
+            wrapTxt(c, "“" + k.wish + "”", W - 180, 2).forEach(function (l) {
               y += 54;
-              c.fillText(l, W / 2, y);
+              ct(l, y);
             });
           }
-          fy = H - (st ? 260 : 110);
+          fy = Math.min(H - 100, Math.max(H - (st ? 210 : 110), y + 76));
           c.fillStyle = "#a8f0c8";
           c.font = '400 36px "Mitr", sans-serif';
-          c.fillText("🪷 ลอยออนไลน์ ลดขยะ ลดคาร์บอน", W / 2, fy);
+          ct("🪷 ลอยออนไลน์ ลดขยะ ลดคาร์บอน", fy);
           c.fillStyle = "#fff";
           c.font = '600 34px "Mitr", sans-serif';
-          c.fillText(SITE.replace(/^https?:\/\//, "").replace(/\/$/, ""), W / 2, fy + 52);
+          ct(SITE.replace(/^https?:\/\//, "").replace(/\/$/, ""), fy + 52);
           c.fillStyle = "rgba(255,255,255,.75)";
           c.font = '400 28px "Mitr", sans-serif';
-          c.fillText("#ลอยกระทงออนไลน์ #คลองตำหรุ", W / 2, fy + 96);
+          ct("#ลอยกระทงออนไลน์ #คลองตำหรุ", fy + 96);
           return _context0.a(2, cv2);
       }
     }, _callee0, null, [[1, 3]]);
