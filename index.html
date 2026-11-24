@@ -1626,6 +1626,10 @@ textarea {
 .sapp button { font: inherit; font-size: 12px; background: none; border: 0; color: #fff; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .sapp i { font-style: normal; font-weight: 700; font-size: 22px; width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; }
 #vShare { margin-top: 10px; }
+.sst { display: flex; gap: 8px; margin: 6px 0; }
+.sbig { flex: 1; font: inherit; font-size: 15px; font-weight: 600; color: #fff; border: 0; border-radius: 14px; padding: 12px 6px; cursor: pointer; }
+.sbig.ig { background: linear-gradient(45deg, #f9a825, #e91e63 55%, #8e24aa); }
+.sbig.fb { background: #1877f2; }
 @media (max-width: 420px) { .shw { flex-direction: column; } .shp { flex: none; width: 70%; } .shc { width: 100%; } }
 </style>
 </head>
@@ -1698,9 +1702,10 @@ textarea {
   <div class="shw"><div class="shp"><img id="shImg" alt=""></div>
    <div class="shc"><div class="tabs stabs"><button class="tab on" data-f="post">โพสต์</button><button class="tab" data-f="story">สตอรี่</button></div>
     <label class="small shck"><input type="checkbox" id="shWish" checked> ใส่คำอธิษฐานในภาพ</label>
-    <button class="sb" onclick="shSave()">💾 บันทึก / ลงสตอรี่</button>
+    <button class="sb" onclick="shSave()">💾 บันทึก / แชร์รูป</button>
     <button class="sb" onclick="shCopy()">🔗 คัดลอกลิงก์</button></div></div>
-  <div class="sapp"><button onclick="shApp('fb')"><i style="background:#1877f2">f</i>Facebook</button><button onclick="shApp('ig')"><i style="background:linear-gradient(45deg,#f9a825,#e91e63,#8e24aa)">◎</i>Instagram</button><button onclick="shApp('line')"><i style="background:#06c755">L</i>LINE</button><button onclick="shApp('x')"><i style="background:#111">𝕏</i>X</button></div>
+  <div class="sst"><button class="sbig ig" onclick="shApp('ig')">📲 ลงสตอรี่ Instagram</button><button class="sbig fb" onclick="shApp('fb')">📲 ลงสตอรี่ Facebook</button></div>
+  <div class="sapp"><button onclick="shApp('line')"><i style="background:#06c755">L</i>LINE</button><button onclick="shApp('x')"><i style="background:#111">𝕏</i>X</button></div>
   <p class="small c" id="shTip"></p></div>
 </div>
 <div id="toast"></div>
@@ -1741,6 +1746,8 @@ if(window.Element&&!Element.prototype.remove)Element.prototype.remove=function()
 if(window.Element&&!Element.prototype.animate)Element.prototype.animate=function(){return{}};
 if(!window.performance)window.performance={};if(!performance.now)performance.now=function(){return Date.now()};
 })();
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(_typeof(e) + " is not iterable"); }
 function _callSpread(a, e, l) { return a.apply(e, l); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var r, e, o = "function" == typeof Symbol ? Symbol : {}, n = o.iterator || "@@iterator", a = o.toStringTag || "@@toStringTag"; function i(o, n, a, i) { var u = n && n.prototype instanceof Generator ? n : Generator, f = Object.create(u.prototype); return _regeneratorDefine2(f, "_invoke", function (t, o, n) { var a, i, u, f = 0, p = n || [], y = !1, G = { p: 0, n: 0, v: r, a: l, f: l.bind(r, 4), d: function d(t, e) { return a = t, i = 0, u = r, G.n = e, c; } }; function l(t, o) { for (i = t, u = o, e = 0; !y && f && !n && e < p.length; e++) { var n, a = p[e], l = G.p, F = a[2]; t > 3 ? (n = F === o) && (u = a[(i = a[4]) ? 5 : (i = 3, 3)], a[4] = a[5] = r) : a[0] <= l && ((n = t < 2 && l < a[1]) ? (i = 0, G.v = o, G.n = a[1]) : l < F && (n = t < 3 || a[0] > o || o > F) && (a[4] = t, a[5] = o, G.n = F, i = 0)); } if (n || t > 1) return c; throw y = !0, o; } return function (n, p, F) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && l(p, F), i = p, u = F; (e = i < 2 ? r : u) || !y;) { a || (i ? (i > 1 && (G.n = i < 3 ? -1 : u), l(i, u)) : G.v = u); try { if (f = 2, a) { if (i || (n = "next"), e = a[n]) { if (!(e = e.call(a, u))) throw TypeError("iterator result is not an object"); if (!e.done) return e; u = e.value, i < 2 && (i = 0); } else 1 === i && (e = a.return) && e.call(a), i < 2 && (u = TypeError("The iterator does not provide a '" + n + "' method"), i = 1); a = r; } else if ((e = (y = G.n < 0) ? u : t.call(o, G)) !== c) break; } catch (t) { a = r, i = 1, u = t; } finally { f = 1; } } return { value: e, done: y }; }; }(o, a, i), !0), f; } var c = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} e = Object.getPrototypeOf; var u = [][n] ? e(e([][n]())) : (_regeneratorDefine2(e = {}, n, function () { return this; }), e), f = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(u); function p(r) { return Object.setPrototypeOf ? Object.setPrototypeOf(r, GeneratorFunctionPrototype) : (r.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(r, a, "GeneratorFunction")), r.prototype = Object.create(f), r; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(f, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, a, "GeneratorFunction"), _regeneratorDefine2(f), _regeneratorDefine2(f, a, "Generator"), _regeneratorDefine2(f, n, function () { return this; }), _regeneratorDefine2(f, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: p }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
@@ -3625,51 +3632,87 @@ function shRender() {
 }
 function _shRender() {
   _shRender = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee1() {
-    var id, cv2, blob, _t0;
-    return _regenerator().w(function (_context1) {
-      while (1) switch (_context1.p = _context1.n) {
+    var id, ww, _loop2, _ret, _i9, _arr, _t0;
+    return _regenerator().w(function (_context10) {
+      while (1) switch (_context10.p = _context10.n) {
         case 0:
-          id = ++SH.busy;
-          SH.file = null;
+          id = ++SH.busy, ww = $("shWish").checked;
+          SH.files = {};
+          SH.urls = {};
+          SH.url = "";
           $("shImg").style.opacity = 0.4;
-          _context1.p = 1;
-          _context1.n = 2;
-          return shDraw(SH.k, SH.fmt, $("shWish").checked);
+          _context10.p = 1;
+          _loop2 = /*#__PURE__*/_regenerator().m(function _loop2() {
+            var f, cv2, blob;
+            return _regenerator().w(function (_context1) {
+              while (1) switch (_context1.n) {
+                case 0:
+                  f = _arr[_i9];
+                  _context1.n = 1;
+                  return shDraw(SH.k, f, ww);
+                case 1:
+                  cv2 = _context1.v;
+                  if (!(id !== SH.busy)) {
+                    _context1.n = 2;
+                    break;
+                  }
+                  return _context1.a(2, {
+                    v: void 0
+                  });
+                case 2:
+                  SH.urls[f] = cv2.toDataURL("image/jpeg", 0.9);
+                  if (f === SH.fmt) {
+                    $("shImg").src = SH.url = SH.urls[f];
+                    $("shImg").style.opacity = 1;
+                  }
+                  _context1.n = 3;
+                  return new Promise(function (ok) {
+                    return cv2.toBlob ? cv2.toBlob(ok, "image/jpeg", 0.9) : ok(null);
+                  });
+                case 3:
+                  blob = _context1.v;
+                  if (blob && id === SH.busy) try {
+                    SH.files[f] = new File([blob], "loykrathong-" + f + ".jpg", {
+                      type: "image/jpeg"
+                    });
+                  } catch (e) {}
+                case 4:
+                  return _context1.a(2);
+              }
+            }, _loop2);
+          });
+          _i9 = 0, _arr = [SH.fmt, SH.fmt === "post" ? "story" : "post"];
         case 2:
-          cv2 = _context1.v;
-          if (!(id !== SH.busy)) {
-            _context1.n = 3;
+          if (!(_i9 < _arr.length)) {
+            _context10.n = 5;
             break;
           }
-          return _context1.a(2);
+          return _context10.d(_regeneratorValues(_loop2()), 3);
         case 3:
-          $("shImg").src = SH.url = cv2.toDataURL("image/jpeg", 0.9);
-          _context1.n = 4;
-          return new Promise(function (ok) {
-            return cv2.toBlob ? cv2.toBlob(ok, "image/jpeg", 0.9) : ok(null);
-          });
-        case 4:
-          blob = _context1.v;
-          if (blob && id === SH.busy) try {
-            SH.file = new File([blob], "loykrathong-" + SH.fmt + ".jpg", {
-              type: "image/jpeg"
-            });
-          } catch (e) {
-            SH.file = null;
+          _ret = _context10.v;
+          if (!_ret) {
+            _context10.n = 4;
+            break;
           }
-          _context1.n = 6;
+          return _context10.a(2, _ret.v);
+        case 4:
+          _i9++;
+          _context10.n = 2;
           break;
         case 5:
-          _context1.p = 5;
-          _t0 = _context1.v;
+          _context10.n = 7;
+          break;
+        case 6:
+          _context10.p = 6;
+          _t0 = _context10.v;
           console.warn(_t0);
           toast("สร้างภาพไม่สำเร็จ");
-        case 6:
-          $("shImg").style.opacity = 1;
         case 7:
-          return _context1.a(2);
+          $("shImg").style.opacity = 1;
+        case 8:
+          return _context10.a(2);
       }
-    }, _callee1, null, [[1, 5]]);
+    }, _callee1, null, [[1, 6]]);
   }));
   return _shRender.apply(this, arguments);
 }
@@ -3682,42 +3725,46 @@ function openShare(k) {
   open_(mShare);
   shRender();
 }
+function shFmt(f) {
+  document.querySelectorAll(".stabs .tab").forEach(function (x) {
+    return x.classList.toggle("on", x.dataset.f === f);
+  });
+  SH.fmt = f;
+  if (SH.urls && SH.urls[f]) $("shImg").src = SH.url = SH.urls[f];
+}
 document.querySelector(".stabs").onclick = function (e) {
   var b = e.target.closest(".tab");
-  if (!b) return;
-  document.querySelectorAll(".stabs .tab").forEach(function (x) {
-    return x.classList.toggle("on", x === b);
-  });
-  SH.fmt = b.dataset.f;
-  shRender();
+  if (b) shFmt(b.dataset.f);
 };
 $("shWish").onchange = shRender;
-var canFile = function canFile() {
-  return SH.file && navigator.canShare && navigator.canShare({
-    files: [SH.file]
+var canFile = function canFile(f) {
+  return f && navigator.canShare && navigator.canShare({
+    files: [f]
   });
 };
-function shDownload() {
-  if (!SH.url) return;
+function shDownload(f) {
+  f = f || SH.fmt;
+  var u = SH.urls && SH.urls[f];
+  if (!u) return;
   var a = document.createElement("a");
-  a.href = SH.url;
-  a.download = "loykrathong-" + SH.fmt + ".jpg";
+  a.href = u;
+  a.download = "loykrathong-" + f + ".jpg";
   document.body.appendChild(a);
   a.click();
   a.remove();
 }
-function shNative(tip) {
-  if (!canFile()) return false;
+function shNative(f, tip) {
+  var file = SH.files && SH.files[f];
+  if (!canFile(file)) return false;
   navigator.share({
-    files: [SH.file],
-    text: SHTXT + " " + SITE
+    files: [file]
   }).catch(function () {});
   if (tip) $("shTip").textContent = tip;
   return true;
 }
 function shSave() {
   if (!SH.url) return toast("กำลังสร้างภาพ รอสักครู่…");
-  if (shNative("เลือก Instagram หรือ Facebook แล้วเลือก “สตอรี่” ได้เลย")) return;
+  if (shNative(SH.fmt, "เลือกแอป Instagram หรือ Facebook แล้วเลือก “สตอรี่”")) return;
   shDownload();
   $("shTip").textContent = "บันทึกรูปแล้ว เปิดแอป Instagram / Facebook → สร้างสตอรี่ → เลือกรูปนี้";
 }
@@ -3730,14 +3777,24 @@ function shCopy() {
     return prompt("คัดลอกลิงก์", t);
   });else prompt("คัดลอกลิงก์", t);
 }
+var MOB = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 function shApp(a) {
   var u = encodeURIComponent(SITE),
     t = encodeURIComponent(SHTXT);
   if (a === "fb" || a === "ig") {
-    if (shNative(a === "ig" ? "เลือก Instagram → สตอรี่ หรือ โพสต์" : "เลือก Facebook → สตอรี่ หรือ โพสต์")) return;
-    if (a === "fb") window.open("https://www.facebook.com/sharer/sharer.php?u=" + u, "_blank");else {
-      shDownload();
-      $("shTip").textContent = "บันทึกรูปแล้ว เปิด Instagram → + → สตอรี่ → เลือกรูปนี้";
+    if (!SH.files || !SH.files.story) return toast("กำลังสร้างภาพ รอสักครู่…");
+    shFmt("story");
+    var app = a === "ig" ? "Instagram" : "Facebook";
+    if (shNative("story", "แตะ " + app + " → เลือก “สตอรี่” (" + (a === "ig" ? "Stories" : "Your story") + ") แล้วกดแชร์ได้เลย")) return;
+    shDownload("story");
+    if (MOB) {
+      $("shTip").textContent = "บันทึกรูปแล้ว กำลังเปิด " + app + " → เลือกรูปล่าสุดในสตอรี่";
+      setTimeout(function () {
+        return location.href = a === "ig" ? "instagram://story-camera" : "fb://";
+      }, 600);
+    } else {
+      $("shTip").textContent = "บันทึกรูปสตอรี่แล้ว ส่งเข้ามือถือแล้วลงสตอรี่ " + app;
+      if (a === "fb") window.open("https://www.facebook.com/sharer/sharer.php?u=" + u, "_blank");
     }
     return;
   }
@@ -3750,37 +3807,37 @@ function share() {
 function _share() {
   _share = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee10() {
     var u, t, _t1;
-    return _regenerator().w(function (_context10) {
-      while (1) switch (_context10.p = _context10.n) {
+    return _regenerator().w(function (_context11) {
+      while (1) switch (_context11.p = _context11.n) {
         case 0:
           u = location.href, t = "\u0E21\u0E32\u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07\u0E2D\u0E2D\u0E19\u0E44\u0E25\u0E19\u0E4C\u0E01\u0E31\u0E1A\u0E40\u0E17\u0E28\u0E1A\u0E32\u0E25\u0E15\u0E33\u0E1A\u0E25\u0E04\u0E25\u0E2D\u0E07\u0E15\u0E33\u0E2B\u0E23\u0E38 \uD83E\uDEB7";
-          _context10.p = 1;
+          _context11.p = 1;
           if (!navigator.share) {
-            _context10.n = 3;
+            _context11.n = 3;
             break;
           }
-          _context10.n = 2;
+          _context11.n = 2;
           return navigator.share({
             title: t,
             text: t,
             url: u
           });
         case 2:
-          _context10.n = 5;
+          _context11.n = 5;
           break;
         case 3:
-          _context10.n = 4;
+          _context11.n = 4;
           return navigator.clipboard.writeText(u);
         case 4:
           toast("\uD83D\uDCCB \u0E04\u0E31\u0E14\u0E25\u0E2D\u0E01\u0E25\u0E34\u0E07\u0E01\u0E4C\u0E41\u0E25\u0E49\u0E27");
         case 5:
-          _context10.n = 7;
+          _context11.n = 7;
           break;
         case 6:
-          _context10.p = 6;
-          _t1 = _context10.v;
+          _context11.p = 6;
+          _t1 = _context11.v;
         case 7:
-          return _context10.a(2);
+          return _context11.a(2);
       }
     }, _callee10, null, [[1, 6]]);
   }));
@@ -3800,27 +3857,27 @@ function poll() {
 function _poll() {
   _poll = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee11() {
     var r, _j3, ids, fresh, _data, _t10;
-    return _regenerator().w(function (_context11) {
-      while (1) switch (_context11.p = _context11.n) {
+    return _regenerator().w(function (_context12) {
+      while (1) switch (_context12.p = _context12.n) {
         case 0:
           if (!document.hidden) {
-            _context11.n = 1;
+            _context12.n = 1;
             break;
           }
-          return _context11.a(2);
+          return _context12.a(2);
         case 1:
-          _context11.p = 1;
+          _context12.p = 1;
           since = data.reduce(function (m, d) {
             return d.created_at > m ? d.created_at : m;
           }, since);
-          _context11.n = 2;
+          _context12.n = 2;
           return fetch(CONFIG.API_URL + "?since=" + encodeURIComponent(since) + "&t=" + Date.now());
         case 2:
-          r = _context11.v;
-          _context11.n = 3;
+          r = _context12.v;
+          _context12.n = 3;
           return r.json();
         case 3:
-          _j3 = _context11.v;
+          _j3 = _context12.v;
           ids = new Set(data.map(function (d) {
             return String(d.id);
           }));
@@ -3841,13 +3898,13 @@ function _poll() {
               return k.name;
             }).join(", ") + " \u0E40\u0E1E\u0E34\u0E48\u0E07\u0E25\u0E2D\u0E22\u0E01\u0E23\u0E30\u0E17\u0E07");
           }
-          _context11.n = 5;
+          _context12.n = 5;
           break;
         case 4:
-          _context11.p = 4;
-          _t10 = _context11.v;
+          _context12.p = 4;
+          _t10 = _context12.v;
         case 5:
-          return _context11.a(2);
+          return _context12.a(2);
       }
     }, _callee11, null, [[1, 4]]);
   }));
