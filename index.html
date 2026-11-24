@@ -3722,6 +3722,7 @@ function _shRender() {
 }
 function openShare(k) {
   if (!k) return;
+  if (!isMine(k)) return toast("แชร์ได้เฉพาะกระทงของคุณเท่านั้น");
   SH.k = k;
   close_(mView);
   $("shWho").textContent = "กระทงของ " + k.name;
